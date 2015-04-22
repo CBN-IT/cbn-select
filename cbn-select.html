@@ -31,7 +31,7 @@
                 display: flex;
                 flex-wrap: wrap;
                 align-items: center;
-                padding: 5px 8px;
+                padding-right: 13px;
                 position: relative;
                 outline: none;
             }
@@ -54,10 +54,11 @@
                 box-sizing: border-box;
                 display: inline-block;
                 outline: none;
-                font-size: 16px;
-                padding: 0;
                 vertical-align: middle;
-                min-width: 130px;
+                min-width: 100px;
+                padding: 0.5em 0.5em 0.25em 0em;
+                font: inherit;
+                background-color: transparent;
             }
             #input[readonly] {
                 text-decoration: line-through;
@@ -87,7 +88,7 @@
             }
             #opener {
                 position: absolute;
-                right: 5px;
+                right: -5px;
                 top: 25%;
                 cursor: pointer;
             }
@@ -126,7 +127,7 @@
                 /*border-bottom: 1px solid #b3cee1;
                 border-right: 1px solid #b3cee1;*/
                 padding: 3px 1px 3px 4px;
-                margin: 5px 5px 5px 0;
+                /*margin: 5px 5px 5px 0;*/
                 display: inline-block;
                 vertical-align: middle;
                 cursor: pointer;
@@ -202,7 +203,7 @@
          --></template>
             <input id="input"
                    type="text"
-                   placeholder="{{ _selected.length ? '' : (placeholder ? placeholder : 'Type here ...')}}"
+                   placeholder="{{ _selected.length ? '' : (placeholder ? placeholder : '')}}"
                    value="{{ _addQuery }}"
                    class="{{ {unmatched: query.length && _empty} | tokenList }}"
                    readonly?="{{ _mode != 'add' }}"
