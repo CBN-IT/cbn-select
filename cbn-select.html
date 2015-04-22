@@ -306,6 +306,19 @@
                 }
             }
         };
+        var ValidateMixin = {
+            validity: {
+                valid: true
+            },
+            publish:{
+                required: false,
+                minLength: undefined,
+                maxLength: undefined,
+                min: undefined,
+                max: undefined
+            }
+
+        };
         var AvailableDropdownMixin = {
             _isAvailable: function(item) {
                 return !this._selected.filter(function(i) {
@@ -616,7 +629,7 @@
                     }
                 }
             }
-        }, CommonMixin, SelectedBrowsingMixin, AvailableDropdownMixin));
+        }, CommonMixin, SelectedBrowsingMixin, AvailableDropdownMixin,ValidateMixin));
     })();
     </script>
 </polymer-element>
