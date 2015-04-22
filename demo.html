@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>&lt;cbn-select&gt;</title>
+    <script src="../webcomponentsjs/webcomponents.js"></script>
+    <link rel="import" href="cbn-select.html">
+    <link rel="import" href="../cbn-json-box/cbn-json-box.html">
+    <style>
+        .slack {
+            height: 5000px;
+        }
+    </style>
+</head>
+<body unresolved>
+<template id="result" is="auto-binding">
+    available=
+    <cbn-json-box rows="3" json="{{ available }}"></cbn-json-box>
+    selected=
+    <cbn-json-box rows="3" json="{{ selected }}"></cbn-json-box>
+    The <code>&lt;select-box&gt;</code>:
+    <select-box id="box" available="{{ available }}" selected="{{ selected }}"></select-box>
+
+</template>
+<br /><br />
+Placeholder:
+<cbn-select id="holder" placeholder="some placeholder ..."></cbn-select>
+<br /><br />
+Example with lots of items:
+<cbn-select id="other"></cbn-select>
+
+<br /><br />
+Lazy loading:
+<cbn-select id="slow"></cbn-select>
+
+<div class="slack"></div>
+
+<script>
+    window.addEventListener('polymer-ready', function() {
+        var result = document.getElementById('result'),
+                slow = document.getElementById('slow'),
+                other = document.getElementById('other');
+        var choices = ["asdf", "wer", "lorem", "ipsum", "tetetete", "foobar"];
+        for (var i=0; i<500; i++) choices.push('stuff-'+i);
+        for (var i=0; i<500; i++) choices.push('asdf-'+i);
+        other.selected = ['asdf']
+        other.available = choices;
+
+        result.available = ["asdf", "wer", "lorem", "ipsum", "sil", "a", "b", "c" , "d"];
+        result.selected = ['a'];
+
+        slow.available = function (query, callback) {
+            setTimeout(function() {
+                callback(["asdf", "wer", "lorem", "ipsum", "sil", "a", "b", "c" , "d"])
+            }, 500);
+        };
+        slow.selected = ['a'];
+        //slow.focus();
+    });
+</script>
+</body>
+</html>

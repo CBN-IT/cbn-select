@@ -1,0 +1,9 @@
+{
+  "name": "cbn-select",
+  "private": true,
+  "dependencies": {
+    "polymer": "Polymer/polymer#^0.5",
+    "core-selection": "Polymer/core-icons#^0.5"
+  },
+  "version": "0.1"
+}
