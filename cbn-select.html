@@ -214,7 +214,7 @@
                 <div id="available" tabindex="-1">
                     <template repeat="{{ c in _matched }}">
                         <div class="choice {{ {highlighted: c.highlighted} | tokenList }}"
-                             on-mousedown="{{ _onClickAvailable }}">{{ c.label }}
+                             on-tap="{{ _onClickAvailable }}">{{ c.label }}
                         </div>
                     </template>
                     <template if="{{ _loading }}">
