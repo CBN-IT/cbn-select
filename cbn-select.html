@@ -19,15 +19,13 @@
     };
 </script>
 
-<polymer-element name="cbn-select" tabindex="-1" attributes="available selected placeholder">
+<polymer-element name="cbn-select" tabindex="-1" attributes="available value placeholder">
     <template>
         <style>
             :host {
                 outline: none;
             }
             #container {
-                /*border: 1px solid #ddd;
-                border-radius: 2px;*/
                 display: flex;
                 flex-wrap: wrap;
                 align-items: center;
@@ -37,16 +35,6 @@
             }
             #container:hover {
                 cursor: text;
-                /*border: 1px solid #aaa;*/
-            }
-            #container.focused,
-            #container.focused:hover {
-                /*box-shadow: inset 0 0 3px #0074d9;*/
-            }
-            #available,
-            #container.focused,
-            #container.focused:hover {
-                /*border: 1px solid #004080;*/
             }
             #input {
                 flex: 1 1;
@@ -68,11 +56,9 @@
                 left: -1px;
                 right: -1px;
                 top: 100%;
-
             }
             #available {
                 position: relative;
-                border-top: none;
                 border-bottom-right-radius: 2px;
                 border-bottom-left-radius: 2px;
                 z-index: 1;
@@ -89,7 +75,7 @@
             #opener {
                 position: absolute;
                 right: -5px;
-                top: 25%;
+                bottom: 0;
                 cursor: pointer;
             }
             .choice {
@@ -104,7 +90,6 @@
             }
             .choice.highlighted {
                 border: 1px solid #bbb;
-                /*background: #EBF2FC;*/
             }
             .choice:hover {
                 border: 1px solid #aaa;
@@ -119,56 +104,32 @@
             .unmatched {
                 color: #e00;
             }
-
             .item {
                 color: #2F2F2F;
                 background: #F1F1F1;
                 border: 1px solid #CCCCCC;
-                /*border-bottom: 1px solid #b3cee1;
-                border-right: 1px solid #b3cee1;*/
-                padding: 3px 1px 3px 4px;
-                /*margin: 5px 5px 5px 0;*/
+                padding: 2px 1px 2px 4px;
+                margin-right: 3px;
+                margin-bottom: 2px;
                 display: inline-block;
                 vertical-align: middle;
                 cursor: pointer;
                 border-radius: 5px;
             }
             .item:hover {
-                /*background: #ccc;*/
-                /*border-bottom: 1px solid #666;
-                border-right: 1px solid #666;*/
                 box-shadow: 0px 0px 3px #aaa;
             }
             .highlighted {
                 background: #ffffcc;
-                /*border-bottom: 1px solid #6c9fc6;
-                border-right: 1px solid #6c9fc6;*/
             }
-            /*.eliminate {
-                font-family: "Segoe UI Symbol", "Arial Unicode MS", sans-serif;
-                vertical-align: top;
-                height: 16px;
-                width: 16px;
-                line-height: 16px;
-                text-align: center;
-                font-size: 8px;
-                margin: 2px 0 0 4px;
-                background: #ccc;
-                color: #fff;
-                border-radius: 10px;
-                cursor: pointer;
-                display: inline-block;
-            }*/
             .eliminate{
                 margin-left: 3px;
             }
             .eliminate > core-icon {
                 height: 16px;
                 width: 16px;
-
             }
             .eliminate:hover > core-icon {
-                /*background: #C03434;*/
                 fill: #FF0000;
             }
             .focused .eliminate {
@@ -421,12 +382,12 @@
                 this._filter(this._addQuery);
             },
             _selectedChanged: SelectBoxUtils.breakBinding(function() {
-                this.selected = this._selected.map(function(item) {
+                this.value = this._selected.map(function(item) {
                     return item.value;
                 });
             }),
-            selectedChanged: SelectBoxUtils.breakBinding(function() {
-                this._selected = this.selected.map(function(value) {
+            valueChanged: SelectBoxUtils.breakBinding(function() {
+                this._selected = this.value.map(function(value) {
                     return {value: value, label: value, query: value};
                 });
             }),
