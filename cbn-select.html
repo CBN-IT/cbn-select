@@ -19,133 +19,10 @@
     };
 </script>
 
-<polymer-element name="cbn-select" tabindex="-1" attributes="available value placeholder">
+<polymer-element name="cbn-select" tabindex="-1" attributes="available value placeholder multiple">
     <template>
-        <style>
-            :host {
-                outline: none;
-            }
-            #container {
-                display: flex;
-                flex-wrap: wrap;
-                align-items: center;
-                padding-right: 13px;
-                position: relative;
-                outline: none;
-            }
-            #container:hover {
-                cursor: text;
-            }
-            #input {
-                flex: 1 1;
-                border: none;
-                box-sizing: border-box;
-                display: inline-block;
-                outline: none;
-                vertical-align: middle;
-                min-width: 100px;
-                padding: 0.5em 0.5em 0.25em 0em;
-                font: inherit;
-                background-color: transparent;
-            }
-            #input[readonly] {
-                text-decoration: line-through;
-            }
-            #available-wrapper {
-                position: absolute;
-                left: -1px;
-                right: -1px;
-                top: 100%;
-            }
-            #available {
-                position: relative;
-                border-bottom-right-radius: 2px;
-                border-bottom-left-radius: 2px;
-                z-index: 1;
-                background: #fff;
-                max-height: 255px;
-                overflow-y: auto;
-                display: none;
-                border: 1px solid black;
-                border-top: none;
-            }
-            .opened #available {
-                display: block;
-            }
-            #opener {
-                position: absolute;
-                right: -5px;
-                bottom: 0;
-                cursor: pointer;
-            }
-            .choice {
-                border: 1px solid #eee;
-                border-radius: 3px;
-                display: block;
-                padding: 5px;
-                margin: 5px;
-                background: #fafafa;
-                cursor: pointer;
-                box-sizing: border-box;
-            }
-            .choice.highlighted {
-                border: 1px solid #bbb;
-            }
-            .choice:hover {
-                border: 1px solid #aaa;
-            }
-            ._loading, ._empty {
-                padding: 5px;
-            }
-            ._loading {
-                background: 5px center no-repeat url("loading.gif");
-                padding-left: 28px;
-            }
-            .unmatched {
-                color: #e00;
-            }
-            .item {
-                color: #2F2F2F;
-                background: #F1F1F1;
-                border: 1px solid #CCCCCC;
-                padding: 2px 1px 2px 4px;
-                margin-right: 3px;
-                margin-bottom: 2px;
-                display: inline-block;
-                vertical-align: middle;
-                cursor: pointer;
-                border-radius: 5px;
-            }
-            .item:hover {
-                box-shadow: 0px 0px 3px #aaa;
-            }
-            .highlighted {
-                background: #ffffcc;
-            }
-            .eliminate{
-                margin-left: 3px;
-            }
-            .eliminate > core-icon {
-                height: 16px;
-                width: 16px;
-            }
-            .eliminate:hover > core-icon {
-                fill: #FF0000;
-            }
-            .focused .eliminate {
-                display: inline-block;
-            }
-            .item.editing {
-                padding: 1px;
-            }
-            .selectionEditor {
-                border: none;
-                border-left: 1px solid #6c9fc6;
-                border-top: 1px solid #6c9fc6;
-                outline: none;
-                padding: 3px 5px;
-            }
-        </style>
+        <link href="cbn-select.css" rel="stylesheet">
+
         <div id="container" tabindex="-1"
              class="{{ {focused: focused, opened: opened} | tokenList }} {{ _mode }}">
             <template repeat="{{ s, i in _selected }}"><!--
@@ -171,8 +48,8 @@
                    on-mousedown="{{ _onFocusInput }}"
                    on-focus="{{ _onFocusInput }}"
             >
-            <div id="available-wrapper" tabindex="-1">
-                <div id="available" tabindex="-1">
+            <div id="available-wrapper" >
+                <div id="available" >
                     <template repeat="{{ c in _matched }}">
                         <div class="choice {{ {highlighted: c.highlighted} | tokenList }}"
                              on-tap="{{ _onClickAvailable }}">{{ c.label }}
@@ -317,7 +194,7 @@
                 this._navigateAvailable('first');
             },
             _navigateAvailable: function(direction) {
-                if (this._mode == 'browse' && this._matched < 2)
+                if (this._mode == 'browse' && this._matched < 2 || !this.opened)
                     return true;
                 this.opened = true;
                 this.async(this._scrollAvailable, [this._navigate('_matched', direction), direction]);
@@ -325,7 +202,11 @@
 
             _addItemToSelected: function(item) {
                 if (item) {
-                    this._selected.push({value: item.value, label: item.label, query: item.value});
+                    if(this.multiple) {
+                        this._selected.push({value: item.value, label: item.label, query: item.value});
+                    } else {
+                        this._selected.splice(0, this._selected.length, {value: item.value, label: item.label, query: item.value});
+                    }
                     this._addQuery = '';
                     this._updateAvailable();
                 }
@@ -354,6 +235,7 @@
             _editQuery: "",
             opened: false,
             focused: false,
+            multiple: false,
             _mode: "", // edit, add, browse
             _selectedFocus: undefined,
             _selectedFocusPos: null,
@@ -382,12 +264,28 @@
                 this._filter(this._addQuery);
             },
             _selectedChanged: SelectBoxUtils.breakBinding(function() {
-                this.value = this._selected.map(function(item) {
-                    return item.value;
-                });
+                if(this.multiple) {
+                    this.value = this._selected.map(function (item) {
+                        return item.value;
+                    });
+                } else {
+                    if(this._selected==null || this._selected.length==0){
+                        this.value = "";
+                    } else {
+                        this.value = this._selected.map(function (item) {
+                            return item.value;
+                        }).join(", ");
+                    }
+                }
+                this.fire("value-changed", {value: this.value});
             }),
             valueChanged: SelectBoxUtils.breakBinding(function() {
-                this._selected = this.value.map(function(value) {
+
+                var tempValue = this.value;
+                if(typeof tempValue =="string"){
+                    tempValue = [tempValue];
+                }
+                this._selected = tempValue.map(function(value) {
                     return {value: value, label: value, query: value};
                 });
             }),
@@ -459,6 +357,10 @@
                 }
             },
             _onBlur: function(e) {
+                if (this._mode == "add" && this._addQuery != "") {
+                    var item = this._matchedFocus;
+                    this._addItemToSelected(this._matchedFocus);
+                }
                 if (!this.critical) {
                     this._selectedFocus = null;
                     this._matchedFocus = null;
@@ -506,6 +408,7 @@
                     this._saveMatchedFocus();
                 } else {
                     this._addItemToSelected(e.target.templateInstance.model.c);
+                    this.$.input.focus();
                 }
                 e.preventDefault();
             },

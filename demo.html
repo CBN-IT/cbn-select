@@ -10,6 +10,9 @@
         .slack {
             height: 5000px;
         }
+        body{
+            overflow: hidden;
+        }
     </style>
 </head>
 <body unresolved>
@@ -19,42 +22,61 @@
     selected=
     <cbn-json-box rows="3" json="{{ selected }}"></cbn-json-box>
     The <code>&lt;select-box&gt;</code>:
-    <select-box id="box" available="{{ available }}" selected="{{ selected }}"></select-box>
+    <select-box multiple="true" id="box" available="{{ available }}" selected="{{ selected }}"></select-box>
 
 </template>
 <br /><br />
 Placeholder:
-<cbn-select id="holder" placeholder="some placeholder ..."></cbn-select>
+<cbn-select  multiple="true" id="holder" placeholder="some placeholder ..."></cbn-select>
 <br /><br />
 Example with lots of items:
-<cbn-select id="other"></cbn-select>
+<cbn-select  multiple="true" id="other"></cbn-select>
+
+<br /><br />
+Single select
+<cbn-select id="single"></cbn-select>
+
+<br /><br />
+Single select with multiple init
+<cbn-select id="singleMultiple"></cbn-select>
 
 <br /><br />
 Lazy loading:
-<cbn-select id="slow"></cbn-select>
+<cbn-select  multiple="true" id="slow"></cbn-select>
 
 <div class="slack"></div>
 
 <script>
     window.addEventListener('polymer-ready', function() {
-        var result = document.getElementById('result'),
-                slow = document.getElementById('slow'),
-                other = document.getElementById('other');
+        var result = document.getElementById('result');
+        var slow = document.getElementById('slow');
+        var other = document.getElementById('other');
+        var single = document.getElementById('single');
+        var singleMultiple = document.getElementById('singleMultiple');
+
         var choices = ["asdf", "wer", "lorem", "ipsum", "tetetete", "foobar"];
         for (var i=0; i<500; i++) choices.push('stuff-'+i);
         for (var i=0; i<500; i++) choices.push('asdf-'+i);
-        other.selected = ['asdf']
+        other.value = ['asdf']
         other.available = choices;
 
         result.available = ["asdf", "wer", "lorem", "ipsum", "sil", "a", "b", "c" , "d"];
-        result.selected = ['a'];
+        result.value = ['a'];
 
         slow.available = function (query, callback) {
             setTimeout(function() {
                 callback(["asdf", "wer", "lorem", "ipsum", "sil", "a", "b", "c" , "d"])
             }, 500);
         };
-        slow.selected = ['a'];
+        slow.value = ['a'];
+
+        single.available = ["asdf", "wer", "lorem", "ipsum", "sil", "a", "b", "c" , "d"];
+        single.value="sil";
+
+        singleMultiple.available = ["asdf", "wer", "lorem", "ipsum", "sil", "a", "b", "c" , "d"];
+        singleMultiple.value=["wer", "sil"];
+
+
         //slow.focus();
     });
 </script>
