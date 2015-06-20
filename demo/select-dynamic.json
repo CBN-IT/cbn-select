@@ -1,0 +1,64 @@
+{
+	"types": {
+		"text": "cbn-basic-input", 
+		"select": "cbn-select"
+	}, 
+	"defaults": {
+		"group-flex": {
+			"type": "group",
+			"wrapChildren": {
+				"element": "div",
+				"className": "row group-inner"
+			}
+		},
+		"input": {
+			"decorator": "cbn-input-decorator",
+			"preview": false
+		}
+	},
+	"elements": [
+		{
+			"inherit": "group-flex", 
+			"caption": "Select Demo",
+			"toggleable" : false, 
+			
+			"children": [
+				{
+					"inherit": "input",
+					"name": "select1",
+					"type": "select",
+					"floatingLabel": true,
+					"label": "Simple",
+					"multiple": false,
+					"freeText": true,
+					"options": [ "One", "Two", "Three", "Four" ],
+					"preview": true,
+					"className": "col-xs-12"
+				},
+				{
+					"inherit": "input",
+					"name": "select2",
+					"type": "select",
+					"floatingLabel": true,
+					"label": "With Data Source",
+					"multiple": false,
+					"dataSource": "#simpleData",
+					"preview": true,
+					"className": "col-xs-12"
+				},
+				{
+					"inherit": "input",
+					"name": "select3",
+					"type": "select",
+					"floatingLabel": true,
+					"label": "With Ajax Source",
+					"multiple": true,
+					"freeText": true,
+					"dataSource": "#ajaxData",
+					"preview": true,
+					"className": "col-xs-12"
+				}
+			]
+		}
+	]
+}

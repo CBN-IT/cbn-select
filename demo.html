@@ -1,84 +1,15 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
 <head>
-    <meta charset="UTF-8">
-    <title>&lt;cbn-select&gt;</title>
-    <script src="../webcomponentsjs/webcomponents.js"></script>
-    <link rel="import" href="cbn-select.html">
-    <link rel="import" href="../cbn-json-box/cbn-json-box.html">
-    <style>
-        .slack {
-            height: 5000px;
-        }
-        body{
-            overflow: hidden;
-        }
-    </style>
+	<meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
 </head>
-<body unresolved>
-<template id="result" is="auto-binding">
-    available=
-    <cbn-json-box rows="3" json="{{ available }}"></cbn-json-box>
-    selected=
-    <cbn-json-box rows="3" json="{{ selected }}"></cbn-json-box>
-    The <code>&lt;select-box&gt;</code>:
-    <select-box multiple="true" id="box" available="{{ available }}" selected="{{ selected }}"></select-box>
+<body>
 
-</template>
-<br /><br />
-Placeholder:
-<cbn-select  multiple="true" id="holder" placeholder="some placeholder ..."></cbn-select>
-<br /><br />
-Example with lots of items:
-<cbn-select  multiple="true" id="other"></cbn-select>
+<p><b>Available demo pages: </b></p>
 
-<br /><br />
-Single select
-<cbn-select id="single"></cbn-select>
+<ul>
+	<li><a href="demo/select-dynamic.html">Select input inside a dynamic form</a></li>
+</ul>
 
-<br /><br />
-Single select with multiple init
-<cbn-select id="singleMultiple"></cbn-select>
-
-<br /><br />
-Lazy loading:
-<cbn-select  multiple="true" id="slow"></cbn-select>
-
-<div class="slack"></div>
-
-<script>
-    window.addEventListener('polymer-ready', function() {
-        var result = document.getElementById('result');
-        var slow = document.getElementById('slow');
-        var other = document.getElementById('other');
-        var single = document.getElementById('single');
-        var singleMultiple = document.getElementById('singleMultiple');
-
-        var choices = ["asdf", "wer", "lorem", "ipsum", "tetetete", "foobar"];
-        for (var i=0; i<500; i++) choices.push('stuff-'+i);
-        for (var i=0; i<500; i++) choices.push('asdf-'+i);
-        other.value = ['asdf']
-        other.available = choices;
-
-        result.available = ["asdf", "wer", "lorem", "ipsum", "sil", "a", "b", "c" , "d"];
-        result.value = ['a'];
-
-        slow.available = function (query, callback) {
-            setTimeout(function() {
-                callback(["asdf", "wer", "lorem", "ipsum", "sil", "a", "b", "c" , "d"])
-            }, 500);
-        };
-        slow.value = ['a'];
-
-        single.available = ["asdf", "wer", "lorem", "ipsum", "sil", "a", "b", "c" , "d"];
-        single.value="sil";
-
-        singleMultiple.available = ["asdf", "wer", "lorem", "ipsum", "sil", "a", "b", "c" , "d"];
-        singleMultiple.value=["wer", "sil"];
-
-
-        //slow.focus();
-    });
-</script>
 </body>
 </html>

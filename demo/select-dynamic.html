@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>Dynamic Form with select inputs</title>
+	
+	<script src="../../webcomponentsjs/webcomponents.js"></script>
+	
+	<link rel="import" href="../../core-ajax/core-ajax.html">
+	<link rel="import" href="../../cbn-grid/flexgrid.html">
+	
+	<link rel="import" href="../../cbn-form/cbn-form.html">
+	<link rel="import" href="../../cbn-form/cbn-dynamic-form.html">
+	<link rel="import" href="../../cbn-input/cbn-input-bundle.html">
+	<link rel="import" href="../cbn-select.html">
+	
+	<link href="//fonts.googleapis.com/css?family=RobotoDraft:regular,bold,italic,thin,light,bolditalic,black,medium&amp;lang=en" rel="stylesheet" type="text/css">
+	
+	<style>
+		body {
+			font-family: RobotoDraft, 'Helvetica Neue', Helvetica, Arial, sans-serif;
+			font-size: 14px;
+		}
+	</style>
+</head>
+<body>
+
+<h1>Select input (inside dynamic form)</h1>
+
+<template id="template-wrapper" is="auto-binding">
+	
+	<core-ajax auto url="select-dynamic.json" handleAs="json" on-core-complete="{{onCoreComplete}}" response="{{formConfig}}"></core-ajax>
+	
+	<cbn-form model="{{formModel}}" style="width: 500px;">
+		
+		<cbn-dynamic-form config="{{formConfig}}"></cbn-dynamic-form>
+		
+		<cbn-data-source id="simpleData" data='[
+			{ "value":"1", "label": "First" },
+			{ "value":"2", "label": "Second" },
+			{ "value":"3", "label": "Third" },
+			{ "value":"4", "label": "Four" }
+		]'></cbn-data-source>
+		
+		<cbn-data-source id="ajaxData">
+			<core-ajax url="data.json" handleAs="json"></core-ajax>
+		</cbn-data-source>
+		
+	</cbn-form>
+	
+	<p style="font-weight: bold;">Output: </p>
+	<pre id="stringifiedJson"></pre>
+	
+</template>
+
+<script>
+	document.addEventListener("HTMLImportsLoaded", function() {
+		var tpl = document.querySelector('#template-wrapper');
+		
+		tpl.formModel = {
+			select1: '',
+			select2: '',
+			select3: '',
+		};
+		tpl.addEventListener('template-bound', function() {
+			var form = document.querySelector('cbn-form');
+			
+			form.addEventListener('cbn-dynamic-form-rendered', function() {
+				var observer = new CompoundObserver();
+				
+				for (var i=0; i < form.childInputs.length; i++) {
+					var field = form.childInputs[i];
+					observer.addPath(tpl.formModel, field.name);
+				}
+				
+				observer.open(function() {
+					document.querySelector('#stringifiedJson').innerHTML = JSON.stringify(tpl.formModel, null, 4);
+				});
+			});
+		});
+	});
+</script>
+
+</body>
+</html>

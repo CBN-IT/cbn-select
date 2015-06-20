@@ -1,9 +1,15 @@
 {
-  "name": "cbn-select",
-  "private": true,
-  "dependencies": {
-    "polymer": "Polymer/polymer#^0.5",
-    "core-icons": "Polymer/core-icons#^0.5"
-  },
-  "version": "0.1.0"
+    "name": "cbn-select",
+    "private": true,
+    "dependencies": {
+        "polymer": "Polymer/polymer#^0.5",
+        "core-icons": "Polymer/core-icons#^0.5",
+        "cbn-form": "git@bitbucket.org:cbn-it/cbn-form.git#master",
+        "cbn-data-source": "git@bitbucket.org:cbn-it/cbn-data-source.git#master"
+    },
+    "devDependencies": {
+        "cbn-input": "git@bitbucket.org:cbn-it/cbn-input.git#master",
+        "cbn-grid": "git@bitbucket.org:cbn-it/cbn-grid.git#master"
+    },
+    "version": "0.2.0"
 }

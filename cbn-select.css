@@ -1,129 +1,165 @@
+
 :host {
-    outline: none;
+	outline: none;
 }
+
+/* The container for all element's components */
 #container {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    padding-right: 13px;
-    position: relative;
-    outline: none;
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	padding-right: 13px;
+	position: relative;
+	outline: none;
 }
 #container:hover {
-    cursor: text;
+	cursor: text;
 }
+
+/* 
+ * Selected items' bubbles.
+ */
+.selected-item {
+	display: inline-block;
+	color: #2F2F2F;
+	background: #F1F1F1;
+	border: 1px solid #CCCCCC;
+	padding: 2px 1px 2px 4px;
+	margin-right: 3px;
+	margin-bottom: 2px;
+	vertical-align: middle;
+	cursor: pointer;
+	border-radius: 5px;
+}
+
+.selected-item:hover {
+	box-shadow: 0 0 3px #aaa;
+}
+
+.selected-item.highlighted {
+	background: #ffffcc;
+}
+
+/* Remove selection button */
+.removeBtn {
+	margin-left: 3px;
+}
+
+.removeBtn > core-icon {
+	height: 16px;
+	width: 16px;
+}
+.removeBtn:hover > core-icon {
+	fill: #FF0000;
+}
+
+#container.focused .removeBtn {
+	display: inline-block;
+}
+
+/* The edit selection input displayed for the currently edited selected-item */
+.option-editor {
+	min-width: 50px;
+	background: transparent;
+	border: 1px solid #eeeecc;
+	outline: none;
+	padding: 0.1em 0.3em;
+}
+.selected-item.editing {
+	padding: 1px;
+}
+
+/*
+ * The input extends to the length of the element.
+ */
 #input {
-    flex: 1 1;
-    border: none;
-    box-sizing: border-box;
-    display: inline-block;
-    outline: none;
-    vertical-align: middle;
-    min-width: 100px;
-    padding: 0.5em 0.5em 0.25em 0em;
-    font: inherit;
-    background-color: transparent;
+	display: inline-block;
+	flex: 1 1;
+	border: none;
+	box-sizing: border-box;
+	outline: none;
+	vertical-align: middle;
+	min-width: 100px;
+	padding: 0.5em 0.5em 0.25em 0;
+	font: inherit;
+	background-color: transparent;
 }
 #input[readonly] {
-    text-decoration: line-through;
+	text-decoration: line-through;
 }
-#available-wrapper {
-    position: absolute;
-    left: -1px;
-    right: -1px;
-    top: 100%;
+
+#input.unmatched {
+	color: #e00;
 }
-#available {
-    position: relative;
-    border-bottom-right-radius: 2px;
-    border-bottom-left-radius: 2px;
-    z-index: 1;
-    background: #fff;
-    max-height: 255px;
-    overflow-y: auto;
-    display: none;
-    border: 1px solid black;
-    border-top: none;
+
+
+/* 
+ * Drop-down/options box styles.
+ */
+#options-wrapper {
+	position: absolute;
+	left: -1px;
+	right: -1px;
+	top: 100%;
 }
-.opened #available {
-    display: block;
+
+#options {
+	position: relative;
+	border-bottom-right-radius: 2px;
+	border-bottom-left-radius: 2px;
+	z-index: 1;
+	background: #fff;
+	max-height: 255px;
+	overflow-y: auto;
+	display: none;
+	border: 1px solid black;
+	border-top: none;
 }
-#opener {
-    position: absolute;
-    right: -5px;
-    bottom: 0;
-    cursor: pointer;
+
+#container.open #options {
+	display: block;
 }
-.choice:first-of-type {
-    margin-top: 5px;
+
+/* Select option/item styles */
+#options .item {
+	border: 1px solid #eee;
+	border-radius: 3px;
+	display: block;
+	padding: 5px;
+	margin: 1px 5px;
+	background: #fafafa;
+	cursor: pointer;
+	box-sizing: border-box;
 }
-.choice:last-of-type {
-    margin-bottom: 5px;
+#options .item:hover {
+	border: 1px solid #aaa;
 }
-.choice {
-    border: 1px solid #eee;
-    border-radius: 3px;
-    display: block;
-    padding: 5px;
-    margin: 1px 5px;
-    background: #fafafa;
-    cursor: pointer;
-    box-sizing: border-box;
+
+#options .item:first-of-type {
+	margin-top: 5px;
 }
-.choice.highlighted {
-    border: 1px solid #bbb;
+#options .item:last-of-type {
+	margin-bottom: 5px;
 }
-.choice:hover {
-    border: 1px solid #aaa;
+
+#options .item.highlighted {
+	background: #ffffcc;
+	border: 1px solid #bbb;
 }
-._loading, ._empty {
-    padding: 5px;
+
+/* Other dropdown styles */
+
+#options .loading, .empty {
+	padding: 5px;
 }
-._loading {
-    background: 5px center no-repeat url("loading.gif");
-    padding-left: 28px;
+#options .loading {
+	background: 5px center no-repeat url("loading.gif");
+	padding-left: 28px;
 }
-.unmatched {
-    color: #e00;
-}
-.item {
-    color: #2F2F2F;
-    background: #F1F1F1;
-    border: 1px solid #CCCCCC;
-    padding: 2px 1px 2px 4px;
-    margin-right: 3px;
-    margin-bottom: 2px;
-    display: inline-block;
-    vertical-align: middle;
-    cursor: pointer;
-    border-radius: 5px;
-}
-.item:hover {
-    box-shadow: 0px 0px 3px #aaa;
-}
-.highlighted {
-    background: #ffffcc;
-}
-.eliminate{
-    margin-left: 3px;
-}
-.eliminate > core-icon {
-    height: 16px;
-    width: 16px;
-}
-.eliminate:hover > core-icon {
-    fill: #FF0000;
-}
-.focused .eliminate {
-    display: inline-block;
-}
-.item.editing {
-    padding: 1px;
-}
-.selectionEditor {
-    border: none;
-    border-left: 1px solid #6c9fc6;
-    border-top: 1px solid #6c9fc6;
-    outline: none;
-    padding: 3px 5px;
+
+#dropdownBtn {
+	position: absolute;
+	right: -5px;
+	bottom: 0;
+	cursor: pointer;
 }

@@ -1,0 +1,34 @@
+[
+	{
+		"value": 1,
+		"label": "Python"
+	},
+	{
+		"value": 2,
+		"label": "JavaScript"
+	},
+	{
+		"value": 3,
+		"label": "HTML5"
+	},
+	{
+		"value": 4,
+		"label": "CSS3"
+	},
+	{
+		"value": 5,
+		"label": "AngularJS"
+	},
+	{
+		"value": 6,
+		"label": "Polymer"
+	},
+	{
+		"value": 7,
+		"label": "PHP"
+	},
+	{
+		"value": 8,
+		"label": "Java"
+	}
+]
