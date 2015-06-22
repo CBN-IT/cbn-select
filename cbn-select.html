@@ -303,6 +303,12 @@ Example:
 				_editQuery: '',
 				
 				/**
+				 * Used for transactionally firing 'change' events (when a 'deselect' followed by a 'select' item is 
+				 * executed, the event should be fired only after the final select).
+				 */
+				_transaction: false,
+				
+				/**
 				 * Stores the status properties of the select element. 
 				 * Mainly used for data bindings (element UI) / event handler methods to define the element's behavior.
 				 * 
@@ -394,7 +400,7 @@ Example:
 						if (!found)
 							return false;
 					}
-					if (!this.allowDuplicates) {
+					if (!this.multiple || !this.allowDuplicates) {
 						// check if the value has already been selected
 						for (i=0; i<this._selectedOptionsHash.length; i++) {
 							if (this._selectedOptionsHash[i] == hash) 
@@ -440,6 +446,9 @@ Example:
 						this._filterOptions(this._addQuery);
 					}
 					
+					if (!this._transaction)
+						this._commitValue();
+					
 					return true;
 				},
 				
@@ -470,6 +479,10 @@ Example:
 						this._selectedOptions = [];
 						this._selectedOptionsHash = [];
 					}
+					
+					if (!this._transaction)
+						this._commitValue();
+					
 					return true;
 				},
 				
@@ -503,6 +516,8 @@ Example:
 					this._blurHandler = this._blurHandler.bind(this);
 					this._keyDownHandler = this._keyDownHandler.bind(this);
 					this._dataSourceAvailable = this._dataSourceAvailable.bind(this);
+					this._inputHandler = this._inputHandler.bind(this);
+					this._changeHandler = this._changeHandler.bind(this);
 				},
 				
 				/**
@@ -522,6 +537,10 @@ Example:
 					this.addEventListener('focus', this._focusHandler, true);
 					this.addEventListener('blur', this._blurHandler, true);
 					this.addEventListener('keydown', this._keyDownHandler, true);
+					
+					// prevent propagation of children's input/change events
+					this.addEventListener('input', this._inputHandler);
+					this.addEventListener('change', this._changeHandler);
 				},
 				
 				/**
@@ -531,6 +550,10 @@ Example:
 					this.removeEventListener('focus', this._focusHandler, true);
 					this.removeEventListener('blur', this._blurHandler, true);
 					this.removeEventListener('keydown', this._keyDownHandler, true);
+					
+					this.removeEventListener('input', this._inputHandler);
+					this.removeEventListener('change', this._changeHandler);
+					
 					if (this._dataSource) {
 						this._dataSource.removeEventListener('cbn-data-available', this._dataSourceAvailable);
 					}
@@ -836,6 +859,36 @@ Example:
 					}
 				},
 				
+				/**
+				 * Catches any 'input' events and stops them from propagating further if they belong to shadow children.
+				 * 
+				 * @param {Event} event The event object.
+				 */
+				_inputHandler: function(event) {
+					if (event.target != this) {
+						event.stopPropagation();
+					}
+				},
+				
+				/**
+				 * Catches any 'change' events and stops them from propagating further if they belong to shadow children.
+				 * 
+				 * @param {Event} event The event object.
+				 */
+				_changeHandler: function(event) {
+					if (event.target != this) {
+						event.stopPropagation();
+					}
+				},
+				
+				/**
+				 * Commits the value of the select, firing the 'change' event.
+				 */
+				_commitValue: function() {
+					this._transaction = false;
+					this.fire('change');
+				},
+				
 				// Behavioral methods
 				
 				/**
@@ -914,8 +967,10 @@ Example:
 						this.deselect(item.item);
 						this._setMode('view');
 					} else {
+						this._transaction = true;
 						this.deselect(item.item);
 						this.select(this._editQuery);
+						this._commitValue();
 						this._setMode('view', this._highlighted.editOptionIdx);
 					}
 				},
