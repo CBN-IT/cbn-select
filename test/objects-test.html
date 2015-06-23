@@ -1,0 +1,135 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+	
+	<script src="../../webcomponentsjs/webcomponents.min.js"></script>
+	<script src="../../web-component-tester/browser.js"></script>
+	
+	<!-- Dependencies -->
+	<link rel="import" href="../../cbn-form/cbn-form.html">
+	
+	<!-- Elements to be tested -->
+	<link rel="import" href="../cbn-select.html">
+	
+</head>
+<body>
+
+<template is="auto-binding">
+	<cbn-form id="firstForm">
+		
+		<cbn-select name="opt1" multiple id="input1_1" options='[ 
+			{ "value": "1", "label": "One" },
+			{ "value": "2", "label": "Two" },
+			{ "value": "3", "label": "Three" }
+		]' ></cbn-select>
+		<cbn-select name="opt2" multiple id="input1_2" itemLabelProperty="value"></cbn-select>
+		
+		<cbn-select name="ds1" id="input2_1" dataSource="#datasource1" multiple itemLabelProperty="value"></cbn-select>
+		
+		<cbn-data-source id="datasource1" data="{{testData1}}"></cbn-data-source>
+		
+	</cbn-form>
+</template>
+
+<script>
+	
+	var tpl;
+	var form = document.querySelector('#firstForm');
+	
+	var testData1 = [
+		{ "key":"1", "value": "One" }, 
+		{ "key":"2", "value": "two" }, 
+		{ "key":"3", "value": "tHrEE" }
+	];
+	tpl = document.querySelector('template[is="auto-binding"]');
+	tpl.testData1 = testData1;
+	
+	// Set-up the test suite
+	suiteSetup(function(done){
+		// hack for polyfilled elements, need to refetch the proxied element
+		form = document.querySelector('#firstForm');
+		
+		flush(done);
+	});
+	
+	teardown(function(done) {
+		var input1 = form.querySelector('#input1_1');
+		
+		input1.freeText = false;
+		
+		flush(done);
+	});
+	
+	test('select/deselect objects', function () {
+		var input1 = form.querySelector('#input1_1');
+		
+		var selectObj1 = { "value": "1", "label": "One" };
+		var selectObj2 = { "value": "2", "label": "Two" };
+		var selectObjInvalid = { "value": "x", "label": "Invalid" };
+		
+		input1.select(null);
+		
+		assert.ok(input1.select(selectObj1), 'select obj1 succeeds');
+		assert.ok(input1.select(selectObj2), 'select obj2 succeeds');
+		assert.notOk(input1.select(selectObjInvalid), 'select invalid obj fails');
+		
+		assert.deepEqual(input1.value, [ selectObj1, selectObj2 ], 'selected obj values');
+		
+		assert.ok(input1.deselect(selectObj1), 'deselect obj1 succeeds');
+		assert.notOk(input1.deselect(selectObjInvalid), 'deselect invalid fails');
+		
+		assert.deepEqual(input1.value, [ selectObj2 ], 'selected obj values');
+	});
+	
+	test('set options + data sources', function (done) {
+		var input2 = form.querySelector('#input1_2');
+		var inputDS = form.querySelector('#input2_1');
+		
+		input2.options = testData1; // set the options
+		
+		var selectObjInvalid = { "key": "x", "value": "Invalid" };
+		
+		// wait for valueChanged event to be processed
+		flush(function(){
+			assert.ok(input2.select(testData1[0]), 'select obj1 succeeds');
+			assert.ok(input2.select(testData1[1]), 'select obj2 succeeds');
+			assert.notOk(input2.select(selectObjInvalid), 'select invalid obj fails');
+			
+			assert.deepEqual(input2.value, [ testData1[0], testData1[1] ], 'selected obj values');
+			
+			// same for the input with data source
+			assert.ok(inputDS.select(testData1[0]), 'select obj1 succeeds');
+			assert.ok(inputDS.select(testData1[1]), 'select obj2 succeeds');
+			assert.notOk(inputDS.select(selectObjInvalid), 'select invalid obj fails');
+			
+			assert.deepEqual(inputDS.value, [ testData1[0], testData1[1] ], 'selected obj values');
+			
+			done();
+		});
+	});
+	
+	test('freeText with objects + duplicates', function () {
+		var input1 = form.querySelector('#input1_1');
+		
+		input1.freeText = true;
+		input1.select(null);
+		
+		var selectObj1 = { "value": "1", "label": "One" };
+		var selectObjInvalid = { "value": "x", "label": "Invalid" };
+		var selectStrVal = "A String";
+		
+		assert.ok(input1.select(selectObj1), 'select obj succeeds');
+		assert.ok(input1.select(selectObjInvalid), 'free obj select succeeds');
+		assert.ok(input1.select(selectStrVal), 'free text select succeeds');
+		assert.notOk(input1.select(selectObjInvalid), 'free obj dupe select fails');
+		assert.notOk(input1.select(selectStrVal), 'free text dupe select fails');
+		
+		assert.deepEqual(input1.value, [ selectObj1, selectObjInvalid, selectStrVal ], 'selected values');
+	});
+	
+</script>
+
+</body>
+</html>

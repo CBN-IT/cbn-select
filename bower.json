@@ -8,6 +8,8 @@
         "cbn-data-source": "git@bitbucket.org:cbn-it/cbn-data-source.git#master"
     },
     "devDependencies": {
+        "core-component-page": "Polymer/core-component-page#^0.5",
+        "web-component-tester": "Polymer/web-component-tester",
         "cbn-input": "git@bitbucket.org:cbn-it/cbn-input.git#master",
         "cbn-grid": "git@bitbucket.org:cbn-it/cbn-grid.git#master"
     },

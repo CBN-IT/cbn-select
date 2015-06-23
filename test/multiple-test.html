@@ -1,0 +1,157 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+	
+	<script src="../../webcomponentsjs/webcomponents.min.js"></script>
+	<script src="../../web-component-tester/browser.js"></script>
+	
+	<!-- Dependencies -->
+	<link rel="import" href="../../cbn-form/cbn-form.html">
+	
+	<!-- Elements to be tested -->
+	<link rel="import" href="../cbn-select.html">
+	
+</head>
+<body>
+
+<template is="auto-binding">
+	<cbn-form id="firstForm">
+		
+		<cbn-select name="first" id="input1_1" options='[ "One", "Two", "Three" ]' multiple></cbn-select>
+		<cbn-select name="two" id="input1_2" options='[ "One", "Two", "Three" ]' multiple></cbn-select>
+		<cbn-select name="third" id="input1_3" options='[ "One", "Two", "Three" ]' multiple></cbn-select>
+		
+	</cbn-form>
+</template>
+
+<script>
+	
+	var form = document.querySelector('#firstForm');
+	
+	// Set-up the test suite
+	suiteSetup(function(done){
+		// hack for polyfilled elements, need to refetch the proxied element
+		form = document.querySelector('#firstForm');
+		flush(done);
+	});
+	
+	teardown(function(done) {
+		var input1 = form.querySelector('#input1_1');
+		var input2 = form.querySelector('#input1_2');
+		
+		input1.freeText = false;
+		input2.freeText = false;
+		input1.allowDuplicates = false;
+		input2.allowDuplicates = false;
+		
+		flush(done);
+	});
+	
+	test('multi select', function () {
+		var input1 = form.querySelector('#input1_1');
+		var input2 = form.querySelector('#input1_2');
+		
+		input1.select(null);
+		input2.select(null);
+		
+		assert.deepEqual(input1.value, [], 'select null');
+		
+		assert.ok(input1.select('One'), 'select 1 succeeds');
+		assert.ok(input1.select('Two'), 'select 2 succeeds');
+		assert.ok(input2.select('One'), 'select 3 succeeds');
+		assert.notOk(input2.select('Invalid'), 'select 4 fails');
+		
+		assert.deepEqual(input1.value, ['One', 'Two'], 'positive select');
+		assert.deepEqual(input2.value, ['One'], 'negative select');
+	});
+	
+	test('multi deselect', function () {
+		var input1 = form.querySelector('#input1_1');
+		var input2 = form.querySelector('#input1_2');
+		
+		input1.select('One');
+		input1.select('Two');
+		input2.select('One');
+		input2.select('Three');
+		
+		assert.ok(input1.deselect('One'), 'deselect 1 succeeds');
+		assert.notOk(input1.deselect('Three'), 'deselect 2 fails');
+		assert.ok(input2.deselect('One'), 'deselect 3 succeeds');
+		assert.ok(input2.deselect('Three'), 'deselect 4 succeeds');
+		
+		assert.deepEqual(input1.value, [ 'Two' ], 'deselected value');
+		assert.deepEqual(input2.value, [ ], 'failed deselect value');
+	});
+	
+	test('multi value setting', function (done) {
+		var input1 = form.querySelector('#input1_1');
+		var input2 = form.querySelector('#input1_2');
+		var input3 = form.querySelector('#input1_3');
+		
+		// reset all values
+		input1.value = ['One', 'Three'];
+		input2.value = null;
+		input3.value = null;
+		
+		input1.value = null; // unset test
+		input2.value = ['One', 'Two'];
+		input3.value = 'Invalid';
+		
+		// wait for valueChanged event to be processed
+		flush(function(){
+			assert.deepEqual(input1.value, [], 'unset value');
+			assert.deepEqual(input2.value, [ 'One', 'Two' ], 'positive value');
+			assert.deepEqual(input3.value, [ ], 'invalid value');
+			
+			done();
+		});
+	});
+	
+	test('multi freeText', function () {
+		var input1 = form.querySelector('#input1_1');
+		var input2 = form.querySelector('#input1_2');
+		
+		input1.freeText = true;
+		input2.freeText = true;
+		
+		input1.select(null);
+		input2.select(null);
+		
+		assert.ok(input1.select('One'), 'select 1 succeeds');
+		assert.ok(input1.select('Two'), 'select 2 succeeds');
+		assert.ok(input2.select('Invalid1'), 'free text select 1 succeeds');
+		assert.ok(input2.select('Invalid2'), 'free text select 2 succeeds');
+		
+		assert.deepEqual(input1.value, ['One', 'Two'], 'options value');
+		assert.deepEqual(input2.value, ['Invalid1', 'Invalid2'], 'free text value');
+	});
+	
+	test('duplicates', function () {
+		var input1 = form.querySelector('#input1_1');
+		var input2 = form.querySelector('#input1_2');
+		
+		input1.select(null);
+		input2.select(null);
+		
+		input1.allowDuplicates = false;
+		input2.allowDuplicates = true;
+		
+		assert.ok(input1.select('One'), 'select 1 succeeds');
+		assert.ok(input1.select('Two'), 'select 2 succeeds');
+		assert.notOk(input1.select('Two'), 'select dupe 2 fails');
+		
+		assert.ok(input2.select('One'), 'allowDuplicate select 1 succeeds');
+		assert.ok(input2.select('Two'), 'allowDuplicate select 2 succeeds');
+		assert.ok(input2.select('Two'), 'allowDuplicate select dupe 2 succeeds');
+		
+		assert.deepEqual(input1.value, ['One', 'Two'], 'no duplicates value');
+		assert.deepEqual(input2.value, ['One', 'Two', 'Two'], 'duplicates value');
+		
+	});
+	
+</script>
+
+</body>
+</html>

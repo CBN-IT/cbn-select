@@ -383,31 +383,31 @@ Example:
 				 * @return {Boolean} True if the item was successfully selected, false otherwise.
 				 */
 				select: function(item, idx) {
+					var result = false;
 					var value = this._getItemValue(item);
 					var hash = this._getItemHash(item);
-					var found, i;
+					var i, found;
 					var oldTransaction = this._transaction;
 					this._startTransaction();
 					
 					try {
-						if (!this.freeText) {
+						if (item != null && !this.freeText) {
 							// check if the option exists inside the options list
-							found = false;
-							if (!this._optionValues || (this._optionValues.indexOf(value)) == -1) {
-								if (this._filteredOptions.length) {
-									item = this._filteredOptions[0].item;
-									value = this._getItemValue(item);
-									hash = this._getItemHash(item);
+							found = (this._optionValues && (this._optionValues.indexOf(value)) > -1);
+							// otherwise, search by hash
+							for (i = 0; i < this._options.length; i++) {
+								if (this._options[i].hashValue == hash)
 									found = true;
-								}
-							} else {
-								found = true;
 							}
-							if (!found)
+							if (!found) // the specified option wasn't found in the options list
 								return false;
 						}
 						if (!this.multiple || !this.allowDuplicates) {
 							// check if the value has already been selected
+							for (i = 0; i < this._selectedOptions.length; i++) {
+								if (this._selectedOptions[i].value == value)
+									return false;
+							}
 							for (i = 0; i < this._selectedOptionsHash.length; i++) {
 								if (this._selectedOptionsHash[i] == hash)
 									return false;
@@ -415,7 +415,7 @@ Example:
 						}
 						
 						if (this.multiple) {
-							if (item === null) {
+							if (item == null) {
 								this.value = [];
 								this._selectedOptions = [];
 								this._selectedOptionsHash = [];
@@ -439,7 +439,7 @@ Example:
 							
 						} else { // multiple == false:
 							this.value = value;
-							if (this.value !== null) {
+							if (item != null) {
 								this._selectedOptions = [{
 									item: item,
 									value: value,
@@ -447,6 +447,7 @@ Example:
 								}];
 								this._selectedOptionsHash = [hash];
 							} else {
+								this.value = '';
 								this._selectedOptions = [];
 								this._selectedOptionsHash = [];
 							}
@@ -456,12 +457,16 @@ Example:
 							this._filterOptions(this._addQuery);
 						}
 						
+						result = true;
+						return true;
+						
 					} finally {
-						if (oldTransaction) // only commit the value if the transaction was started here
-							this._commitValue();
+						if (!oldTransaction) { // only finish the transaction if it was started here
+							if (result) 
+								this._commitValue();
+							else this._endTransaction();
+						}
 					}
-					
-					return true;
 				},
 				
 				/**
@@ -474,6 +479,7 @@ Example:
 				 * @return {Boolean} True if the value was found, false otherwise.
 				 */
 				deselect: function(item) {
+					var result = false;
 					var oldTransaction = this._transaction;
 					this._startTransaction();
 					
@@ -496,12 +502,32 @@ Example:
 							this._selectedOptionsHash = [];
 						}
 						
+						result = true;
+						return true;
+						
 					} finally {
-						if (oldTransaction)
-							this._commitValue();
+						if (!oldTransaction) {
+							if (result) 
+								this._commitValue();
+							else this._endTransaction();
+						}
 					}
-					
-					return true;
+				},
+				
+				/**
+				 * Returns the list of selected option objects.
+				 * This is different from the {@link #value} property because it always returns an array, and contains 
+				 * the option objects as passed via the options array / data source (i.e. doesn't select the value using 
+				 * {@link #itemValueProperty})
+				 * 
+				 * @return {Array<Object>} An array with the selected options.
+				 */
+				getSelectedOptions: function() {
+					var selected = [];
+					this._selectedOptions.forEach(function(item){
+						selected.push(item.item);
+					});
+					return selected;
 				},
 				
 				
@@ -581,10 +607,15 @@ Example:
 				
 				/**
 				 * Called when the value is changed externally.
+				 * 
+				 * @param {mixed} oldVal The old value.
+				 * @param {mixed} newVal The new value.
 				 */
 				valueChanged: function(oldVal, newVal) {
 					if (this._transaction) // quit if value was changed internally
 						return;
+					
+					var result = false;
 					
 					// start an external transaction
 					this._startTransaction();
@@ -607,11 +638,13 @@ Example:
 							this.select(newVal);
 						}
 						
+						result = true;
+						
 					} finally {
-						this._endTransaction();
+						if (result) 
+							this._commitValue();
+						else this._endTransaction();
 					}
-					
-					this._commitValue();
 				},
 				
 				/**
