@@ -42,7 +42,7 @@ Example:
 					
 					<template if="{{ item.editing }}">
 						<input class="option-editor" type="text"  title="Edit value" value="{{ _editQuery }}"
-							   size="{{ _editQuery.length < 5 ? 1 : _editQuery.length - 2 }}">
+							   size="{{ _editQuery.length < 5 ? 1 : _editQuery.length-1 }}">
 					</template>
 					<template if="{{ !item.editing }}">{{ item.label }}</template>
 					
@@ -235,20 +235,20 @@ Example:
 				/**
 				 * The type definition of the option (incl. metadata) object.
 				 * 
-				 * @private
 				 * @typedef  {Object}        SelectOptionMeta
-				 * @param {Object|String} item The actual data item's object.
-				 * @param {String}        [label] The display label of the item.
-				 * @param {Object|String} [value] The item's value (to set as input value).
-				 * @param {String}        [hashValue] The value that will be used for comparing item objects.
-				 * @param {String}        [filterValue] The value used for filtering.
-				 * @param {Boolean}       [highlight] Whether the item is currently highlighted.
+				 * @memberof cbn-select
+				 * @property {Object|String} item The actual data item's object.
+				 * @property {String}        [label] The display label of the item.
+				 * @property {Object|String} [value] The item's value (to set as input value).
+				 * @property {String}        [hashValue] The value that will be used for comparing item objects.
+				 * @property {String}        [filterValue] The value used for filtering.
+				 * @property {Boolean}       [highlight] Whether the item is currently highlighted.
 				 */
 				
 				/**
 				 * Stores all option items, together with metadata.
 				 * @private
-				 * @type { SelectOptionMeta[] }
+				 * @type { Array<SelectOptionMeta> }
 				 */
 				_options: null,
 				
@@ -268,7 +268,7 @@ Example:
 				
 				/**
 				 * Stores the filtered items, together with metadata.
-				 * @type { SelectOptionMeta[] }
+				 * @type { Array<SelectOptionMeta> }
 				 * @private
 				 */
 				_filteredOptions: null,
@@ -277,7 +277,7 @@ Example:
 				 * Stores the selected values and their metadata inside a special Item object.
 				 * Regardless of the multiple attribute, this value is always an array (with length=1 if multiple is false).
 				 * @private
-				 * @type { SelectOptionMeta[] }
+				 * @type { Array<SelectOptionMeta> }
 				 */
 				_selectedOptions: null,
 				
@@ -303,8 +303,10 @@ Example:
 				_editQuery: '',
 				
 				/**
-				 * Used for transactionally firing 'change' events (when a 'deselect' followed by a 'select' item is 
-				 * executed, the event should be fired only after the final select).
+				 * Whether the select {@link #value} is currently being updated internally.
+				 * 
+				 * Used for detecting whether the value was updated externally and/or transactionally firing 'change' 
+				 * events.
 				 */
 				_transaction: false,
 				
@@ -377,77 +379,87 @@ Example:
 				 * Otherwise, the old selected value is replaced.
 				 * 
 				 * @param {String|Object|null} item The item to select, null to deselect all values.
+				 * @param {Number}             [idx] If multiple=true, specifies the index where to append the value. 
 				 * @return {Boolean} True if the item was successfully selected, false otherwise.
 				 */
-				select: function(item) {
+				select: function(item, idx) {
 					var value = this._getItemValue(item);
 					var hash = this._getItemHash(item);
 					var found, i;
+					var oldTransaction = this._transaction;
+					this._startTransaction();
 					
-					if (!this.freeText) {
-						// check if the option exists inside the options list
-						found = false;
-						if (!this._optionValues || (this._optionValues.indexOf(value)) == -1) {
-							if (this._filteredOptions.length) {
-								item = this._filteredOptions[0].item;
-								value = this._getItemValue(item);
-								hash = this._getItemHash(item);
+					try {
+						if (!this.freeText) {
+							// check if the option exists inside the options list
+							found = false;
+							if (!this._optionValues || (this._optionValues.indexOf(value)) == -1) {
+								if (this._filteredOptions.length) {
+									item = this._filteredOptions[0].item;
+									value = this._getItemValue(item);
+									hash = this._getItemHash(item);
+									found = true;
+								}
+							} else {
 								found = true;
 							}
-						} else {
-							found = true;
-						}
-						if (!found)
-							return false;
-					}
-					if (!this.multiple || !this.allowDuplicates) {
-						// check if the value has already been selected
-						for (i=0; i<this._selectedOptionsHash.length; i++) {
-							if (this._selectedOptionsHash[i] == hash) 
+							if (!found)
 								return false;
 						}
-					}
-					
-					if (this.multiple) {
-						if (item === null) {
-							this.value = [];
-							this._selectedOptions = [];
-						} else {
-							if (!Array.isArray(this.value)) {
-								this.value = [];
-							} else {
-								this.value = this.value.slice();
+						if (!this.multiple || !this.allowDuplicates) {
+							// check if the value has already been selected
+							for (i = 0; i < this._selectedOptionsHash.length; i++) {
+								if (this._selectedOptionsHash[i] == hash)
+									return false;
 							}
-							this.value.push(value);
-							this._selectedOptions.push({
-								item: item,
-								value: value,
-								label: this._getItemLabel(item)
-							});
-							this._selectedOptionsHash.push(hash);
 						}
 						
-					} else { // multiple == false:
-						this.value = value;
-						if (this.value !== null) {
-							this._selectedOptions = [{
-								item: item,
-								value: value,
-								label: this._getItemLabel(item)
-							}];
-							this._selectedOptionsHash = [ hash ];
-						} else {
-							this._selectedOptions = [];
-							this._selectedOptionsHash = [];
+						if (this.multiple) {
+							if (item === null) {
+								this.value = [];
+								this._selectedOptions = [];
+								this._selectedOptionsHash = [];
+								
+							} else {
+								if (!Array.isArray(this.value)) {
+									this.value = [];
+								} else {
+									this.value = this.value.slice();
+								}
+								if (idx === undefined) 
+									idx = this._selectedOptions.length;
+								this.value.splice(idx, 0, value);
+								this._selectedOptions.splice(idx, 0, {
+									item: item,
+									value: value,
+									label: this._getItemLabel(item)
+								});
+								this._selectedOptionsHash.splice(idx, 0, hash);
+							}
+							
+						} else { // multiple == false:
+							this.value = value;
+							if (this.value !== null) {
+								this._selectedOptions = [{
+									item: item,
+									value: value,
+									label: this._getItemLabel(item)
+								}];
+								this._selectedOptionsHash = [hash];
+							} else {
+								this._selectedOptions = [];
+								this._selectedOptionsHash = [];
+							}
 						}
+						
+						if (this.multiple && !this.allowDuplicates) {
+							this._filterOptions(this._addQuery);
+						}
+						
+					} finally {
+						if (oldTransaction) // only commit the value if the transaction was started here
+							this._commitValue();
 					}
-					
-					if (this.multiple && !this.allowDuplicates) {
-						this._filterOptions(this._addQuery);
-					}
-					
-					if (!this._transaction)
-						this._commitValue();
 					
 					return true;
 				},
@@ -462,26 +474,32 @@ Example:
 				 * @return {Boolean} True if the value was found, false otherwise.
 				 */
 				deselect: function(item) {
-					var hash = this._getItemHash(item);
-					if (this.multiple) {
-						if (!Array.isArray(this.value)) return false;
-						var i = this._selectedOptionsHash.indexOf(hash);
-						if (i < 0) return false;
-						
-						this.value.splice(i, 1);
-						this._selectedOptions.splice(i, 1);
-						this._selectedOptionsHash.splice(i, 1);
-						
-					} else { // multiple == false: 
-						if (this._selectedOptionsHash.length != 1 || this._selectedOptionsHash[0] != hash) 
-							return false;
-						this.value = '';
-						this._selectedOptions = [];
-						this._selectedOptionsHash = [];
-					}
+					var oldTransaction = this._transaction;
+					this._startTransaction();
 					
-					if (!this._transaction)
-						this._commitValue();
+					try {
+						var hash = this._getItemHash(item);
+						if (this.multiple) {
+							if (!Array.isArray(this.value)) return false;
+							var i = this._selectedOptionsHash.indexOf(hash);
+							if (i < 0) return false;
+							
+							this.value.splice(i, 1);
+							this._selectedOptions.splice(i, 1);
+							this._selectedOptionsHash.splice(i, 1);
+							
+						} else { // multiple == false: 
+							if (this._selectedOptionsHash.length != 1 || this._selectedOptionsHash[0] != hash)
+								return false;
+							this.value = '';
+							this._selectedOptions = [];
+							this._selectedOptionsHash = [];
+						}
+						
+					} finally {
+						if (oldTransaction)
+							this._commitValue();
+					}
 					
 					return true;
 				},
@@ -525,7 +543,9 @@ Example:
 				 */
 				ready: function() {
 					if (this.multiple) {
+						this._startTransaction();
 						this.value = [];
+						this._endTransaction();
 					}
 				},
 				
@@ -557,6 +577,72 @@ Example:
 					if (this._dataSource) {
 						this._dataSource.removeEventListener('cbn-data-available', this._dataSourceAvailable);
 					}
+				},
+				
+				/**
+				 * Called when the value is changed externally.
+				 */
+				valueChanged: function(oldVal, newVal) {
+					if (this._transaction) // quit if value was changed internally
+						return;
+					
+					// start an external transaction
+					this._startTransaction();
+					
+					try {
+						// clear the value / internal selected fields
+						if (this.multiple) {
+							this.value = [];
+						} else {
+							this.value = '';
+						}
+						this._selectedOptions = [];
+						this._selectedOptionsHash = [];
+						
+						if (this.multiple && Array.isArray(newVal)) {
+							newVal.forEach(function(val) {
+								this.select(val);
+							}, this);
+						} else {
+							this.select(newVal);
+						}
+						
+					} finally {
+						this._endTransaction();
+					}
+					
+					this._commitValue();
+				},
+				
+				/**
+				 * Starts a new transaction for changing the {@link #value} property.
+				 */
+				_startTransaction: function() {
+					this._transaction = true;
+				},
+				
+				/**
+				 * Ends/commits the current transaction, without firing the input / change events.
+				 * Uses async to wait for the changed handlers to be processed before stopping it (they are part of the 
+				 * transaction, too).
+				 * @param {Function} [callback] An optional callback function to call after the transaction is committed.
+				 */
+				_endTransaction: function(callback) {
+					this.async(function(){
+						this._transaction = false;
+						if (callback)
+							callback.call(this);
+					});
+				},
+				
+				/**
+				 * Commits the value of the select, firing the 'input' and 'change' events.
+				 */
+				_commitValue: function() {
+					this._endTransaction(function(){
+						this.fire('input');
+						this.fire('change');
+					});
 				},
 				
 				/**
@@ -811,7 +897,7 @@ Example:
 				 * 
 				 * @param {Event}  event The captured event.
 				 * @param {Object} detail The event's detail.
-				 * @param {Node}   sender The event sender DOM node.
+				 * @param {HTMLElement} sender The event sender DOM node.
 				 */
 				_selectedOptionDblClick: function(event, detail, sender) {
 					if (this._status.mode != 'view' && this._status.mode != 'query') 
@@ -865,7 +951,7 @@ Example:
 				 * @param {Event} event The event object.
 				 */
 				_inputHandler: function(event) {
-					if (event.target != this) {
+					if (event.target != this || event.path[0] != this) {
 						event.stopPropagation();
 					}
 				},
@@ -876,17 +962,9 @@ Example:
 				 * @param {Event} event The event object.
 				 */
 				_changeHandler: function(event) {
-					if (event.target != this) {
+					if (event.target != this || event.path[0] != this) {
 						event.stopPropagation();
 					}
-				},
-				
-				/**
-				 * Commits the value of the select, firing the 'change' event.
-				 */
-				_commitValue: function() {
-					this._transaction = false;
-					this.fire('change');
 				},
 				
 				// Behavioral methods
@@ -968,8 +1046,9 @@ Example:
 						this._setMode('view');
 					} else {
 						this._transaction = true;
+						
 						this.deselect(item.item);
-						this.select(this._editQuery);
+						this.select(this._editQuery, this._highlighted.editOptionIdx);
 						this._commitValue();
 						this._setMode('view', this._highlighted.editOptionIdx);
 					}
