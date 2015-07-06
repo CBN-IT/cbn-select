@@ -907,6 +907,10 @@ Example:
 					var item = sender.templateInstance.model.item;
 					this.select(item.item);
 					this._clearAddQuery();
+					if (!this.multiple) {
+						this._setMode('view');
+						this._status.open = false;
+					}
 				},
 				
 				/**

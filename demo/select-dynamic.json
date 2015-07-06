@@ -42,6 +42,7 @@
 					"floatingLabel": true,
 					"label": "With Data Source",
 					"multiple": false,
+					"freeText": true,
 					"dataSource": "#simpleData",
 					"preview": true,
 					"className": "col-xs-12"
