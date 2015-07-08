@@ -21,19 +21,19 @@
  */
 .selected-item {
 	display: inline-block;
-	color: #2F2F2F;
-	background: #F1F1F1;
-	border: 1px solid #CCCCCC;
-	padding: 2px 1px 2px 4px;
-	margin-right: 3px;
-	margin-bottom: 2px;
+	font-size: 0.9em;
+	color: #333333;
+	background: #E7E7E7;
+	padding: 0.2em 0.5em;
+	margin: 0.1em 0.2em 0.15em 0;
 	vertical-align: middle;
 	cursor: pointer;
-	border-radius: 5px;
+	border-radius: 0.7em;
 }
 
 .selected-item:hover {
-	box-shadow: 0 0 3px #aaa;
+	background: #EFEFEF;
+	box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.37);;
 }
 
 .selected-item.highlighted {
@@ -79,8 +79,8 @@
 	box-sizing: border-box;
 	outline: none;
 	vertical-align: middle;
-	min-width: 100px;
-	padding: 0.5em 0.5em 0.25em 0;
+	min-width: 4em;
+	padding: 0.05em;
 	font: inherit;
 	background-color: transparent;
 }
@@ -101,19 +101,17 @@
 	left: -1px;
 	right: -1px;
 	top: 100%;
+	margin-top: 3px;
 }
 
 #options {
 	position: relative;
-	border-bottom-right-radius: 2px;
-	border-bottom-left-radius: 2px;
 	z-index: 1;
-	background: #fff;
-	max-height: 255px;
+	background: #ffffff;
+	max-height: 25em;
 	overflow-y: auto;
 	display: none;
-	border: 1px solid black;
-	border-top: none;
+	box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.37);
 }
 
 #container.open #options {
@@ -122,17 +120,16 @@
 
 /* Select option/item styles */
 #options .item {
-	border: 1px solid #eee;
-	border-radius: 3px;
 	display: block;
-	padding: 5px;
-	margin: 1px 5px;
-	background: #fafafa;
+	padding: 0.3em 0.5em;
+	margin: 0;
+	background: white;
 	cursor: pointer;
 	box-sizing: border-box;
 }
 #options .item:hover {
-	border: 1px solid #aaa;
+	color: #FFFFFF;
+	background: #9FBFFF;
 }
 
 #options .item:first-of-type {
@@ -143,8 +140,8 @@
 }
 
 #options .item.highlighted {
-	background: #ffffcc;
-	border: 1px solid #bbb;
+	color: #FFFFFF;
+	background: #3f7fff;
 }
 
 /* Other dropdown styles */
