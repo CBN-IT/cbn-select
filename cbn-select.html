@@ -36,7 +36,7 @@ Example:
 		<div id="container" tabindex="-1"
 				class="{{ { focused: _status.focused, open: _status.open } | tokenList }}">
 			
-			<template if="{{ multiple || alwaysShowChips }}">
+			<template if="{{ _showChips }}">
 				<template repeat="{{ item in _selectedOptions }}">
 					<div class="selected-item {{ { highlighted: item.highlighted, editing: item.editing } | tokenList }} {{ item.classes }}"
 							on-tap="{{ _selectedOptionTap }}"
@@ -362,6 +362,13 @@ Example:
 				},
 				
 				/**
+				 * Whether to display/use the selected option chips or just a simple input containing the selected value.
+				 */
+				get _showChips() {
+					return this.multiple || this.alwaysShowChips;
+				},
+				
+				/**
 				 * Maps the highlightable items to their current indices.
 				 */
 				_highlighted: {
@@ -399,21 +406,33 @@ Example:
 					var result = false;
 					var value = this._getItemValue(item);
 					var hash = this._getItemHash(item);
-					var i, found;
+					var i, found, foundIdx;
 					var oldTransaction = this._transaction;
 					this._startTransaction();
 					
 					try {
-						if (item != null && !this.freeText) {
+						if (item != null) {
 							// check if the option exists inside the options list
-							found = (this._optionValues && (this._optionValues.indexOf(value)) > -1);
-							// otherwise, search by hash
+							found = (this._optionValues && (foundIdx = this._optionValues.indexOf(value)) > -1);
+							// otherwise, search by hash/label
 							for (i = 0; i < this._options.length; i++) {
-								if (this._options[i].hashValue == hash)
-									found = true;
+								foundHere = foundHash = false;
+								if (this._options[i].hashValue == hash) {
+									found = true; foundIdx = i;
+									break;
+								}
+								if ((this._options[i].label+'').toLowerCase() == (item+'').toLowerCase()) {
+									found = true; foundIdx = i;
+								}
 							}
-							if (!found) // the specified option wasn't found in the options list
+							if (!found && !this.freeText) // the specified option wasn't found in the options list
 								return false;
+							if (found && foundIdx >= 0) {
+								// replace it with the object found
+								item = this._options[foundIdx].item;
+								value = this._getItemValue(item);
+								hash = this._getItemHash(item);
+							}
 						}
 						if (!this.multiple || !this.allowDuplicates) {
 							// check if the value has already been selected
@@ -627,8 +646,8 @@ Example:
 				/**
 				 * Called when the value is changed externally.
 				 * 
-				 * @param {mixed} oldVal The old value.
-				 * @param {mixed} newVal The new value.
+				 * @param {*} oldVal The old value.
+				 * @param {*} newVal The new value.
 				 */
 				valueChanged: function(oldVal, newVal) {
 					if (this._transaction) // quit if value was changed internally
@@ -991,8 +1010,6 @@ Example:
 				
 				/**
 				 * Called when the dropdown opener button is clicked/tapped.
-				 * 
-				 * @param {Event}  event The captured event.
 				 */
 				_dropDownButtonTap: function() {
 					this._setMode('query');
@@ -1103,11 +1120,11 @@ Example:
 				},
 				
 				/**
-				 * If {@link #alwaysShowChips} is true, updates `_addQuery` to the currently selected value.
+				 * If {@link #_showChips} is true, updates `_addQuery` to the currently selected value.
 				 * @private
 				 */
 				_updateAddQuery: function() {
-					if (!this.multiple && !this.alwaysShowChips) {
+					if (!this._showChips) {
 						// show the final selected value
 						this._addQuery = (this._selectedOptions.length ? this._selectedOptions[0].label : '' );
 						// reset the filter
