@@ -503,6 +503,10 @@ Example:
 							this._selectedOptionsHash = [];
 						}
 						
+						if (this.multiple && !this.allowDuplicates) {
+							this._filterOptions(this._addQuery);
+						}
+						
 						result = true;
 						return true;
 						
@@ -1215,6 +1219,11 @@ Example:
 				 * @param {String} query The filter query to apply.
 				 */
 				_filterOptions: function(query) {
+					if (this._highlighted.filteredOptionIdx > -1) {
+						// un-highlight the currently active element
+						if (this._filteredOptions[this._highlighted.filteredOptionIdx])
+							this._filteredOptions[this._highlighted.filteredOptionIdx].highlighted = false;
+					}
 					this._filteredOptions = this.$.filter.filter(this._options, query);
 					
 					if (this.multiple && !this.allowDuplicates) {
