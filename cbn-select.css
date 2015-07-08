@@ -72,7 +72,7 @@
 /*
  * The input extends to the length of the element.
  */
-#input {
+.text-input {
 	display: inline-block;
 	flex: 1 1;
 	border: none;
@@ -84,12 +84,12 @@
 	font: inherit;
 	background-color: transparent;
 }
-#input[readonly] {
+.text-input[readonly] {
 	text-decoration: line-through;
 }
 
-#input.unmatched {
-	color: #e00;
+.text-input.unmatched {
+	color: #DDDDDD;
 }
 
 

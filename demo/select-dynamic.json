@@ -30,7 +30,6 @@
 					"floatingLabel": true,
 					"label": "Simple",
 					"multiple": false,
-					"freeText": true,
 					"options": [ "One", "Two", "Three", "Four" ],
 					"preview": true,
 					"className": "col-xs-12"

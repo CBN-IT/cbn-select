@@ -36,27 +36,29 @@ Example:
 		<div id="container" tabindex="-1"
 				class="{{ { focused: _status.focused, open: _status.open } | tokenList }}">
 			
-			<template repeat="{{ item in _selectedOptions }}">
-				<div class="selected-item {{ { highlighted: item.highlighted, editing: item.editing } | tokenList }} {{ item.classes }}"
-						on-tap="{{ _selectedOptionTap }}"
-						on-dblclick="{{ _selectedOptionDblClick }}">
-					
-					<template if="{{ item.editing }}">
-						<input class="option-editor" type="text"  title="Edit value" value="{{ _editQuery }}"
-							   size="{{ _editQuery.length < 5 ? 1 : _editQuery.length-1 }}">
-					</template>
-					<template if="{{ !item.editing }}">{{ item.label }}</template>
-					
-					<a class="removeBtn" on-tap="{{ _removeBtnTap }}">
-						<core-icon icon="highlight-remove"></core-icon>
-					</a>
-				</div>
+			<template if="{{ multiple || alwaysShowChips }}">
+				<template repeat="{{ item in _selectedOptions }}">
+					<div class="selected-item {{ { highlighted: item.highlighted, editing: item.editing } | tokenList }} {{ item.classes }}"
+							on-tap="{{ _selectedOptionTap }}"
+							on-dblclick="{{ _selectedOptionDblClick }}">
+						
+						<template if="{{ item.editing }}">
+							<input class="option-editor" type="text"  title="Edit value" value="{{ _editQuery }}"
+								   size="{{ _editQuery.length < 5 ? 1 : _editQuery.length-1 }}">
+						</template>
+						<template if="{{ !item.editing }}">{{ item.label }}</template>
+						
+						<a class="removeBtn" on-tap="{{ _removeBtnTap }}">
+							<core-icon icon="highlight-remove"></core-icon>
+						</a>
+					</div>
+				</template>
 			</template>
 			
 			<input id="input" type="text" value="{{ _addQuery }}"
 					placeholder="{{ placeholder ? placeholder : '' }}"
-					class="{{ { unmatched: query.length && _filteredOptions.length } | tokenList }}"
-					readonly?="{{ _status.mode != 'query' }}"
+					class="{{ { 'text-input':true } | tokenList }}"
+					readonly?="{{ readonly }}"
 					on-mousedown="{{ _focusHandler }}" on-input="{{ _queryInputHandler }}"
 					on-focus="{{ _focusHandler }}">
 			
@@ -80,7 +82,7 @@ Example:
 					</template>
 				</div>
 			</div>
-			<div id="dropdownBtn" on-click="{{ onClickAvailableOpener }}">
+			<div id="dropdownBtn" on-tap="{{ _dropDownButtonTap }}">
 				<core-icon icon="arrow-drop-down"></core-icon>
 			</div>
 		</div>
@@ -210,7 +212,16 @@ Example:
 					 * @attribute placeholder
 					 * @type {String}
 					 */
-					placeholder: ''
+					placeholder: '',
+					
+					/**
+					 * Set this to true to always show the selection chips.
+					 * Automatically set to true when multiple selection is enabled.
+					 * 
+					 * @attribute alwaysShowChips
+					 * @type {Boolean}
+					 */
+					alwaysShowChips: false
 					
 				},
 				
@@ -227,7 +238,8 @@ Example:
 					"itemValueProperty": {type: 'attribute'},
 					"filterProperty": {type: 'attribute'},
 					"filterMode": {type: 'attribute'},
-					"placeholder": {type: 'attribute'}
+					"placeholder": {type: 'attribute'},
+					"alwaysShowChips": {type: 'attribute'}
 				},
 				
 				
@@ -457,6 +469,7 @@ Example:
 						if (this.multiple && !this.allowDuplicates) {
 							this._filterOptions(this._addQuery);
 						}
+						this._updateAddQuery();
 						
 						result = true;
 						return true;
@@ -506,6 +519,7 @@ Example:
 						if (this.multiple && !this.allowDuplicates) {
 							this._filterOptions(this._addQuery);
 						}
+						this._updateAddQuery();
 						
 						result = true;
 						return true;
@@ -869,6 +883,9 @@ Example:
 								this.select(this._addQuery);
 							}
 							this._clearAddQuery();
+							if (!this.multiple && !this.alwaysShowChip) {
+								this.blur();
+							}
 						},
 						
 						/* left arr  */ 37: function() {
@@ -973,6 +990,15 @@ Example:
 				},
 				
 				/**
+				 * Called when the dropdown opener button is clicked/tapped.
+				 * 
+				 * @param {Event}  event The captured event.
+				 */
+				_dropDownButtonTap: function() {
+					this._setMode('query');
+				},
+				
+				/**
 				 * Called when the query input has been modified.
 				 */
 				_queryInputHandler: function() {
@@ -1072,6 +1098,21 @@ Example:
 				_clearAddQuery: function() {
 					this._addQuery = '';
 					this._queryOptions(this._addQuery);
+					
+					this._updateAddQuery();
+				},
+				
+				/**
+				 * If {@link #alwaysShowChips} is true, updates `_addQuery` to the currently selected value.
+				 * @private
+				 */
+				_updateAddQuery: function() {
+					if (!this.multiple && !this.alwaysShowChips) {
+						// show the final selected value
+						this._addQuery = (this._selectedOptions.length ? this._selectedOptions[0].label : '' );
+						// reset the filter
+						this._filterOptions('');
+					}
 				},
 				
 				/**
@@ -1244,7 +1285,7 @@ Example:
 				 * @param {Object|String} item The item to fetch the property for.
 				 */
 				_getItemValue: function(item) {
-					if (typeof item == 'string') 
+					if (typeof item != 'object') 
 						return item;
 					return (this.itemValueProperty ? item[this.itemValueProperty] : item );
 				},
@@ -1260,7 +1301,7 @@ Example:
 				 * @param {Object|String} item The item to fetch the property for.
 				 */
 				_getItemHash: function(item) {
-					if (typeof item == 'string') 
+					if (typeof item != 'object') 
 						return item;
 					return JSON.stringify(item);
 				},
@@ -1271,7 +1312,7 @@ Example:
 				 * @param {Object|String} item The item to fetch the property for.
 				 */
 				_getItemFilterValue: function(item) {
-					if (typeof item == 'string') 
+					if (typeof item != 'object') 
 						return item;
 					return (this.filterProperty ? item[this.filterProperty] : item );
 				},
@@ -1282,7 +1323,7 @@ Example:
 				 * @param {Object|String} item The item to fetch the property for.
 				 */
 				_getItemLabel: function(item) {
-					if (typeof item == 'string') 
+					if (typeof item != 'object') 
 						return item;
 					return (this.itemLabelProperty ? item[this.itemLabelProperty] : item );
 				}
