@@ -406,6 +406,9 @@ Example:
 					var result = false;
 					var value = this._getItemValue(item);
 					var hash = this._getItemHash(item);
+					if (this._isNUE(value) || this._isNUE(this._getItemLabel(item))) {
+						return;
+					}
 					var i, found, foundIdx;
 					var oldTransaction = this._transaction;
 					this._startTransaction();
@@ -416,7 +419,6 @@ Example:
 							found = (this._optionValues && (foundIdx = this._optionValues.indexOf(value)) > -1);
 							// otherwise, search by hash/label
 							for (i = 0; i < this._options.length; i++) {
-								foundHere = foundHash = false;
 								if (this._options[i].hashValue == hash) {
 									found = true; foundIdx = i;
 									break;
@@ -1343,6 +1345,13 @@ Example:
 					if (typeof item != 'object') 
 						return item;
 					return (this.itemLabelProperty ? item[this.itemLabelProperty] : item );
+				},
+				/**
+				 * is null undefined or empty string
+				 * @private
+				 */
+				_isNUE: function(val){
+					return val === undefined || val=== null || val === "";
 				}
 				
 			}, CbnForm.AbstractInput, CbnForm.ValidatableInput, CbnForm.DynamicControl));
