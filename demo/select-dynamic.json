@@ -33,8 +33,8 @@
 					"options": [ "One", "Two", "Three", "Four" ],
 					"preview": true,
 					"className": "col-xs-12",
-					"alwaysShowChips": true,
-					"freeText":true
+					"alwaysShowChips": false,
+					"freeText":false
 				},
 				{
 					"inherit": "input",
