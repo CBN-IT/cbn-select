@@ -1347,11 +1347,13 @@ Example:
 					return (this.itemLabelProperty ? item[this.itemLabelProperty] : item );
 				},
 				/**
-				 * is null undefined or empty string
+				 * is null, undefined or empty string
 				 * @private
 				 */
 				_isNUE: function(val){
-					return val === undefined || val=== null || val === "";
+					return val === undefined || val === null || 
+						(typeof val === "string" && val.trim().length === 0) ||
+						((val instanceof Array) && val.length === 0);
 				}
 				
 			}, CbnForm.AbstractInput, CbnForm.ValidatableInput, CbnForm.DynamicControl));
