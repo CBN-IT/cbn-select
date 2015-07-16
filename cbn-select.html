@@ -398,7 +398,7 @@ Example:
 				 * If the multiple attribute is true, the value is appended to the selected values list.
 				 * Otherwise, the old selected value is replaced.
 				 * 
-				 * @param {String|Object|null} item The item to select, null to deselect all values.
+				 * @param {String|Object|null} item The item to select.
 				 * @param {Number}             [idx] If multiple=true, specifies the index where to append the value. 
 				 * @return {Boolean} True if the item was successfully selected, false otherwise.
 				 */
@@ -406,9 +406,10 @@ Example:
 					var result = false;
 					var value = this._getItemValue(item);
 					var hash = this._getItemHash(item);
-					if (this._isNUE(value) || this._isNUE(this._getItemLabel(item))) {
-						return;
+					if (this._isNUE(item) || this._isNUE(this._getItemLabel(item))) {
+						return false;
 					}
+					
 					var i, found, foundIdx;
 					var oldTransaction = this._transaction;
 					this._startTransaction();
@@ -630,6 +631,16 @@ Example:
 				},
 				
 				/**
+				 * Called when the parent / light DOM tree is fully initialized.
+				 */
+				domReady: function() {
+					// the data source element might have not been initialized; np, we'll do it now
+					if (this.dataSource && !this._dataSource) {
+						this.dataSourceChanged();
+					}
+				},
+				
+				/**
 				 * Callback when an element instance is attached to the DOM. Used to clean up event handlers.
 				 */
 				detached: function() {
@@ -733,7 +744,6 @@ Example:
 				dataSourceChanged: function() {
 					// disable the current data source
 					if (this._dataSource) {
-						this._available = [];
 						this._dataSource.removeEventListener('cbn-data-available', this._dataSourceAvailable);
 						this._dataSource = null;
 					}
@@ -904,7 +914,7 @@ Example:
 								this.select(this._addQuery);
 							}
 							this._clearAddQuery();
-							if (!this.multiple && !this.alwaysShowChip) {
+							if (!this.multiple && !this.alwaysShowChips) {
 								this.blur();
 							}
 						},
