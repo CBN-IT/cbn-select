@@ -37,24 +37,29 @@
 		flush(done);
 	});
 	
-	teardown(function(done) {
+	setup(function(done) {
 		var input1 = form.querySelector('#input1_1');
 		var input2 = form.querySelector('#input1_2');
 		
+		input1.value = null;
+		input2.value = null;
+		
 		input1.freeText = false;
 		input2.freeText = false;
+		
 		input1.allowDuplicates = false;
 		input2.allowDuplicates = false;
 		
-		flush(done);
+		flush(function(){ // yeah, I know, ugly hack
+			setTimeout(function(){
+				done();
+			}.bind(this), 0);
+		});
 	});
 	
 	test('multi select', function () {
 		var input1 = form.querySelector('#input1_1');
 		var input2 = form.querySelector('#input1_2');
-		
-		input1.select(null);
-		input2.select(null);
 		
 		assert.deepEqual(input1.value, [], 'select null');
 		
@@ -116,9 +121,6 @@
 		input1.freeText = true;
 		input2.freeText = true;
 		
-		input1.select(null);
-		input2.select(null);
-		
 		assert.ok(input1.select('One'), 'select 1 succeeds');
 		assert.ok(input1.select('Two'), 'select 2 succeeds');
 		assert.ok(input2.select('Invalid1'), 'free text select 1 succeeds');
@@ -131,9 +133,6 @@
 	test('duplicates', function () {
 		var input1 = form.querySelector('#input1_1');
 		var input2 = form.querySelector('#input1_2');
-		
-		input1.select(null);
-		input2.select(null);
 		
 		input1.allowDuplicates = false;
 		input2.allowDuplicates = true;
@@ -148,7 +147,6 @@
 		
 		assert.deepEqual(input1.value, ['One', 'Two'], 'no duplicates value');
 		assert.deepEqual(input2.value, ['One', 'Two', 'Two'], 'duplicates value');
-		
 	});
 	
 </script>

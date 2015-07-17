@@ -54,12 +54,18 @@
 		flush(done);
 	});
 	
-	teardown(function(done) {
+	setup(function(done) {
 		var input1 = form.querySelector('#input1_1');
+		
+		input1.value = null;
 		
 		input1.freeText = false;
 		
-		flush(done);
+		flush(function(){ // yeah, I know, ugly hack
+			setTimeout(function(){
+				done();
+			}.bind(this), 0);
+		});
 	});
 	
 	test('select/deselect objects', function () {
@@ -68,8 +74,6 @@
 		var selectObj1 = { "value": "1", "label": "One" };
 		var selectObj2 = { "value": "2", "label": "Two" };
 		var selectObjInvalid = { "value": "x", "label": "Invalid" };
-		
-		input1.select(null);
 		
 		assert.ok(input1.select(selectObj1), 'select obj1 succeeds');
 		assert.ok(input1.select(selectObj2), 'select obj2 succeeds');
@@ -114,7 +118,6 @@
 		var input1 = form.querySelector('#input1_1');
 		
 		input1.freeText = true;
-		input1.select(null);
 		
 		var selectObj1 = { "value": "1", "label": "One" };
 		var selectObjInvalid = { "value": "x", "label": "Invalid" };

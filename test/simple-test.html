@@ -37,31 +37,41 @@
 		flush(done);
 	});
 	
-	teardown(function(done) {
+	setup(function(done) {
 		var input1 = form.querySelector('#input1_1');
 		var input2 = form.querySelector('#input1_2');
 		
+		input1.value = null;
+		input2.value = null;
 		input1.freeText = false;
 		input2.freeText = false;
 		
-		flush(done);
+		flush(function(){ // yeah, I know, ugly hack
+			setTimeout(function(){
+				done();
+			}.bind(this), 0);
+		});
 	});
 	
-	test('select method', function () {
+	test('select method', function (done) {
 		var input1 = form.querySelector('#input1_1');
 		var input2 = form.querySelector('#input1_2');
 		
-		input1.select(null);
-		input2.select(null);
+		input1.value = null;
+		input2.value = undefined;
 		
-		assert.equal(input1.value, '', 'select null');
-		assert.equal(input2.value, '', 'select null (2)');
-		
-		assert.ok(input1.select('One'), 'select succeeds');
-		assert.notOk(input2.select('Invalid'), 'select fails');
-		
-		assert.equal(input1.value, 'One', 'positive select');
-		assert.equal(input2.value, '', 'negative select');
+		flush(function(){
+			assert.equal(input1.value, '', 'select null');
+			assert.equal(input2.value, '', 'select null (2)');
+			
+			assert.ok(input1.select('One'), 'select succeeds');
+			assert.notOk(input2.select('Invalid'), 'select fails');
+			
+			assert.equal(input1.value, 'One', 'positive select');
+			assert.equal(input2.value, '', 'negative select');
+				
+			done();
+		});
 	});
 	
 	test('deselect method', function () {
@@ -88,35 +98,45 @@
 		input2.value = null;
 		input3.value = null;
 		
-		input1.value = ''; // unset test
-		input2.value = 'One';
-		input3.value = 'Invalid';
-		
-		// wait for valueChanged event to be processed
-		flush(function(){
-			assert.equal(input1.value, '', 'empty value');
-			assert.equal(input2.value, 'One', 'positive value');
-			assert.equal(input3.value, '', 'invalid value');
-			
-			done();
+		flush(function() {
+			setTimeout(function() {
+				input1.value = ''; // unset test
+				input2.value = 'One';
+				input3.value = 'Invalid';
+				
+				// wait for valueChanged event to be processed
+				flush(function () {
+					setTimeout(function() {
+						assert.equal(input1.value, '', 'empty value');
+						assert.equal(input2.value, 'One', 'positive value');
+						assert.equal(input3.value, '', 'invalid value');
+						
+						done();
+					}.bind(this), 0);
+				});
+			}.bind(this), 0);
 		});
 	});
 	
-	test('freeText', function () {
+	test('freeText', function (done) {
 		var input1 = form.querySelector('#input1_1');
 		var input2 = form.querySelector('#input1_2');
 		
 		input1.freeText = true;
 		input2.freeText = true;
 		
-		input1.select(null);
-		input2.select(null);
+		input1.value = '';
+		input2.value = '';
 		
-		assert.ok(input1.select('One'), 'select succeeds');
-		assert.ok(input2.select('Invalid'), 'free text select succeeds');
-		
-		assert.equal(input1.value, 'One', 'options value');
-		assert.equal(input2.value, 'Invalid', 'free text value');
+		flush(function() {
+			assert.ok(input1.select('One'), 'select succeeds');
+			assert.ok(input2.select('Invalid'), 'free text select succeeds');
+			
+			assert.equal(input1.value, 'One', 'options value');
+			assert.equal(input2.value, 'Invalid', 'free text value');
+			
+			done();
+		});
 	});
 	
 </script>
