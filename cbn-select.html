@@ -59,8 +59,7 @@ Example:
 					placeholder="{{ placeholder ? placeholder : '' }}"
 					class="{{ { 'text-input':true } | tokenList }}"
 					readonly?="{{ readonly }}"
-					on-mousedown="{{ _focusHandler }}" on-input="{{ _queryInputHandler }}"
-					on-focus="{{ _focusHandler }}">
+					on-mousedown="{{ _focusHandler }}" on-input="{{ _queryInputHandler }}">
 			
 			<div id="options-wrapper">
 				<div id="options">
@@ -809,6 +808,7 @@ Example:
 				_focusHandler: function(event) {
 					if (event.target == this || event.target == this.$.input)
 						this._setMode('query');
+					event.stopPropagation();
 				},
 				
 				/**
