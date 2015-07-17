@@ -763,7 +763,6 @@ Example:
 						this._status.optionsLoading = true;
 						this._setOptions([]);
 						this._filterOptions(this._addQuery);
-						this._queryOptions(this._addQuery);
 						
 					} else {
 						this._filter(this._addQuery);
@@ -1095,9 +1094,13 @@ Example:
 						case 'query':
 							// show the auto-complete box
 							this._status.open = true;
+							
 							// reset all highlights
 							this._highlightSelectedItem(null);
 							this._highlightDropdownItem(null);
+							
+							// query for options
+							this._queryOptions(this._addQuery);
 							
 							// focus the add/query input
 							this.$.input.focus();
