@@ -92,20 +92,21 @@
 		var inputDS = form.querySelector('#input2_1');
 		
 		input2.options = testData1; // set the options
+		inputDS.focus(); // to fetch the data
 		
 		var selectObjInvalid = { "key": "x", "value": "Invalid" };
 		
 		// wait for valueChanged event to be processed
 		flush(function(){
-			assert.ok(input2.select(testData1[0]), 'select obj1 succeeds');
-			assert.ok(input2.select(testData1[1]), 'select obj2 succeeds');
+			assert.ok(input2.select(testData1[0]), 'options: select obj1 succeeds');
+			assert.ok(input2.select(testData1[1]), 'options: select obj2 succeeds');
 			assert.notOk(input2.select(selectObjInvalid), 'select invalid obj fails');
 			
 			assert.deepEqual(input2.value, [ testData1[0], testData1[1] ], 'selected obj values');
 			
 			// same for the input with data source
-			assert.ok(inputDS.select(testData1[0]), 'select obj1 succeeds');
-			assert.ok(inputDS.select(testData1[1]), 'select obj2 succeeds');
+			assert.ok(inputDS.select(testData1[0]), 'datasource: select obj1 succeeds');
+			assert.ok(inputDS.select(testData1[1]), 'datasource: select obj2 succeeds');
 			assert.notOk(inputDS.select(selectObjInvalid), 'select invalid obj fails');
 			
 			assert.deepEqual(inputDS.value, [ testData1[0], testData1[1] ], 'selected obj values');

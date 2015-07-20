@@ -770,14 +770,11 @@ Example:
 				},
 				
 				/**
-				 * Called when the `cbn-data-source` element (if used) has new data available.
-				 * 
-				 * @param {Event} event The event.
+				 * Called when the `cbn-data-source` element has new data available.
 				 */
-				_dataSourceAvailable: function(event) {
+				_dataSourceAvailable: function() {
 					this._status.optionsLoading = false;
-					var dataSource = event.target;
-					this._setOptions(dataSource.filteredData);
+					this._setOptions(this._dataSource.filteredData);
 					this._filterOptions(this._addQuery);
 				},
 				
@@ -792,7 +789,10 @@ Example:
 				_queryOptions: function(query) {
 					if (this._dataSource) {
 						this._status.optionsLoading = true;
-						this._dataSource.query(query);
+						var isDataAvailable = this._dataSource.query(query);
+						if (isDataAvailable) {
+							this._dataSourceAvailable();
+						} // otherwise, wait for the data-available event
 						
 					} else {
 						// just filter them using the locally configured filter
@@ -1083,6 +1083,9 @@ Example:
 						
 					}
 					
+					var oldMode = this._status.mode;
+					this._status.mode = mode;
+					
 					switch (mode) {
 						case 'view':
 							if (param !== undefined) {
@@ -1100,7 +1103,8 @@ Example:
 							this._highlightDropdownItem(null);
 							
 							// query for options
-							this._queryOptions(this._addQuery);
+							if (oldMode != mode)
+								this._queryOptions(this._addQuery);
 							
 							// focus the add/query input
 							this.$.input.focus();
@@ -1120,7 +1124,6 @@ Example:
 							break;
 					}
 					
-					this._status.mode = mode;
 					return true;
 				},
 				
