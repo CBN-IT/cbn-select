@@ -406,6 +406,7 @@ Example:
 					var value = this._getItemValue(item);
 					var hash = this._getItemHash(item);
 					if (this._isNUE(item) || this._isNUE(this._getItemLabel(item))) {
+						this._updateAddQuery();
 						return false;
 					}
 					
