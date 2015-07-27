@@ -34,7 +34,8 @@
 					"preview": true,
 					"className": "col-xs-12",
 					"alwaysShowChips": false,
-					"freeText":false
+					"freeText":false,
+					"defaultValue": "Two"
 				},
 				{
 					"inherit": "input",

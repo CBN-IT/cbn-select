@@ -58,14 +58,7 @@
 	document.addEventListener("HTMLImportsLoaded", function() {
 		var tpl = document.querySelector('#template-wrapper');
 		
-		tpl.formModel = {
-			select1: '',
-			select2: '',
-			select3: '',
-			select4: '',
-			select5: '',
-			select6: ''
-		};
+		tpl.formModel = { };
 		tpl.addEventListener('template-bound', function() {
 			var form = document.querySelector('cbn-form');
 			

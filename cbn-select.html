@@ -1287,6 +1287,8 @@ Example:
 						this._options.push(itemMeta);
 						this._optionValues.push(this._getItemValue(itemMeta.item));
 					}
+					
+					this.select(this.value || this.defaultValue);
 				},
 				
 				/**
