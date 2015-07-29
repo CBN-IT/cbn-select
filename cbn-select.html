@@ -308,6 +308,13 @@ Example:
 				_addQuery: '',
 				
 				/**
+				 * Stores the last query used to filter by when the data is available.
+				 * @private
+				 * @type {String}
+				 */
+				_filterValue: '',
+				
+				/**
 				 * Stores the edit option input's current value.
 				 * @private
 				 * @type {String}
@@ -489,7 +496,7 @@ Example:
 						}
 						
 						if (this.multiple && !this.allowDuplicates) {
-							this._filterOptions(this._addQuery);
+							this._filterOptions(this._showChips ? this._addQuery : '');
 						}
 						this._updateAddQuery();
 						
@@ -539,7 +546,7 @@ Example:
 						}
 						
 						if (this.multiple && !this.allowDuplicates) {
-							this._filterOptions(this._addQuery);
+							this._filterOptions(this._showChips ? this._addQuery : '');
 						}
 						this._updateAddQuery();
 						
@@ -735,7 +742,7 @@ Example:
 				optionsChanged: function() {
 					this._status.optionsLoading = false;
 					this._setOptions(this.options);
-					this._filterOptions(this._addQuery);
+					this._filterOptions(this._showChips ? this._addQuery : '');
 				},
 				
 				/**
@@ -762,7 +769,7 @@ Example:
 						// the loading parameter will be set back to false when the `cbn-data-available` event is fired
 						this._status.optionsLoading = true;
 						this._setOptions([]);
-						this._filterOptions(this._addQuery);
+						this._filterOptions(this._showChips ? this._addQuery : '');
 						
 					} else {
 						this._filter(this._addQuery);
@@ -776,7 +783,7 @@ Example:
 				_dataSourceAvailable: function() {
 					this._status.optionsLoading = false;
 					this._setOptions(this._dataSource.filteredData);
-					this._filterOptions(this._addQuery);
+					this._filterOptions(this._filterValue);
 				},
 				
 				/**
@@ -788,6 +795,7 @@ Example:
 				 * @param {String} query The query to run.
 				 */
 				_queryOptions: function(query) {
+					this._filterValue = query;
 					if (this._dataSource) {
 						this._status.optionsLoading = true;
 						var isDataAvailable = this._dataSource.query(query);
@@ -797,7 +805,7 @@ Example:
 						
 					} else {
 						// just filter them using the locally configured filter
-						this._filterOptions(this._addQuery);
+						this._filterOptions(this._filterValue);
 					}
 				},
 				
@@ -914,7 +922,7 @@ Example:
 								this.select(this._addQuery);
 							}
 							this._clearAddQuery();
-							if (!this.multiple && !this.alwaysShowChips) {
+							if (!this._showChips) {
 								this.blur();
 							}
 						},
@@ -1105,7 +1113,7 @@ Example:
 							
 							// query for options
 							if (oldMode != mode)
-								this._queryOptions(this._addQuery);
+								this._queryOptions(this._showChips ? this._addQuery : '');
 							
 							// focus the add/query input
 							this.$.input.focus();
@@ -1133,7 +1141,7 @@ Example:
 				 */
 				_clearAddQuery: function() {
 					this._addQuery = '';
-					this._queryOptions(this._addQuery);
+					this._queryOptions('');
 					
 					this._updateAddQuery();
 				},
@@ -1146,8 +1154,6 @@ Example:
 					if (!this._showChips) {
 						// show the final selected value
 						this._addQuery = (this._selectedOptions.length ? this._selectedOptions[0].label : '' );
-						// reset the filter
-						this._filterOptions('');
 					}
 				},
 				
