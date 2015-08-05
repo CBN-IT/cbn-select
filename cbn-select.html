@@ -1153,7 +1153,11 @@ Example:
 				_updateAddQuery: function() {
 					if (!this._showChips) {
 						// show the final selected value
-						this._addQuery = (this._selectedOptions.length ? this._selectedOptions[0].label : '' );
+						if(this.freeText){
+							this._addQuery = (this._selectedOptions.length ? this._selectedOptions[0].label : this._addQuery );
+						}	else {
+							this._addQuery = (this._selectedOptions.length ? this._selectedOptions[0].label : '' );
+						}
 					}
 				},
 				
