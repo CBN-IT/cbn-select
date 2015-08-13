@@ -693,6 +693,7 @@ Example:
 								this.select(val);
 							}, this);
 						} else {
+							this._addQuery = newVal;
 							this.select(newVal);
 						}
 						
@@ -829,6 +830,7 @@ Example:
 						this.select(this._addQuery);
 						this._clearAddQuery();
 					}
+					this._saveEditedOption();
 					this._setMode('');
 					this._status.focused = false;
 					this._status.open = false;
@@ -1298,7 +1300,7 @@ Example:
 						this._optionValues.push(this._getItemValue(itemMeta.item));
 					}
 					
-					this.select(this.value || this.defaultValue);
+					this.select(this.value || this.defaultValue || "");
 				},
 				
 				/**
@@ -1314,7 +1316,16 @@ Example:
 							this._filteredOptions[this._highlighted.filteredOptionIdx].highlighted = false;
 					}
 					this._filteredOptions = this.$.filter.filter(this._options, query);
-					
+					if (this.freeText) {
+						var isExactMatch = this.$.filter.filter(this._options, query, "exact-ci",true).length!==0;
+						if(!isExactMatch) {
+							var qItem = {
+								label: query,
+								value: query
+							};
+							this._filteredOptions.push(qItem);
+						}
+					}
 					if (this.multiple && !this.allowDuplicates) {
 						// remove the selected options from the filtered list
 						this._filteredOptions = this._filteredOptions.filter(function(item) {
