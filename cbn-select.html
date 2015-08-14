@@ -693,7 +693,9 @@ Example:
 								this.select(val);
 							}, this);
 						} else {
-							this._addQuery = newVal;
+							if(!this._showChips) {
+								this._addQuery = newVal;
+							}
 							this.select(newVal);
 						}
 						
