@@ -25,6 +25,8 @@ Example:
 <link rel="import" href="../cbn-form/cbn-form-abstract.html">
 <link rel="import" href="../cbn-form/cbn-form-validator.html">
 <link rel="import" href="../cbn-data-source/cbn-data-source.html">
+<link rel="import" href="../cbn-data-source/cbn-data-filter.html">
+
 
 <polymer-element name="cbn-select" tabindex="-1">
 	<template>
@@ -203,7 +205,7 @@ Example:
 					 * @attribute filterMode
 					 * @type {String}
 					 */
-					filterMode: 'begins-ci',
+					filterMode: 'contains-ci',
 					
 					/**
 					 * The placeholder to show when there is no value entered.
