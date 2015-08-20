@@ -188,6 +188,15 @@ Example:
 					itemValueProperty: '',
 					
 					/**
+					 * Specifies what property of the option object to set as model hash.
+					 * 
+					 * @attribute itemHashProperty
+					 * @type {String}
+					 * @default ''
+					 */
+					itemHashProperty: 'value',
+					
+					/**
 					 * Specify the option item property to use to filter the options list.
 					 * Specify empty value if your data is a String list and you want to compare the items directly.
 					 * 
@@ -1366,6 +1375,9 @@ Example:
 				_getItemHash: function(item) {
 					if (typeof item != 'object') 
 						return item;
+					if (this.itemHashProperty && item[this.itemHashProperty]) {
+						return item[this.itemHashProperty];
+					}
 					return JSON.stringify(item);
 				},
 				
@@ -1390,6 +1402,7 @@ Example:
 						return item;
 					return (this.itemLabelProperty ? item[this.itemLabelProperty] : item );
 				},
+				
 				/**
 				 * is null, undefined or empty string
 				 * @private
