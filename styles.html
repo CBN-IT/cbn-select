@@ -1,0 +1,166 @@
+<dom-module id="cbn-select-styles"><template>
+	<style>
+		:host {
+			/* Default values for CSS variables / mixins: */
+			
+		}
+		
+		/* The container for all element's components */
+		#container {
+			display: flex;
+			flex-wrap: wrap;
+			align-items: center;
+			padding-right: 13px;
+			position: relative;
+			outline: none;
+		}
+		#container:hover {
+			cursor: text;
+		}
+		
+		/* 
+		 * Selected items' bubbles.
+		 */
+		.selected-item {
+			display: inline-block;
+			font-size: 0.9em;
+			color: #333333;
+			background: #E7E7E7;
+			padding: 0.2em 0.5em;
+			margin: 0.1em 0.2em 0.15em 0;
+			vertical-align: middle;
+			cursor: pointer;
+			border-radius: 0.7em;
+		}
+		
+		.selected-item:hover {
+			background: #EFEFEF;
+			box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.37);
+		}
+		
+		.selected-item.highlighted {
+			background: #ffffcc;
+			box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.37);
+		}
+		
+		/* Remove selection button */
+		.removeBtn {
+			margin-left: 3px;
+		}
+		
+		.removeBtn > iron-icon {
+			height: 14px;
+			width: 14px;
+			margin-bottom: 1px;
+			fill: #666666;
+		}
+		.removeBtn:hover > iron-icon {
+			fill: #FF0000;
+		}
+		
+		/* The edit selection input displayed for the currently edited selected-item */
+		.option-editor {
+			min-width: 50px;
+			background: transparent;
+			border: 1px solid #eeeecc;
+			outline: none;
+			padding: 0.1em 0.3em;
+		}
+		.selected-item.editing {
+			padding: 1px;
+		}
+		
+		/*
+		 * The input extends to the length of the element.
+		 */
+		.text-input {
+			display: inline-block;
+			flex: 1 1;
+			border: none;
+			box-sizing: border-box;
+			outline: none;
+			vertical-align: middle;
+			min-width: 4em;
+			padding: 0.05em;
+			font: inherit;
+			background-color: transparent;
+		}
+		.text-input[readonly] {
+			text-decoration: line-through;
+		}
+		
+		.text-input.unmatched {
+			color: #DDDDDD;
+		}
+		
+		/* 
+		 * Drop-down/options box styles.
+		 */
+		#options-wrapper {
+			position: absolute;
+			left: -1px;
+			right: -1px;
+			top: 100%;
+			margin-top: 3px;
+		}
+		
+		#options {
+			position: relative;
+			z-index: 1;
+			background: #ffffff;
+			max-height: 25em;
+			overflow-y: auto;
+			display: none;
+			box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.37);
+		}
+		
+		#container.open #options {
+			display: block;
+		}
+		
+		/* Select option/item styles */
+		#options .item {
+			display: block;
+			padding: 0.3em 0.5em;
+			margin: 0;
+			background: white;
+			cursor: pointer;
+			box-sizing: border-box;
+		}
+		#options .item:hover {
+			color: #FFFFFF;
+			background: #9FBFFF;
+		}
+		
+		#options .item:first-of-type {
+			margin-top: 5px;
+		}
+		#options .item:last-of-type {
+			margin-bottom: 5px;
+		}
+		
+		#options .item.highlighted {
+			color: #FFFFFF;
+			background: #3f7fff;
+		}
+		
+		/* Other dropdown styles */
+		
+		#options .loading, .empty {
+			padding: 5px;
+			font-style: italic;
+		}
+		#options .loading {
+			background: 5px center no-repeat url("loading.gif");
+			padding-left: 28px;
+		}
+		
+		#dropdownBtn {
+			position: absolute;
+			right: -5px;
+			bottom: 0;
+			cursor: pointer;
+		}
+		
+	</style>
+</template></dom-module>

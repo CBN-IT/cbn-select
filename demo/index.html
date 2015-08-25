@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>Cbn-Select Demo</title>
+	
+	<script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+	
+	<link rel="import" href="../../font-roboto/roboto.html" />
+	
+	<link rel="import" href="../../cbn-form/cbn-form.html">
+	<link rel="import" href="../cbn-select.html" />
+	
+	<style>
+		body {
+			font-family: RobotoDraft, 'Helvetica Neue', Helvetica, Arial, sans-serif;
+			font-size: 14px;
+		}
+	</style>
+	
+	<style is="custom-style">
+		* {
+			--paper-input-container {
+				padding: 0 !important;
+			}
+		}
+	</style>
+</head>
+<body>
+
+<div style="margin: 20px auto; width: 500px;">
+	<h1>Cbn-Select Demo</h1>
+	
+	<template is="dom-bind">
+		
+		<form id="demoForm" is="cbn-form" model>
+			
+			<p>
+				<cbn-select name="one" options="[[demoOptions1]]"></cbn-select>
+			</p>
+			
+			<p>
+				<cbn-select name="two" multiple options="[[demoOptions1]]"></cbn-select>
+			</p>
+			
+			<p>
+				<cbn-select name="two" multiple free-text options="[[demoOptions1]]"></cbn-select>
+			</p>
+			
+		</form>
+		
+		<p style="font-weight: bold;">Output: </p>
+		<pre id="stringifiedJson"></pre>
+		
+	</template>
+</div>
+
+<script>
+	var tpl = document.querySelector('template[is=dom-bind]');
+	tpl.demoOptions1 = [];
+	for (i=0; i<30; i++) {
+		tpl.demoOptions1.push("x" + i);
+	}
+	
+	tpl.addEventListener('dom-change', function(){
+		/** @namespace tpl.$.demoForm */
+		var form = tpl.$.demoForm;
+		
+		function updateOutput() {
+			/** @namespace tpl.$.stringifiedJson */
+			tpl.$.stringifiedJson.textContent = JSON.stringify(form.model, null, 4);
+		}
+		
+		form.addEventListener('value-changed', updateOutput);
+		updateOutput();
+	});
+	
+</script>
+
+</body>
+</html>
