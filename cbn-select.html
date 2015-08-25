@@ -693,6 +693,7 @@ Example:
 					
 					if (!this._options || !this._options.length) {
 						this._delayedValue = newVal;
+						this._queryOptions('');
 						return;
 					}
 					
@@ -1179,9 +1180,9 @@ Example:
 					if (!this._showChips) {
 						// show the final selected value
 						if(this.freeText){
-							this._addQuery = (this._selectedOptions.length ? this._selectedOptions[0].label : this._addQuery );
+						 	this._addQuery = (this._selectedOptions.length ? this._selectedOptions[0].label : this._addQuery );
 						}	else {
-							this._addQuery = (this._selectedOptions.length ? this._selectedOptions[0].label : '' );
+						 	this._addQuery = (this._selectedOptions.length ? this._selectedOptions[0].label : '' );
 						}
 					}
 				},
@@ -1327,6 +1328,7 @@ Example:
 						var aux = this._delayedValue;
 						this._delayedValue = null;
 						this.valueChanged(this.value, aux);
+						
 					} else {
 						this.select(this.value || this.defaultValue || "");
 					}
