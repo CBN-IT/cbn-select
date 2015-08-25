@@ -341,6 +341,11 @@ Example:
 				_transaction: false,
 				
 				/**
+				 * Stores the value to set when the list of options has finished loading.
+				 */
+				_delayedValue: null,
+				
+				/**
 				 * Stores the status properties of the select element. 
 				 * Mainly used for data bindings (element UI) / event handler methods to define the element's behavior.
 				 * 
@@ -685,6 +690,11 @@ Example:
 						return;
 					
 					var result = false;
+					
+					if (!this._options || !this._options.length) {
+						this._delayedValue = newVal;
+						return;
+					}
 					
 					// start an external transaction
 					this._startTransaction();
@@ -1313,7 +1323,13 @@ Example:
 						this._optionValues.push(this._getItemValue(itemMeta.item));
 					}
 					
-					this.select(this.value || this.defaultValue || "");
+					if (this._delayedValue) {
+						var aux = this._delayedValue;
+						this._delayedValue = null;
+						this.valueChanged(this.value, aux);
+					} else {
+						this.select(this.value || this.defaultValue || "");
+					}
 				},
 				
 				/**
