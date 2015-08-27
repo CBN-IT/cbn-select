@@ -1327,7 +1327,9 @@ Example:
 					if (this._delayedValue) {
 						var aux = this._delayedValue;
 						this._delayedValue = null;
-						this.valueChanged(this.value, aux);
+						if (this._options.length != 0) {
+							this.valueChanged(this.value, aux);
+						}
 						
 					} else {
 						this.select(this.value || this.defaultValue || "");
