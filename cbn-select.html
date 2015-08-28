@@ -793,9 +793,12 @@ Example:
 						
 						// the loading parameter will be set back to false when the `cbn-data-available` event is fired
 						this._status.optionsLoading = true;
-						this._setOptions([]);
-						this._filterOptions(this._showChips ? this._addQuery : '');
-						
+						if(this._dataSource.data && this._dataSource.data.length>0){
+							this._dataSourceAvailable();
+						} else {
+							this._setOptions([]);
+							this._filterOptions(this._showChips ? this._addQuery : '');
+						}
 					} else {
 						this._filter(this._addQuery);
 						this._status.optionsLoading = false;
