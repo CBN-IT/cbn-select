@@ -779,6 +779,7 @@ Example:
 						this._dataSource.removeEventListener('cbn-data-available', this._dataSourceAvailable);
 						this._dataSource = null;
 					}
+					
 					if (this.dataSource) {
 						// search for a dataSource
 						if (typeof this.dataSource == 'string') {
@@ -793,8 +794,11 @@ Example:
 						
 						// the loading parameter will be set back to false when the `cbn-data-available` event is fired
 						this._status.optionsLoading = true;
-						if(this._dataSource.data && this._dataSource.data.length>0){
+						
+						if (this._dataSource.data && this._dataSource.data.length>0){
 							this._dataSourceAvailable();
+						} else if (this._delayedValue) {
+							this._queryOptions(this._showChips ? this._addQuery : '');
 						} else {
 							this._setOptions([]);
 							this._filterOptions(this._showChips ? this._addQuery : '');
@@ -1398,7 +1402,7 @@ Example:
 				_getItemHash: function(item) {
 					if (typeof item != 'object') 
 						return item;
-					if (this.itemHashProperty && item[this.itemHashProperty]) {
+					if (this.itemHashProperty && item && item[this.itemHashProperty]) {
 						return item[this.itemHashProperty];
 					}
 					return JSON.stringify(item);
