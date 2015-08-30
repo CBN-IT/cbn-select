@@ -690,11 +690,12 @@ Example:
 						return;
 					
 					var result = false;
-					
-					if (!this._options || !this._options.length) {
-						this._delayedValue = newVal;
-						this._queryOptions('');
-						return;
+					if (this.dataSource) {
+						if (!this._options || !this._options.length) {
+							this._delayedValue = newVal;
+							this._queryOptions('');
+							return;
+						}
 					}
 					
 					// start an external transaction
@@ -1355,7 +1356,12 @@ Example:
 						if (this._filteredOptions[this._highlighted.filteredOptionIdx])
 							this._filteredOptions[this._highlighted.filteredOptionIdx].highlighted = false;
 					}
-					this._filteredOptions = this.$.filter.filter(this._options, query);
+					var temp  = this.$.filter.filter(this._options, query);
+					this._filteredOptions = [];
+					for (var i in temp) {
+						this._filteredOptions.push(temp[i]);
+					}
+					
 					if (this.freeText) {
 						var isExactMatch = this.$.filter.filter(this._options, query, "exact-ci",true).length!==0;
 						if(!isExactMatch) {
