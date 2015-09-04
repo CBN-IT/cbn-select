@@ -1365,11 +1365,11 @@ Example:
 					if (this.freeText) {
 						var isExactMatch = this.$.filter.filter(this._options, query, "exact-ci",true).length!==0;
 						if(!isExactMatch) {
-							var qItem = {
+							/*var qItem = {
 								label: query,
 								value: query
 							};
-							this._filteredOptions.push(qItem);
+							this._filteredOptions.push(qItem);*/
 						}
 					}
 					if (this.multiple && !this.allowDuplicates) {

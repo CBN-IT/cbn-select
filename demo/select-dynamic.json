@@ -39,6 +39,18 @@
 				},
 				{
 					"inherit": "input",
+					"name": "select14",
+					"type": "select",
+					"floatingLabel": true,
+					"label": "Simpleeee",
+					"multiple": true,
+					"freeText":true,
+					"preview": true,
+					"options": ["kkjkjjk"],
+					"className": "col-xs-12"
+				},
+				{
+					"inherit": "input",
 					"name": "select2",
 					"type": "select",
 					"floatingLabel": true,
