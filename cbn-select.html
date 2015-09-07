@@ -439,6 +439,10 @@ Example:
 					
 					try {
 						if (item != null) {
+							if (this.options != null && this.options.length > 0 && (this._options==null || this._options.length!=this.options.length)){
+								this._setOptions(this.options);
+								//sometimes valueChanged happens before _setOptions even tho this.options is populated
+							}
 							// check if the option exists inside the options list
 							found = (this._optionValues && (foundIdx = this._optionValues.indexOf(value)) > -1);
 							// otherwise, search by hash/label
