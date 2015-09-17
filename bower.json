@@ -6,6 +6,7 @@
         "polymer": "Polymer/polymer#^1.1",
         "iron-icon": "PolymerElements/iron-icon#^1.0",
         "iron-icons": "PolymerElements/iron-icons#^1.0",
+        "paper-input": "PolymerElements/paper-input#^1.0",
         "cbn-form": "git@bitbucket.org:cbn-it/cbn-form.git#polymer1.0",
         "cbn-data-source": "git@bitbucket.org:cbn-it/cbn-data-source.git#polymer1.0"
     },

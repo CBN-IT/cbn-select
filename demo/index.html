@@ -10,6 +10,7 @@
 	
 	<link rel="import" href="../../cbn-form/cbn-form.html">
 	<link rel="import" href="../cbn-select.html" />
+	<link rel="import" href="../cbn-paper-select.html" />
 	
 	<style>
 		body {
@@ -35,17 +36,11 @@
 		
 		<form id="demoForm" is="cbn-form" model>
 			
-			<p>
-				<cbn-select name="one" options="[[demoOptions1]]"></cbn-select>
-			</p>
+			<cbn-paper-select label="Single" name="pone" options="[[demoOptions1]]"></cbn-paper-select>
 			
-			<p>
-				<cbn-select name="two" multiple options="[[demoOptions1]]"></cbn-select>
-			</p>
+			<cbn-paper-select label="Multiple" name="ptwo" multiple options="[[demoOptions1]]"></cbn-paper-select>
 			
-			<p>
-				<cbn-select name="two" multiple free-text options="[[demoOptions1]]"></cbn-select>
-			</p>
+			<cbn-paper-select label="Multiple FreeText" name="pthree" multiple free-text options="[[demoOptions1]]"></cbn-paper-select>
 			
 		</form>
 		
