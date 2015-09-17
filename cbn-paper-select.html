@@ -35,7 +35,7 @@ style this element.
 			<cbn-select name$="[[name]]" id="input" class="paper-input-input"
 						value="{{value}}" allow-duplicates$="[[allowDuplicates]]" 
 						multiple$="[[multiple]]" free-text$="[[freeText]]"
-						options="[[options]]"
+						options="[[options]]" use-iron-list="[[useIronList]]"
 						data-source="[[dataSource]]"
 						item-label-property="[[itemLabelProperty]]"
 						item-value-property="[[itemValueProperty]]"
@@ -98,6 +98,14 @@ style this element.
 			options: {
 				type: Array,
 				value: function() { return []; }
+			},
+			
+			/**
+			 * Whether to use iron-list for rendering the dropdown options.
+			 */
+			useIronList: {
+				type: Boolean,
+				value: false
 			},
 			
 			/**

@@ -40,6 +40,7 @@ Custom property                | Description                       | Default
 <link rel="import" href="../iron-icons/iron-icons.html" />
 <link rel="import" href="../cbn-data-source/cbn-data-source.html" />
 <link rel="import" href="../cbn-data-source/consumer-behavior.html" />
+<link rel="import" href="../iron-list/iron-list.html" />
 
 <link rel="import" href="styles.html" />
 
@@ -80,18 +81,28 @@ Custom property                | Description                       | Default
 					on-tap="_dropDownButtonTap" on-input="_queryInputHandler">
 			
 			<div id="options-wrapper">
-				<div id="options">
-					<template is="dom-repeat" items="[[_filteredOptions]]" as="item">
-						<div class$="[[_computeDropdownItemClass(item.highlighted)]]"
-							 on-tap="_dropdownOptionTap">[[item.label]]</div>
-					</template>
-					<template is="dom-if" if="[[_optionsLoading]]">
-						<div class="loading">Loading options ...</div>
-					</template>
-					<template is="dom-if" if="[[_computeEmptyOptionsList(_optionsLoading, _filteredOptions)]]">
-						<div class="empty">No available options.</div>
-					</template>
-				</div>
+				<template is="dom-if" if="[[useIronList]]">
+					<iron-list id="ironList" class="options-list" items="[[_filteredOptions]]" as="item">
+						<template>
+							<div class$="[[_computeDropdownItemClass(item.highlighted)]]"
+								 on-tap="_dropdownOptionTap">[[item.label]]</div>
+						</template>
+					</iron-list>
+				</template>
+				<template is="dom-if" if="[[!useIronList]]">
+					<div id="options" class="options-list">
+						<template is="dom-repeat" items="[[_filteredOptions]]" as="item">
+							<div class$="[[_computeDropdownItemClass(item.highlighted)]]"
+								 on-tap="_dropdownOptionTap">[[item.label]]</div>
+						</template>
+						<template is="dom-if" if="[[_optionsLoading]]">
+							<div class="loading">Loading options ...</div>
+						</template>
+						<template is="dom-if" if="[[_computeEmptyOptionsList(_optionsLoading, _filteredOptions)]]">
+							<div class="empty">No available options.</div>
+						</template>
+					</div>
+				</template>
 			</div>
 			<div id="dropdownBtn" on-tap="_dropDownButtonTap">
 				<iron-icon icon="icons:arrow-drop-down"></iron-icon>
@@ -148,6 +159,14 @@ Custom property                | Description                       | Default
 				options: {
 					type: Array,
 					value: function() { return []; }
+				},
+				
+				/**
+				 * Whether to use iron-list for rendering the dropdown options.
+				 */
+				useIronList: {
+					type: Boolean,
+					value: false
 				},
 				
 				/**

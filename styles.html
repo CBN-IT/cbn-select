@@ -101,10 +101,11 @@
 			left: -1px;
 			right: -1px;
 			top: 100%;
+			height: 25em;
 			margin-top: 3px;
 		}
 		
-		#options {
+		.options-list {
 			position: relative;
 			z-index: 1;
 			background: #ffffff;
@@ -114,12 +115,12 @@
 			box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.37);
 		}
 		
-		#container.open #options {
+		#container.open .options-list {
 			display: block;
 		}
 		
 		/* Select option/item styles */
-		#options .item {
+		.options-list .item {
 			display: block;
 			padding: 0.3em 0.5em;
 			margin: 0;
@@ -127,30 +128,38 @@
 			cursor: pointer;
 			box-sizing: border-box;
 		}
-		#options .item:hover {
+		.options-list .item:hover {
 			color: #FFFFFF;
 			background: #9FBFFF;
 		}
 		
-		#options .item:first-of-type {
+		.options-list .item:first-of-type {
 			margin-top: 5px;
 		}
-		#options .item:last-of-type {
+		.options-list .item:last-of-type {
 			margin-bottom: 5px;
 		}
 		
-		#options .item.highlighted {
+		.options-list .item.highlighted {
 			color: #FFFFFF;
 			background: #3f7fff;
 		}
 		
+		#ironList {
+			position: absolute;
+			top: 0;
+			left: 0;
+			right: 0;
+			bottom: 0;
+		}
+		
 		/* Other dropdown styles */
 		
-		#options .loading, .empty {
+		.options-list .loading, .empty {
 			padding: 5px;
 			font-style: italic;
 		}
-		#options .loading {
+		.options-list .loading {
 			background: 5px center no-repeat url("loading.gif");
 			padding-left: 28px;
 		}
