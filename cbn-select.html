@@ -42,11 +42,11 @@ Example:
 				<template repeat="{{ item in _selectedOptions }}">
 					<div class="selected-item {{ { highlighted: item.highlighted, editing: item.editing } | tokenList }} {{ item.classes }}"
 							on-tap="{{ _selectedOptionTap }}"
-							on-dblclick="{{ _selectedOptionDblClick }}">
+							on-dblclick="{{ _selectedOptionDblClick }}" style="width:100%">
 						
 						<template if="{{ item.editing }}">
 							<input class="option-editor" type="text"  title="Edit value" value="{{ _editQuery }}"
-								   size="{{ _editQuery.length < 5 ? 1 : _editQuery.length-1 }}">
+								   style="width:90%">
 						</template>
 						<template if="{{ !item.editing }}">{{ item.label }}</template>
 						
