@@ -40,20 +40,38 @@ Example:
 			
 			<template if="{{ _showChips }}">
 				<template repeat="{{ item in _selectedOptions }}">
+
+					<template if="{{ item.editing }}">
 					<div class="selected-item {{ { highlighted: item.highlighted, editing: item.editing } | tokenList }} {{ item.classes }}"
 							on-tap="{{ _selectedOptionTap }}"
-							on-dblclick="{{ _selectedOptionDblClick }}">
-						
-						<template if="{{ item.editing }}">
+							on-dblclick="{{ _selectedOptionDblClick }}" style="width:100%">
 							<input class="option-editor" type="text"  title="Edit value" value="{{ _editQuery }}"
-								   size="{{ _editQuery.length < 5 ? 1 : _editQuery.length-1 }}" autocomplete="off">
-						</template>
-						<template if="{{ !item.editing }}">{{ item.label }}</template>
+								   style="width:90%">
 						
+							
+
+							<a class="removeBtn" on-tap="{{ _removeBtnTap }}">
+								<core-icon icon="highlight-remove"></core-icon>
+							</a>
+						</div>
+						</template>
+						
+
+					<template if="{{ !item.editing }}">
+						<div class="selected-item {{ { highlighted: item.highlighted, editing: item.editing } | tokenList }} {{ item.classes }}"
+							 on-tap="{{ _selectedOptionTap }}"
+							 on-dblclick="{{ _selectedOptionDblClick }}">
+
+							{{ item.label }}
+
 						<a class="removeBtn" on-tap="{{ _removeBtnTap }}">
 							<core-icon icon="highlight-remove"></core-icon>
 						</a>
 					</div>
+				</template>
+					
+					
+					
 				</template>
 			</template>
 			
@@ -61,7 +79,6 @@ Example:
 					placeholder="{{ placeholder ? placeholder : '' }}"
 					class="{{ { 'text-input':true } | tokenList }}"
 					readonly?="{{ readonly }}"
-				    autocomplete="off"
 					on-mousedown="{{ _focusHandler }}" on-input="{{ _queryInputHandler }}">
 			
 			<div id="options-wrapper">
@@ -1370,11 +1387,11 @@ Example:
 					if (this.freeText) {
 						var isExactMatch = this.$.filter.filter(this._options, query, "exact-ci",true).length!==0;
 						if(!isExactMatch) {
-							var qItem = {
+							/*var qItem = {
 								label: query,
 								value: query
 							};
-							this._filteredOptions.push(qItem);
+							this._filteredOptions.push(qItem);*/
 						}
 					}
 					if (this.multiple && !this.allowDuplicates) {
