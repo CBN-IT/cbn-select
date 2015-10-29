@@ -46,7 +46,7 @@ Example:
 						
 						<template if="{{ item.editing }}">
 							<input class="option-editor" type="text"  title="Edit value" value="{{ _editQuery }}"
-								   size="{{ _editQuery.length < 5 ? 1 : _editQuery.length-1 }}">
+								   size="{{ _editQuery.length < 5 ? 1 : _editQuery.length-1 }}" autocomplete="off">
 						</template>
 						<template if="{{ !item.editing }}">{{ item.label }}</template>
 						
@@ -61,6 +61,7 @@ Example:
 					placeholder="{{ placeholder ? placeholder : '' }}"
 					class="{{ { 'text-input':true } | tokenList }}"
 					readonly?="{{ readonly }}"
+				    autocomplete="off"
 					on-mousedown="{{ _focusHandler }}" on-input="{{ _queryInputHandler }}">
 			
 			<div id="options-wrapper">
