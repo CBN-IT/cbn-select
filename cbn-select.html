@@ -65,7 +65,7 @@ Custom property                | Description                       | Default
 						
 						<template is="dom-if" if="[[item.editing]]">
 							<input class="option-editor" type="text" title="Edit value" value="{{_editQuery::input}}"
-								   size$="[[_computeEditInputSize(_editQuery)]]">
+								   autocomplete="off" size$="[[_computeEditInputSize(_editQuery)]]">
 						</template>
 						<template is="dom-if" if="[[!item.editing]]">[[item.label]]</template>
 						
@@ -76,7 +76,7 @@ Custom property                | Description                       | Default
 				</template>
 			</template>
 			
-			<input id="input" type="text" value="{{_inputValue}}" class="text-input"
+			<input id="input" type="text" value="{{_inputValue}}" class="text-input" autocomplete="off"
 					title="[[placeholder]]" placeholder$="[[placeholder]]" readonly$="[[readonly]]"
 					on-tap="_dropDownButtonTap" on-input="_queryInputHandler">
 			
