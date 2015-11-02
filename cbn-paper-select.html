@@ -186,8 +186,26 @@ style this element.
 		},
 		
 		behaviors: [
-			Polymer.PaperInputBehavior
+			Polymer.PaperInputBehavior,
+			CbnForm.DynamicElement
 		],
+		
+		/**
+		 * Element's dynamic attributes.
+		 */
+		dynamicAttributes: {
+			"multiple": { type: 'attribute' },
+			"freeText": { type: 'attribute' },
+			"allowDuplicates": { type: 'attribute' },
+			"options": { type: 'property' },
+			"dataSource": { type: 'property' },
+			"itemLabelProperty": { type: 'attribute' },
+			"itemValueProperty": { type: 'attribute' },
+			"filterProperty": { type: 'attribute' },
+			"filterMode": { type: 'attribute' },
+			"placeholder": { type: 'attribute' },
+			"alwaysShowChips": { type: 'attribute' }
+		},
 		
 		ready: function() {
 			this.$.container.addEventListener('input', this.$.container._onInput);
@@ -212,4 +230,10 @@ style this element.
 		}
 		
 	});
+	
+	CbnForm.registerElement('cbn-paper-select', {
+		types: ['select'],
+		priority: 3
+	});
+	
 </script>
