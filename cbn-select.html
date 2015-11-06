@@ -21,12 +21,19 @@ Example:
 The stock `cbn-select` has paper-like look. 
 You can customize it using the following CSS mixins: 
 
-Custom property                | Description                       | Default
--------------------------------|-----------------------------------|--------------------
-`--cbn-select-container`       | Overrides for the main container  | `{ }`
-
-
-   TODO: implement customizable styles
+Custom property                | Description                             | Default
+-------------------------------|-----------------------------------------|--------------------
+`--cbn-select-min-width`       | Minimum width for the options dropdown  | `{ }`
+`--cbn-select-container`       | Main select container                   | `{ }`
+`--cbn-select-ed-item`         | Selected item                           | `{ }`
+`--cbn-select-ed-item-hover`   | Selected item (hovered)                 | `{ }`
+`--cbn-select-ed-item-hlight`  | Selected item (highlighted)             | `{ }`
+`--cbn-select-edit-item`       | Item edit input                         | `{ }`
+`--cbn-select-input`           | Main select input                       | `{ }`
+`--cbn-select-options-item`    | Dropdown item / line                    | `{ }`
+`--cbn-select-options-item-hover`| Dropdown item (hovered)               | `{ }`
+`--cbn-select-loading`         | Loading message                         | `{ }`
+`--cbn-select-dropdown-btn`    | Dropdown button                         | `{ }`
 
 
 @group CBN Elements
@@ -46,11 +53,6 @@ Custom property                | Description                       | Default
 
 <dom-module id="cbn-select">
 	<template>
-		<style>
-			:host {
-				outline: none;
-			}
-		</style>
 		<style include="cbn-select-styles"></style>
 		
 		<cbn-data-filter id="filter" auto="false"
