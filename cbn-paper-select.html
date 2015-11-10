@@ -44,6 +44,10 @@ style this element.
 						filter-mode="[[filterMode]]"
 						placeholder$="[[placeholder]]"
 						always-show-chips$="[[alwaysShowChips]]"
+						validation="[[validation]]"
+						validation-order="[[validationOrder]]"
+						validation-type="[[validationType]]"
+						default-validation-message="[[defaultValidationMessage]]"
 				></cbn-select>
 			
 			<template is="dom-if" if="[[errorMessage]]">
@@ -187,6 +191,7 @@ style this element.
 		
 		behaviors: [
 			Polymer.PaperInputBehavior,
+			CbnForm.PaperContainer,
 			CbnForm.DynamicElement
 		],
 		
@@ -195,17 +200,17 @@ style this element.
 		 */
 		dynamicAttributes: {
 			"multiple": { type: 'attribute' },
-			"freeText": { type: 'attribute' },
-			"allowDuplicates": { type: 'attribute' },
+			"freeText": { type: 'property' },
+			"allowDuplicates": { type: 'property' },
 			"options": { type: 'property' },
 			"dataSource": { type: 'property' },
-			"itemLabelProperty": { type: 'attribute' },
-			"itemValueProperty": { type: 'attribute' },
-			"filterProperty": { type: 'attribute' },
-			"filterMode": { type: 'attribute' },
-			"placeholder": { type: 'attribute' },
-			"alwaysShowChips": { type: 'attribute' },
-			"label": { type: 'attribute' }
+			"itemLabelProperty": { type: 'property' },
+			"itemValueProperty": { type: 'property' },
+			"filterProperty": { type: 'property' },
+			"filterMode": { type: 'property' },
+			"alwaysShowChips": { type: 'property' },
+			"label": { type: 'attribute' },
+			"placeholder": { type: 'attribute' }
 		},
 		
 		ready: function() {

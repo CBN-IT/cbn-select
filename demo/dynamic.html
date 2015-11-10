@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	<title>Select inputs inside cbn-dynamic-form</title>
+	
+	<script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+	
+	<link rel="import" href="../../iron-ajax/iron-ajax.html">
+	<link rel="import" href="../../cbn-form/cbn-form.html">
+	<link rel="import" href="../../cbn-data-source/cbn-data-source.html">
+	
+	<link rel="import" href="../../cbn-form/cbn-dynamic-form.html">
+	<link rel="import" href="../cbn-select.html">
+	<link rel="import" href="../cbn-paper-select.html">
+</head>
+<body>
+
+<div  style="width: 500px; margin: 50px auto;">
+	<h1>Dynamic select inputs, advanced demo</h1>
+	
+	<template is="dom-bind">
+		
+		<iron-ajax auto url="dynamic-config.json" handle-as="json" last-response="{{formConfig}}"></iron-ajax>
+		
+		<form is="cbn-form" id="demoForm" model style="width: 100%;">
+			
+			<cbn-dynamic-form config="{{formConfig}}">
+			</cbn-dynamic-form>
+			
+			<cbn-data-source id="simpleData" data='[
+				{ "value":"1", "label": "First" },
+				{ "value":"2", "label": "Second" },
+				{ "value":"3", "label": "Third" },
+				{ "value":"5", "label": "Third With hash", "_hash":"hash" },
+				{ "value":"4", "label": "Four" }
+			]'></cbn-data-source>
+			
+			<cbn-data-source id="ajaxData">
+				<iron-ajax url="data.json" handle-as="json"></iron-ajax>
+			</cbn-data-source>
+			
+		</form>
+		
+		<p style="font-weight: bold;">Output: </p>
+		<pre id="stringifiedJson"></pre>
+		
+	</template>
+</div>
+
+<script>
+	var tpl = document.querySelector('template[is=dom-bind]');
+	
+	tpl.addEventListener('dom-change', function(){
+		/** @namespace tpl.$.demoForm */
+		var form = tpl.$.demoForm;
+		
+		function updateOutput() {
+			/** @namespace tpl.$.stringifiedJson */
+			tpl.$.stringifiedJson.textContent = JSON.stringify(form.model, null, 4);
+		}
+		
+		form.addEventListener('value-changed', updateOutput);
+		updateOutput();
+	});
+</script>
+
+</body>
+</html>

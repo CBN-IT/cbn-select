@@ -1,0 +1,81 @@
+{
+	"types": { 
+		"select": "cbn-paper-select"
+	},
+	"elements": [
+		{
+			"name": "select1",
+			"type": "select",
+			"floatingLabel": true,
+			"label": "Simple",
+			"multiple": false,
+			"options": [ "One", "Two", "Three", "Four" ],
+			"preview": true,
+			"alwaysShowChips": false,
+			"freeText":false,
+			"defaultValue": "Two"
+		},
+		{
+			"name": "select2",
+			"type": "select",
+			"floatingLabel": true,
+			"label": "show clips",
+			"multiple": false,
+			"options": [ "One", "Two", "Three", "Four" ],
+			"preview": true,
+			"alwaysShowChips": true
+		},
+		{
+			"name": "select3",
+			"type": "select",
+			"floatingLabel": true,
+			"label": "free text",
+			"multiple": false,
+			"options": [ "One", "Two", "Three", "Four" ],
+			"preview": true,
+			"freeText":true
+		},
+		{
+			"name": "select4",
+			"type": "select",
+			"floatingLabel": true,
+			"label": "free text show clips",
+			"multiple": false,
+			"options": [ "One", "Two", "Three", "Four" ],
+			"preview": true,
+			"alwaysShowChips": true,
+			"freeText":true
+		},
+		{
+			"name": "select5",
+			"type": "select",
+			"floatingLabel": true,
+			"label": "With Data Source, FreeText",
+			"multiple": false,
+			"freeText": true,
+			"dataSource": "#simpleData",
+			"preview": true
+		},
+		{
+			"name": "select6",
+			"type": "select",
+			"floatingLabel": true,
+			"label": "With Data Source, FreeText, AlwaysShowChips",
+			"multiple": false,
+			"freeText": true,
+			"dataSource": "#simpleData",
+			"preview": true,
+			"alwaysShowChips": true
+		},
+		{
+			"name": "select7",
+			"type": "select",
+			"floatingLabel": true,
+			"label": "With Ajax Source, Multiple",
+			"multiple": true,
+			"freeText": true,
+			"dataSource": "#ajaxData",
+			"preview": true
+		}
+	]
+}

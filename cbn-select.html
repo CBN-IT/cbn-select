@@ -276,6 +276,11 @@ Custom property                | Description                             | Defau
 			// Private methods: 
 			
 			/**
+			 * Search scope for `CbnDataSource.ConsumerBehavior`.
+			 */
+			get _searchScope() { return this.parentForm; },
+			
+			/**
 			 * Used to normalize element's event handler methods.
 			 */
 			created: function() {
