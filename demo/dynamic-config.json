@@ -22,6 +22,7 @@
 			"label": "show clips",
 			"multiple": false,
 			"options": [ "One", "Two", "Three", "Four" ],
+			"defaultValue": "Two",
 			"preview": true,
 			"alwaysShowChips": true
 		},
@@ -70,6 +71,10 @@
 		{
 			"name": "select7",
 			"type": "select",
+			"defaultValue": [ {
+				"value": 6,
+				"label": "Polymer"
+			} ],
 			"floatingLabel": true,
 			"label": "With Ajax Source, Multiple",
 			"multiple": true,

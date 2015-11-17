@@ -202,6 +202,14 @@ Custom property                | Description                             | Defau
 				},
 				
 				/**
+				 * Specifies what property of the option object to set as hash (used for comparing two item objects).
+				 */
+				itemHashProperty: {
+					type: String,
+					value: ''
+				},
+				
+				/**
 				 * Specify the option item property to use to filter the options list.
 				 * Specify empty value if your data is a String list and you want to compare the items directly.
 				 */
@@ -217,7 +225,7 @@ Custom property                | Description                             | Defau
 				 */
 				filterMode: {
 					type: String,
-					value: 'begins-ci'
+					value: 'contains-cid'
 				},
 				
 				/**

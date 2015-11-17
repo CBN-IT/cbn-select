@@ -34,12 +34,14 @@ style this element.
 			<label hidden$="[[!label]]">[[label]]</label>
 			
 			<cbn-select name$="[[name]]" id="input" class="paper-input-input"
-						value="{{value}}" allow-duplicates$="[[allowDuplicates]]" 
+						value="{{value}}" allow-duplicates$="[[allowDuplicates]]"
+						default-value="[[defaultValue]]"
 						multiple$="[[multiple]]" free-text$="[[freeText]]"
 						options="[[options]]" use-iron-list="[[useIronList]]"
 						data-source="[[dataSource]]"
 						item-label-property="[[itemLabelProperty]]"
 						item-value-property="[[itemValueProperty]]"
+						item-hash-property="[[itemHashProperty]]"
 						filter-property="[[filterProperty]]"
 						filter-mode="[[filterMode]]"
 						placeholder$="[[placeholder]]"
@@ -144,6 +146,14 @@ style this element.
 			},
 			
 			/**
+			 * Specifies what property of the option object to set as hash (used for comparing two item objects).
+			 */
+			itemHashProperty: {
+				type: String,
+				value: ''
+			},
+			
+			/**
 			 * Specify the option item property to use to filter the options list.
 			 * Specify empty value if your data is a String list and you want to compare the items directly.
 			 */
@@ -206,6 +216,7 @@ style this element.
 			"dataSource": { type: 'property' },
 			"itemLabelProperty": { type: 'property' },
 			"itemValueProperty": { type: 'property' },
+			"itemHashProperty": { type: 'property' },
 			"filterProperty": { type: 'property' },
 			"filterMode": { type: 'property' },
 			"alwaysShowChips": { type: 'property' },
