@@ -38,6 +38,7 @@
 			background: #E7E7E7;
 			padding: 0.0em 0.5em;
 			margin: 0.1em 0.2em 0.15em 0;
+			line-height: 17px;
 			vertical-align: middle;
 			cursor: pointer;
 			border-radius: 0.7em;
@@ -59,6 +60,8 @@
 		/* Remove selection button */
 		.removeBtn {
 			margin-left: 3px;
+			display: inline-flex;
+			vertical-align: middle;
 		}
 		
 		.removeBtn > iron-icon {
@@ -116,12 +119,12 @@
 		/* 
 		 * Drop-down/options box styles.
 		 */
-		#options-wrapper {
+		#optionsWrapper {
 			position: absolute;
 			left: -1px;
 			right: -1px;
 			top: 100%;
-			height: 25em;
+			max-height: 25em;
 			min-width: var(--cbn-select-min-width);
 			display: none;
 			margin-top: 3px;
@@ -137,7 +140,7 @@
 			@apply(--cbn-select-opts-list);
 		}
 		
-		#container.open #options-wrapper {
+		#container.open #optionsWrapper {
 			display: block;
 		}
 		

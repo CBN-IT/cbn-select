@@ -82,7 +82,7 @@ Custom property                | Description                             | Defau
 					title="[[placeholder]]" placeholder$="[[placeholder]]" readonly$="[[readonly]]"
 					on-tap="_dropDownButtonTap" on-input="_queryInputHandler">
 			
-			<div id="options-wrapper">
+			<div id="optionsWrapper">
 				<template is="dom-if" if="[[useIronList]]">
 					<iron-list id="ironList" class="options-list" items="[[_filteredOptions]]" as="item">
 						<template>
@@ -244,11 +244,6 @@ Custom property                | Description                             | Defau
 					type: Boolean,
 					value: false
 				}
-			},
-			
-			testobs: function(item) {
-				console.trace(this.name, 'SELECTED OPTS CHANGED!', JSON.stringify(item), item.editing);
-				return item.label;
 			},
 			
 			behaviors: [

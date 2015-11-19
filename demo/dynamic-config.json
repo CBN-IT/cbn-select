@@ -18,6 +18,7 @@
 		{
 			"name": "select2",
 			"type": "select",
+			"style": "width: 200px; float: left;",
 			"useIronList": true,
 			"floatingLabel": true,
 			"label": "show clips, iron-list",
@@ -28,10 +29,17 @@
 			"alwaysShowChips": true
 		},
 		{
+			"name": "text2",
+			"type": "text",
+			"label": "Sample text",
+			"style": "float: left; display: block; width: 200px; margin-left: 10px;"
+		},
+		{
 			"name": "select3",
 			"type": "select",
 			"floatingLabel": true,
 			"label": "free text",
+			"style": "clear: both;",
 			"multiple": false,
 			"options": [ "One", "Two", "Three", "Four" ],
 			"preview": true,
