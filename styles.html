@@ -36,7 +36,7 @@
 			font-size: 0.9em;
 			color: #333333;
 			background: #E7E7E7;
-			padding: 0.2em 0.5em;
+			padding: 0.0em 0.5em;
 			margin: 0.1em 0.2em 0.15em 0;
 			vertical-align: middle;
 			cursor: pointer;
@@ -73,11 +73,16 @@
 		
 		/* The edit selection input displayed for the currently edited selected-item */
 		.option-editor {
-			min-width: 50px;
-			background: transparent;
-			border: 1px solid #eeeecc;
-			outline: none;
-			padding: 0.1em 0.3em;
+			/* !important is a shady dom fix */
+			font-size: inherit !important;
+			font-weight: inherit !important;
+			line-height: inherit !important;
+			width: auto !important;
+			min-width: 50px !important;
+			background: rgba(0,0,0,0.05) !important;
+			border: none !important;
+			outline: none !important;
+			padding: 0 0.3em !important;
 			@apply(--cbn-select-edit-item);
 		}
 		.selected-item.editing {

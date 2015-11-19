@@ -69,7 +69,7 @@ Custom property                | Description                             | Defau
 							<input class="option-editor" type="text" title="Edit value" value="{{_editQuery::input}}"
 								   autocomplete="off" size$="[[_computeEditInputSize(_editQuery)]]">
 						</template>
-						<template is="dom-if" if="[[!item.editing]]">[[item.label]]</template>
+						<template is="dom-if" if="[[!item.editing]]"><span>[[item.label]]</span></template>
 						
 						<a class="removeBtn" on-tap="_removeBtnTap">
 							<iron-icon icon="icons:backspace"></iron-icon>
@@ -244,7 +244,11 @@ Custom property                | Description                             | Defau
 					type: Boolean,
 					value: false
 				}
-				
+			},
+			
+			testobs: function(item) {
+				console.trace(this.name, 'SELECTED OPTS CHANGED!', JSON.stringify(item), item.editing);
+				return item.label;
 			},
 			
 			behaviors: [

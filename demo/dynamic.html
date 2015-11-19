@@ -57,8 +57,6 @@
 		
 		function updateOutput(event) {
 			/** @namespace tpl.$.stringifiedJson */
-			if (event)
-				console.trace('val set', event.target.name, event.target.value, event.detail);
 			tpl.$.stringifiedJson.textContent = JSON.stringify(form.model, null, 4);
 		}
 		
