@@ -61,7 +61,7 @@ Custom property                | Description                             | Defau
 		<div id="container" tabindex="-1" class$="[[_computeContainerClass(_status.open)]]">
 			
 			<template is="dom-if" if="[[_computeShowChips(multiple,alwaysShowChips)]]">
-				<template is="dom-repeat" items="[[_selectedOptions]]" as="item">
+				<template is="dom-repeat" items="[[_displaySelectedOptions]]" as="item">
 					<div class$="[[_computeSelectedItemClass(item.highlighted,item.editing)]]"
 							on-tap="_selectedOptionTap" on-dblclick="_selectedOptionDblClick">
 						
@@ -412,7 +412,7 @@ Custom property                | Description                             | Defau
 					
 					/* enter     */ 13: function() {
 						if (this._highlighted.selectedOptionIdx < 0 || 
-								this._highlighted.selectedOptionIdx >= this._selectedOptions.length) 
+								this._highlighted.selectedOptionIdx >= this._displaySelectedOptions.length) 
 							return;
 						this._setMode('edit', this._highlighted.selectedOptionIdx);
 					},
@@ -423,7 +423,7 @@ Custom property                | Description                             | Defau
 					
 					/* left arr  */ 37: function() { this._highlightSelectedItem(-1, true); },
 					/* right arr */ 39: function() {
-						if (this._highlighted.selectedOptionIdx >= (this._selectedOptions.length - 1)) {
+						if (this._highlighted.selectedOptionIdx >= (this._displaySelectedOptions.length - 1)) {
 							this._setMode('query');
 						} else {
 							this._highlightSelectedItem(1, true);
@@ -437,8 +437,8 @@ Custom property                | Description                             | Defau
 					/* backspace */ 8: function() {
 						if (!this._inputValue.length) {
 							// another backspace removes the last selected item 
-							if (this._selectedOptions.length) {
-								this.deselect(this._selectedOptions[this._selectedOptions.length-1].item);
+							if (this._displaySelectedOptions.length) {
+								this.deselect(this._displaySelectedOptions[this._displaySelectedOptions.length-1].item);
 							}
 							return false;
 						}
@@ -462,7 +462,7 @@ Custom property                | Description                             | Defau
 					},
 					
 					/* left arr  */ 37: function() {
-						if (this._inputValue.length || !this._selectedOptions.length)
+						if (this._inputValue.length || !this._displaySelectedOptions.length)
 							return true;
 						this._setMode('view');
 						this._highlightSelectedItem('last');
@@ -516,7 +516,7 @@ Custom property                | Description                             | Defau
 				var item = event.model.item;
 				if (!item) return;
 				if (item.editing) return; // don't interrupt the edit!
-				var idx = this._selectedOptions.indexOf(item);
+				var idx = this._displaySelectedOptions.indexOf(item);
 				this._setMode('view', idx);
 			},
 			
@@ -532,7 +532,7 @@ Custom property                | Description                             | Defau
 				
 				/** @namespace event.model */
 				var item = event.model.item;
-				var idx = this._selectedOptions.indexOf(item);
+				var idx = this._displaySelectedOptions.indexOf(item);
 				if (!item) return;
 				this._highlightSelectedItem(idx);
 				this._setMode('edit', this._highlighted.selectedOptionIdx);
