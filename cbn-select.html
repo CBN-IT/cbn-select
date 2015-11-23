@@ -377,6 +377,12 @@ Custom property                | Description                             | Defau
 						(keycode > 218 && keycode < 223);   // [\]' (in order)
 				}
 				
+				if (isPrintable(event) && this._status.mode == 'view') {
+					// focus the input
+					this._setMode('query');
+					this.$.input.value += String.fromCharCode(1*event.charCode);
+				}
+				
 				var proceed, dispatch = this._keyDispatch[this._status.mode][event.keyCode] || this._keyDispatch[event.keyCode];
 				var hasModifiers = event['altGraphKey'] || event['metaKey'] || event.altKey || event.shiftKey;
 				if (dispatch && !hasModifiers) {
@@ -390,10 +396,9 @@ Custom property                | Description                             | Defau
 						event.preventDefault();
 					}
 					
-				} else if (isPrintable(event) && this._status.mode == 'view') {
-					// focus the input
+				} else if (this._status.mode == 'view') {
+					// unknown command was received, switch to query
 					this._setMode('query');
-					this.$.input.value += String.fromCharCode(1*event.charCode);
 				}
 			},
 			
@@ -407,7 +412,18 @@ Custom property                | Description                             | Defau
 				view: { // when one of the chosen options is highlighted
 					
 					/* backspace */  8: function() { /* Deselects the currently highlighted value. */
-						this._removeSelectedOption();
+						if (this._highlighted.selectedOptionIdx) {
+							this._setMode('query');
+							if (!this._inputValue.length) {
+								// another backspace removes the last selected item 
+								if (this._displaySelectedOptions.length) {
+									this.deselect(this._displaySelectedOptions[this._displaySelectedOptions.length-1].item);
+								}
+								return false;
+							}
+						} else {
+							this._removeSelectedOption();
+						}
 					},
 					
 					/* enter     */ 13: function() {
@@ -492,6 +508,14 @@ Custom property                | Description                             | Defau
 			},
 			
 			/**
+			 * Closes the options dropdown list.
+			 */
+			_closeDropdown: function() {
+				this._setMode('view');
+				this.set('_status.open', false);
+			},
+			
+			/**
 			 * Called when a dropdown option has been clicked / tapped.
 			 * 
 			 * @param {Object} event The captured event.
@@ -501,8 +525,7 @@ Custom property                | Description                             | Defau
 				this.select(item.item);
 				this._clearQueryInput();
 				if (!this.multiple) {
-					this._setMode('view');
-					this.set('_status.open', false);
+					this._closeDropdown();
 				}
 			},
 			
