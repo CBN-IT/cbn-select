@@ -56,7 +56,7 @@ Custom property                | Description                             | Defau
 		<style include="cbn-select-styles"></style>
 		
 		<cbn-data-filter id="filter" auto="false"
-				filter-property="[[filterProperty]]" filter-mode="[[filterMode]]"></cbn-data-filter>
+				filter-property="filterValue" filter-mode="[[filterMode]]"></cbn-data-filter>
 		
 		<div id="container" tabindex="-1" class$="[[_computeContainerClass(_status.open)]]">
 			
@@ -243,7 +243,16 @@ Custom property                | Description                             | Defau
 				alwaysShowChips: {
 					type: Boolean,
 					value: false
+				},
+				
+				/**
+				 * Whether the current input value is invalid.
+				 */
+				_inputValueInvalid: {
+					type: Boolean,
+					value: false
 				}
+				
 			},
 			
 			behaviors: [
@@ -316,6 +325,19 @@ Custom property                | Description                             | Defau
 				this.removeEventListener('keydown', this._keyDownHandler, true);
 			},
 			
+			/**
+			 * Overrides the `CbnForm.Validatable`'s `validate()` method to validate the input value.
+			 */
+			validate: function() {
+				var result = !this._inputValueInvalid;
+				if (!result) {
+					this.fire('cbn-form-validate', { result: result });
+					return result;
+				}
+				return CbnForm.Validatable.validate.call(this);
+			},
+			
+			
 			// Event handlers: 
 			
 			/**
@@ -340,10 +362,8 @@ Custom property                | Description                             | Defau
 						// a child element was clicked, maintain focus
 						this.focus();
 					} else {
-						if (this._inputValue) {
-							this.select(this._inputValue);
-							this._clearQueryInput();
-						}
+						var res = this.select(this._inputValue);
+						this._updateQueryInputChanged(res);
 						this.set('_status.focused', false);
 						this._setMode('');
 					}
@@ -466,12 +486,13 @@ Custom property                | Description                             | Defau
 					},
 					
 					/* enter     */ 13: function() {
+						var res;
 						if (this._highlighted.filteredOptionIdx > -1) {
-							this.select(this._filteredOptions[this._highlighted.filteredOptionIdx].item);
+							res = this.select(this._filteredOptions[this._highlighted.filteredOptionIdx].item);
 						} else {
-							this.select(this._inputValue);
+							res = this.select(this._inputValue);
 						}
-						this._clearQueryInput();
+						this._updateQueryInputChanged(res);
 						if (!this._showChips) {
 							this.blur();
 						}
@@ -522,8 +543,8 @@ Custom property                | Description                             | Defau
 			 */
 			_dropdownOptionTap: function(event) {
 				var item = event.model.item;
-				this.select(item.item);
-				this._clearQueryInput();
+				var res = this.select(item.item);
+				this._updateQueryInputChanged(res);
 				if (!this.multiple) {
 					this._closeDropdown();
 				}

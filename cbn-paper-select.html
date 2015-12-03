@@ -226,7 +226,14 @@ style this element.
 		},
 		
 		ready: function() {
-			this.$.container.addEventListener('input', this.$.container._onInput);
+			this.$.container.addEventListener('input', function() {
+				this.$.container._handleValueAndAutoValidate(this);
+			}.bind(this));
+			this.$.container.addEventListener('cbn-form-validate', function(event) {
+				this.$.container.invalid = !event.detail.result;
+				this.$.container._handleValue(this);
+			}.bind(this));
+			
 			this.$.container._handleValue = function(inputElement) {
 				var value = this._inputElementValue;
 				var input = this._inputElement;
