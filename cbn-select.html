@@ -243,15 +243,8 @@ Custom property                | Description                             | Defau
 				alwaysShowChips: {
 					type: Boolean,
 					value: false
-				},
-				
-				/**
-				 * Whether the current input value is invalid.
-				 */
-				_inputValueInvalid: {
-					type: Boolean,
-					value: false
 				}
+				
 				
 			},
 			
@@ -362,8 +355,12 @@ Custom property                | Description                             | Defau
 						// a child element was clicked, maintain focus
 						this.focus();
 					} else {
-						var res = this.select(this._inputValue);
-						this._updateQueryInputChanged(res);
+						if (this._inputValue || this._inputModified) {
+							var res = this.select(this._inputValue);
+							this._updateQueryInputChanged(res);
+						} else {
+							this._setInputValidState(true);
+						}
 						this.set('_status.focused', false);
 						this._setMode('');
 					}
@@ -618,6 +615,7 @@ Custom property                | Description                             | Defau
 			 */
 			_queryInputHandler: function(event) {
 				this._inputValue = event.target.value;
+				this._inputModified = true;
 				
 				// clear any dropdown option selection
 				this._highlightDropdownItem(null);
