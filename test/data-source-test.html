@@ -1,0 +1,60 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+	
+	<script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+	<script src="../../web-component-tester/browser.js"></script>
+	
+	<script src="../../test-fixture/test-fixture-mocha.js"></script>
+	<link rel="import" href="../../test-fixture/test-fixture.html" />
+	
+	<!-- Elements to be tested -->
+	<link rel="import" href="../cbn-select.html">
+	
+</head>
+<body>
+
+<test-fixture id="simpleSelect">
+	<template is="dom-template">
+		<cbn-form>
+			<cbn-select id="select" name="test" data-source="#testDs">
+				<cbn-data-source id="testDS" data="{{testData}}"></cbn-data-source>
+			</cbn-select>
+		</cbn-form>
+	</template>
+</test-fixture>
+
+<script>
+	
+	suite('options from cbn-data-source', function () {
+		var f;
+		
+		test('normal operation', function () {
+			var testData = [
+					{ value: 1, label: "One" },
+					{ value: 2, label: "Two" },
+					{ value: 3, label: "Three" },
+					{ value: 4, label: "Four" }
+				];
+			f = fixture('simpleSelect', {
+				testData: testData
+			});
+			f = f.querySelector('#select');
+			// TODO: fix this
+			console.log(f._dataSource);
+			
+			f.value = testData[0];
+			assert.deepEqual(f.value, '', testData[0]);
+		});
+		
+		
+		
+	});
+
+
+</script>
+
+</body>
+</html>
