@@ -318,18 +318,6 @@ Custom property                | Description                             | Defau
 				this.removeEventListener('keydown', this._keyDownHandler, true);
 			},
 			
-			/**
-			 * Overrides the `CbnForm.Validatable`'s `validate()` method to validate the input value.
-			 */
-			validate: function() {
-				var result = !this._inputValueInvalid;
-				if (!result) {
-					this.fire('cbn-form-validate', { result: result });
-					return result;
-				}
-				return CbnForm.Validatable.validate.call(this);
-			},
-			
 			
 			// Event handlers: 
 			
@@ -359,7 +347,7 @@ Custom property                | Description                             | Defau
 							var res = this.select(this._inputValue);
 							this._updateQueryInputChanged(res);
 						} else {
-							this._setInputValidState(true);
+							this._setInternalValidationState(true);
 						}
 						this.set('_status.focused', false);
 						this._setMode('');

@@ -27,7 +27,7 @@ style this element.
 			}
 		</style>
 		
-		<paper-input-container id="container" no-label-float$="[[noLabelFloat]]" attr-for-value="value"
+		<paper-input-container id="container" no-label-float$="[[noLabelFloat]]" attr-for-value="validate-value"
 							   always-float-label="[[_computeAlwaysFloatLabel(alwaysFloatLabel,placeholder)]]"
 							   auto-validate$="[[autoValidate]]" disabled$="[[disabled]]" invalid="[[invalid]]">
 			
@@ -225,33 +225,20 @@ style this element.
 			"placeholder": { type: 'attribute' }
 		},
 		
-		ready: function() {
-			this.$.container.addEventListener('input', function() {
-				this.$.container._handleValueAndAutoValidate(this);
-			}.bind(this));
-			this.$.container.addEventListener('cbn-form-validate', function(event) {
-				this.$.container.invalid = !event.detail.result;
-				this.$.container._handleValue(this);
-			}.bind(this));
-			
-			this.$.container._handleValue = function(inputElement) {
-				var value = this._inputElementValue;
-				var input = this._inputElement;
-				
-				if (input._inputValue) {
-					this._inputHasContent = true;
-				} else if (input.multiple) {
-					this._inputHasContent = !!(value && value.length);
-				} else {
-					this._inputHasContent = !!(value);
-				}
-				
-				this.updateAddons({
-					inputElement: inputElement,
-					value: value,
-					invalid: this.invalid
-				});
+		/**
+		 * Extension point for returning whether the contained input is empty.
+		 *
+		 * @param {Object} input The source input element.
+		 * @param {*}       value The value to check.
+		 * @returns {Boolean} True if the input's displayed value is empty.
+		 */
+		_isInputEmpty: function(input, value) {
+			if (input._inputValue) {
+				return false;
+			} else if (input.multiple) {
+				return !(value && value.length);
 			}
+			return !(value || value === 0);
 		}
 		
 	});

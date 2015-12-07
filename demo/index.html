@@ -36,7 +36,8 @@
 		
 		<form id="demoForm" is="cbn-form" model>
 			
-			<cbn-paper-select use-iron-list auto-validate label="Single" name="pone" options="[[demoOptions1]]"></cbn-paper-select>
+			<cbn-paper-select use-iron-list auto-validate validation='{ "required": true }'
+							  label="Single" name="pone" options="[[demoOptions1]]"></cbn-paper-select>
 			
 			<cbn-paper-select label="Multiple" name="ptwo" multiple options="[[demoOptions1]]"></cbn-paper-select>
 			
