@@ -74,6 +74,7 @@
 			"multiple": false,
 			"freeText": true,
 			"dataSource": "#simpleData",
+			"itemHashProperty": "value",
 			"preview": true,
 			"alwaysShowChips": true
 		},
@@ -81,12 +82,10 @@
 			"name": "select7",
 			"type": "select",
 			"useIronList": true,
-			"defaultValue": [ {
-				"value": 6,
-				"label": "Polymer"
-			} ],
+			"defaultValue": [ 6, 7 ],
 			"floatingLabel": true,
 			"label": "With Ajax Source, Multiple, iron-list",
+			"itemHashProperty": "value",
 			"multiple": true,
 			"freeText": true,
 			"dataSource": "#ajaxData",

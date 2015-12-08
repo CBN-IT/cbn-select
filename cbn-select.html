@@ -343,7 +343,7 @@ Custom property                | Description                             | Defau
 						// a child element was clicked, maintain focus
 						this.focus();
 					} else {
-						if (this._inputValue || this._inputModified) {
+						if (this._inputValue || (!this._showChips && this._inputModified)) {
 							var res = this.select(this._inputValue);
 							this._updateQueryInputChanged(res);
 						} else {
