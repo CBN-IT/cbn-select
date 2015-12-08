@@ -76,6 +76,7 @@
 			"dataSource": "#simpleData",
 			"itemHashProperty": "value",
 			"preview": true,
+			"defaultValue": "0",
 			"alwaysShowChips": true
 		},
 		{
