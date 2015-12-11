@@ -24,6 +24,7 @@ style this element.
 		<style>
 			:host {
 				display: block;
+				outline: 0;
 			}
 		</style>
 		
@@ -197,6 +198,10 @@ style this element.
 				type: String
 			}
 			
+		},
+		
+		hostAttributes: {
+			'tab-index': -1
 		},
 		
 		behaviors: [

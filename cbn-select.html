@@ -245,7 +245,6 @@ Custom property                | Description                             | Defau
 					value: false
 				}
 				
-				
 			},
 			
 			behaviors: [
@@ -478,8 +477,9 @@ Custom property                | Description                             | Defau
 							res = this.select(this._inputValue);
 						}
 						this._updateQueryInputChanged(res);
-						if (!this._showChips) {
+						if (!this.multiple) {
 							this.blur();
+							this._setMode('');
 						}
 					},
 					
@@ -510,6 +510,7 @@ Custom property                | Description                             | Defau
 				/* escape    */ 27: function() {
 					this._clearQueryInput();
 					this.blur();
+					this._setMode('');
 				}
 			},
 			
