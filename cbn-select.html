@@ -82,6 +82,10 @@ Custom property                | Description                             | Defau
 					title="[[placeholder]]" placeholder$="[[placeholder]]" readonly$="[[readonly]]"
 					on-tap="_dropDownButtonTap" on-input="_queryInputHandler">
 			
+			<div id="dropdownBtn" on-tap="_dropDownButtonTap">
+				<iron-icon icon="icons:arrow-drop-down"></iron-icon>
+			</div>
+			
 			<div id="optionsWrapper">
 				<template is="dom-if" if="[[useIronList]]">
 					<iron-list id="ironList" class="options-list" items="[[_filteredOptions]]" as="item">
@@ -105,9 +109,6 @@ Custom property                | Description                             | Defau
 						</template>
 					</div>
 				</template>
-			</div>
-			<div id="dropdownBtn" on-tap="_dropDownButtonTap">
-				<iron-icon icon="icons:arrow-drop-down"></iron-icon>
 			</div>
 		</div>
 		
@@ -512,14 +513,6 @@ Custom property                | Description                             | Defau
 					this.blur();
 					this._setMode('');
 				}
-			},
-			
-			/**
-			 * Closes the options dropdown list.
-			 */
-			_closeDropdown: function() {
-				this._setMode('view');
-				this.set('_status.open', false);
 			},
 			
 			/**
