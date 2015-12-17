@@ -344,8 +344,10 @@ Custom property                | Description                             | Defau
 						this.focus();
 					} else {
 						if (this._inputValue || (!this._showChips && this._inputModified)) {
-							var res = this.select(this._inputValue);
-							this._updateQueryInputChanged(res);
+							if (!this.isItemSelected(this._inputValue)) {
+								var res = this.select(this._inputValue);
+								this._updateQueryInputChanged(res);
+							}
 						} else {
 							this._setInternalValidationState(true);
 						}

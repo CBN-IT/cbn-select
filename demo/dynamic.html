@@ -59,9 +59,9 @@
 		/** @namespace tpl.$.demoForm */
 		var form = tpl.$.demoForm;
 		
-		function updateOutput(event) {
-			if (event)
-				console.trace('v-c', event.detail);
+		function updateOutput(ev) {
+			if (ev)
+				console.trace('value changed', ev.target.name, ev.detail);
 			/** @namespace tpl.$.stringifiedJson */
 			tpl.$.stringifiedJson.textContent = JSON.stringify(form.model, null, 4);
 		}
