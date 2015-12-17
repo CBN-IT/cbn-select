@@ -240,10 +240,11 @@ style this element.
 		_isInputEmpty: function(input, value) {
 			if (input._inputValue) {
 				return false;
-			} else if (input.multiple) {
+			}
+			if (input.multiple) {
 				return !(value && value.length);
 			}
-			return !(value || value === 0);
+			return value === '' || value === undefined || value === null;
 		}
 		
 	});
