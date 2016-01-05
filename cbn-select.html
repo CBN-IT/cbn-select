@@ -47,6 +47,7 @@ Custom property                | Description                             | Defau
 <link rel="import" href="../iron-icons/iron-icons.html" />
 <link rel="import" href="../cbn-data-source/cbn-data-source.html" />
 <link rel="import" href="../cbn-data-source/consumer-behavior.html" />
+<link rel="import" href="../cbn-polymer-extensions/lib/position-behavior.html">
 <link rel="import" href="../iron-list/iron-list.html" />
 
 <link rel="import" href="styles.html" />
@@ -165,6 +166,16 @@ Custom property                | Description                             | Defau
 				},
 				
 				/**
+				 * The position to show the dropdown box at.
+				 *
+				 * See `PositionBehavior` for mode details.
+				 */
+				position: {
+					type: String,
+					value: "bottom+3 left, top left"
+				},
+				
+				/**
 				 * Whether to use iron-list for rendering the dropdown options.
 				 */
 				useIronList: {
@@ -253,6 +264,7 @@ Custom property                | Description                             | Defau
 				CbnForm.Validatable,
 				CbnForm.DynamicElement,
 				CbnDataSource.ConsumerBehavior,
+				Cbn.PositionBehavior,
 				scope.SelectUIBehavior,
 				scope.SelectOptionsBehavior
 			],
