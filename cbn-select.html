@@ -94,6 +94,14 @@ Custom property                | Description                             | Defau
 							<div class$="[[_computeDropdownItemClass(item.highlighted)]]"
 								 on-tap="_dropdownOptionTap">[[item.label]]</div>
 						</template>
+						<div class="options-status">
+							<template is="dom-if" if="[[_optionsLoading]]">
+								<div class="loading">Loading options ...</div>
+							</template>
+							<template is="dom-if" if="[[_computeEmptyOptionsList(_optionsLoading, _filteredOptions)]]">
+								<div class="empty">No available options</div>
+							</template>
+						</div>
 					</iron-list>
 				</template>
 				<template is="dom-if" if="[[!useIronList]]">
@@ -106,7 +114,7 @@ Custom property                | Description                             | Defau
 							<div class="loading">Loading options ...</div>
 						</template>
 						<template is="dom-if" if="[[_computeEmptyOptionsList(_optionsLoading, _filteredOptions)]]">
-							<div class="empty">No available options.</div>
+							<div class="empty">No available options</div>
 						</template>
 					</div>
 				</template>
