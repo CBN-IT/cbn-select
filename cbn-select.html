@@ -48,6 +48,7 @@ Custom property                | Description                             | Defau
 <link rel="import" href="../cbn-data-source/cbn-data-source.html" />
 <link rel="import" href="../cbn-data-source/consumer-behavior.html" />
 <link rel="import" href="../cbn-polymer-extensions/lib/position-behavior.html">
+<link rel="import" href="../cbn-polymer-extensions/lib/focusable-behavior.html">
 <link rel="import" href="../iron-list/iron-list.html" />
 
 <link rel="import" href="styles.html" />
@@ -263,6 +264,24 @@ Custom property                | Description                             | Defau
 				alwaysShowChips: {
 					type: Boolean,
 					value: false
+				},
+				
+				/**
+				 * The element that should retain the focus.
+				 */
+				focusTarget: {
+					type: Object,
+					value: function() { //noinspection JSUnresolvedVariable
+						return ( this.$ && this.$.input ? this.$.input : this ); }
+				},
+				
+				/**
+				 * The element that should retain the focus.
+				 */
+				focusableContainer: {
+					type: Object,
+					value: function() { //noinspection JSUnresolvedVariable
+						return ( this.$ && this.$.container ? this.$.container : this ); }
 				}
 				
 			},
@@ -273,6 +292,7 @@ Custom property                | Description                             | Defau
 				CbnForm.DynamicElement,
 				CbnDataSource.ConsumerBehavior,
 				Cbn.PositionBehavior,
+				Cbn.FocusableBehavior,
 				scope.SelectUIBehavior,
 				scope.SelectOptionsBehavior
 			],
@@ -299,7 +319,9 @@ Custom property                | Description                             | Defau
 			},
 			
 			listeners: {
-				'mousedown': '_mouseDownHandler'
+				'keydown': '_keyDownHandler',
+				'focus-in': '_focusIn',
+				'focus-out': '_focusOut'
 			},
 			
 			// Private methods: 
@@ -309,85 +331,30 @@ Custom property                | Description                             | Defau
 			 */
 			get _searchScope() { return this.parentForm; },
 			
-			/**
-			 * Used to normalize element's event handler methods.
-			 */
-			created: function() {
-				// bind some internally used event handlers to 'this'
-				this._focusHandler = this._focusHandler.bind(this);
-				this._blurHandler = this._blurHandler.bind(this);
-				this._keyDownHandler = this._keyDownHandler.bind(this);
-			},
-			
-			/**
-			 * Callback when an element instance is attached to the DOM. Used to set up event handlers.
-			 */
-			attached: function() {
-				// capture those events for the element itself and all its children
-				this.addEventListener('focus', this._focusHandler, true);
-				this.addEventListener('blur', this._blurHandler, true);
-				this.addEventListener('keydown', this._keyDownHandler, true);
-			},
-			
-			/**
-			 * Callback when an element instance is attached to the DOM. Used to clean up event handlers.
-			 */
-			detached: function() {
-				this.removeEventListener('focus', this._focusHandler, true);
-				this.removeEventListener('blur', this._blurHandler, true);
-				this.removeEventListener('keydown', this._keyDownHandler, true);
-			},
-			
 			
 			// Event handlers: 
 			
 			/**
 			 * Captures the focus event on any of the element's children.
 			 */
-			_focusHandler: function() {
-				this._refocus = false;
-				if (this._status.focused) 
-					return;
-				this.set('_status.focused', true);
-				
-				if (!this._status.mode)
-					this._setMode('query');
+			_focusIn: function() {
+				this._setMode('query');
 			},
 			
 			/**
 			 * Captures the blur event on any of the element's children.
 			 */
-			_blurHandler: function() {
-				this.async(function() {
-					if (this._refocus || this.contains(document.activeElement)) {
-						// a child element was clicked, maintain focus
-						this.focus();
-					} else {
-						this._saveEditedOption();
-						if (this._inputValue || (!this._showChips && this._inputModified)) {
-							if (!this.isItemSelected(this._inputValue)) {
-								var res = this.select(this._inputValue);
-								this._updateQueryInputChanged(res);
-							}
-						} else {
-							this._setInternalValidationState(true);
-						}
-						this.set('_status.focused', false);
-						this._setMode('');
+			_focusOut: function() {
+				this._saveEditedOption();
+				if (this._inputValue || (!this._showChips && this._inputModified)) {
+					if (!this.isItemSelected(this._inputValue)) {
+						var res = this.select(this._inputValue);
+						this._updateQueryInputChanged(res);
 					}
-				});
-			},
-			
-			/**
-			 * Receives all mouse down events (for the element and its children).
-			 * Used to prevent losing focus when one of the children is clicked.
-			 */
-			_mouseDownHandler: function() {
-				this._refocus = true;
-				setTimeout(function() {
-					// WARNING: needs to execute after macrotask!
-					this._refocus = false;
-				}.bind(this), 0);
+				} else {
+					this._setInternalValidationState(true);
+				}
+				this._setMode('');
 			},
 			
 			/**

@@ -47,6 +47,7 @@ style this element.
 						filter-mode="[[filterMode]]"
 						placeholder$="[[placeholder]]"
 						always-show-chips$="[[alwaysShowChips]]"
+						focusable-ancestor="cbn-paper-select"
 						validation="[[validation]]"
 						validation-order="[[validationOrder]]"
 						validation-type="[[validationType]]"
@@ -198,10 +199,6 @@ style this element.
 				type: String
 			}
 			
-		},
-		
-		hostAttributes: {
-			'tab-index': -1
 		},
 		
 		behaviors: [
