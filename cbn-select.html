@@ -371,11 +371,16 @@ Custom property                | Description                             | Defau
 						(keycode > 185 && keycode < 193) || // ;=,-./` (in order)
 						(keycode > 218 && keycode < 223);   // [\]' (in order)
 				}
-				
-				if (isPrintable(event) && this._status.mode == 'view') {
-					// focus the input
+				var domEvent = Polymer.dom(event);
+				if (isPrintable(event)) {
 					this._setMode('query');
-					this.$.input.value += String.fromCharCode(1*event.charCode);
+					if (domEvent.rootTarget != this.$.input) {
+						// focus the input
+						event.preventDefault();
+						this.$.input.value += String.fromCharCode(1 * event.charCode);
+						return;
+					}
+					return;
 				}
 				
 				var proceed, dispatch = this._keyDispatch[this._status.mode][event.keyCode] || this._keyDispatch[event.keyCode];
@@ -586,14 +591,13 @@ Custom property                | Description                             | Defau
 			 * @param {Event} event The input event object.
 			 */
 			_queryInputHandler: function(event) {
-				this._inputValue = event.target.value;
 				this._inputModified = true;
 				
 				// clear any dropdown option selection
 				this._highlightDropdownItem(null);
 				
 				// query/filter the options on the fly
-				this._queryOptions(this._inputValue);
+				this._queryOptions(event.target.value);
 				if (!this.freeText) {
 					// highlight the first option found
 					this._highlightDropdownItem('first');
