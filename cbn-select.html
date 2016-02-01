@@ -80,7 +80,7 @@ Custom property                | Description                             | Defau
 				</template>
 			</template>
 			
-			<input id="input" type="text" value="{{_inputValue}}" class="text-input" autocomplete="off"
+			<input id="input" type="text" value="{{_inputValue::input}}" class="text-input" autocomplete="off"
 					title="[[placeholder]]" placeholder$="[[placeholder]]" readonly$="[[readonly]]"
 					on-tap="_dropDownButtonTap" on-input="_queryInputHandler">
 			
@@ -372,15 +372,13 @@ Custom property                | Description                             | Defau
 						(keycode > 218 && keycode < 223);   // [\]' (in order)
 				}
 				var domEvent = Polymer.dom(event);
-				if (isPrintable(event)) {
+				if (isPrintable(event) && this._status.mode == 'view') {
 					this._setMode('query');
 					if (domEvent.rootTarget != this.$.input) {
 						// focus the input
 						event.preventDefault();
 						this.$.input.value += String.fromCharCode(1 * event.charCode);
-						return;
 					}
-					return;
 				}
 				
 				var proceed, dispatch = this._keyDispatch[this._status.mode][event.keyCode] || this._keyDispatch[event.keyCode];
