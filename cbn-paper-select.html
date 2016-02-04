@@ -47,6 +47,7 @@ style this element.
 						filter-mode="[[filterMode]]"
 						placeholder$="[[placeholder]]"
 						always-show-chips$="[[alwaysShowChips]]"
+						focusable-ancestor="cbn-paper-select"
 						validation="[[validation]]"
 						validation-order="[[validationOrder]]"
 						validation-type="[[validationType]]"
@@ -156,11 +157,11 @@ style this element.
 			
 			/**
 			 * Specify the option item property to use to filter the options list.
-			 * Specify empty value if your data is a String list and you want to compare the items directly.
+			 * If empty, will autodetect it based on `itemLabelProperty`.
 			 */
 			filterProperty: {
 				type: String,
-				value: 'label'
+				value: ''
 			},
 			
 			/**
@@ -200,10 +201,6 @@ style this element.
 			
 		},
 		
-		hostAttributes: {
-			'tab-index': -1
-		},
-		
 		behaviors: [
 			Polymer.PaperInputBehavior,
 			CbnForm.PaperContainer,
@@ -240,10 +237,11 @@ style this element.
 		_isInputEmpty: function(input, value) {
 			if (input._inputValue) {
 				return false;
-			} else if (input.multiple) {
+			}
+			if (input.multiple) {
 				return !(value && value.length);
 			}
-			return !(value || value === 0);
+			return value === '' || value === undefined || value === null;
 		}
 		
 	});

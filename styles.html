@@ -1,23 +1,19 @@
-<style is="custom-style">
-	:root {
-		/* Default values for CSS variables / mixins */
-		--cbn-select-min-width: 15em;
-	}
-</style>
+<link rel="import" href="../iron-flex-layout/iron-flex-layout.html">
 
 <dom-module id="cbn-select-styles"><template>
 	<style>
 		
 		:host {
-			display: inline-block;
+			display: block;
 			outline: 0;
 		}
 		
 		/* The container for all element's components */
 		#container {
-			display: flex;
-			flex-wrap: wrap;
-			align-items: center;
+			@apply(--layout-horizontal);
+			@apply(--layout-center);
+			@apply(--layout-wrap);
+			
 			position: relative;
 			outline: none;
 			
@@ -31,7 +27,9 @@
 		 * Selected items' bubbles.
 		 */
 		.selected-item {
-			display: inline-block;
+			@apply(--layout-horizontal);
+			@apply(--layout-center);
+			
 			/*font-size: 0.9em;*/
 			color: #333333;
 			background: #E7E7E7;
@@ -41,6 +39,8 @@
 			vertical-align: middle;
 			cursor: pointer;
 			border-radius: 0.7em;
+			overflow: hidden;
+			white-space: nowrap;
 			@apply(--cbn-select-ed-item);
 		}
 		
@@ -54,6 +54,15 @@
 			background: #ffffcc;
 			box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.37);
 			@apply(--cbn-select-ed-item-hlight);
+		}
+		
+		.selected-item.editing {
+			overflow: visible;
+		}
+		
+		.selected-item > span {
+			overflow: hidden;
+			flex: 1;
 		}
 		
 		/* Remove selection button */
@@ -120,21 +129,17 @@
 		 */
 		#optionsWrapper {
 			position: fixed;
-			z-index: 1;
-			min-width: var(--cbn-select-min-width);
+			z-index: 9999;
+			min-width: var(--cbn-select-min-width, 15em);
 			min-height: 10em;
-			max-height: 25em;
+			max-height: 40em;
 			display: none;
 			overflow-y: auto;
 			
-			margin-top: 5px;
 			box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.37);
 			background: #ffffff;
 			
 			@apply(--cbn-select-opts-list);
-		}
-		#container.open #optionsWrapper {
-			display: block;
 		}
 		
 		.options-list {
@@ -168,13 +173,6 @@
 			color: #FFFFFF;
 			background: #9FBFFF;
 			@apply(--cbn-select-options-item-hover);
-		}
-		
-		.options-list .item:first-of-type {
-			margin-top: 5px;
-		}
-		.options-list .item:last-of-type {
-			margin-bottom: 5px;
 		}
 		
 		.options-list .item.highlighted {

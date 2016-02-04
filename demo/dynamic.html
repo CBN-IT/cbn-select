@@ -33,11 +33,15 @@
 			
 			<cbn-data-source id="simpleData" data='[
 				{ "value":"0", "label": "Zero" },
+				{ "value":"0", "label": "Zero" },
+				{ "value":"0", "label": "Zero" },
+				{ "value":"0", "label": "Zero" },
+				{ "value":"0", "label": "Zero" },
 				{ "value":"1", "label": "First" },
 				{ "value":"2", "label": "Second" },
 				{ "value":"3", "label": "Third" },
 				{ "value":"5", "label": "Third With hash", "_hash":"hash" },
-				{ "value":"4", "label": "Four" }
+				{ "value":"4", "label": "Fourth with a very long name should fit right? we&#39;ll see, I guess... lorem ipsum dolor sit amet lalala lalala" }
 			]'></cbn-data-source>
 			
 			<cbn-data-source id="ajaxData">
@@ -59,9 +63,9 @@
 		/** @namespace tpl.$.demoForm */
 		var form = tpl.$.demoForm;
 		
-		function updateOutput(event) {
-			if (event)
-				console.trace('v-c', event.detail);
+		function updateOutput(ev) {
+			if (ev)
+				console.trace('value changed', ev.target.name, ev.detail);
 			/** @namespace tpl.$.stringifiedJson */
 			tpl.$.stringifiedJson.textContent = JSON.stringify(form.model, null, 4);
 		}

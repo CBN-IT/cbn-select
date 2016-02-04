@@ -36,6 +36,9 @@
 		
 		<form id="demoForm" is="cbn-form" model>
 			
+			<cbn-paper-select style="position: absolute; width: 100px;;right: 10px; top: 10px;" 
+							  label="Multiple" name="ptwoabs" multiple options="[[demoOptions1]]"></cbn-paper-select>
+			
 			<cbn-paper-select use-iron-list auto-validate validation='{ "required": true }'
 							  label="Single" name="pone" options="[[demoOptions1]]"></cbn-paper-select>
 			
@@ -58,14 +61,16 @@
 	var tpl = document.querySelector('template[is=dom-bind]');
 	tpl.demoOptions1 = [];
 	for (i=0; i<30; i++) {
-		tpl.demoOptions1.push("x" + i);
+		tpl.demoOptions1.push("xasdasdas dasdasdasd asdasdasdasdasd asd asd " + i);
 	}
 	
 	tpl.addEventListener('dom-change', function(){
 		/** @namespace tpl.$.demoForm */
 		var form = tpl.$.demoForm;
 		
-		function updateOutput() {
+		function updateOutput(ev) {
+			if (ev)
+				console.trace('value changed', ev.target.name, ev.detail);
 			/** @namespace tpl.$.stringifiedJson */
 			tpl.$.stringifiedJson.textContent = JSON.stringify(form.model, null, 4);
 		}
