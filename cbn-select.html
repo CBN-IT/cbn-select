@@ -494,12 +494,12 @@ Custom property                | Description                             | Defau
 						this._setMode('view', this._highlighted.selectedOptionIdx);
 					}
 				},
-				36: function(){ this._setMode('query'); this._highlightDropdownItem('first');  }, // home
+				/*36: function(){ this._setMode('query'); this._highlightDropdownItem('first');  },*/ // home
 				33: function(){ this._setMode('query'); this._highlightDropdownItem(-5, true); }, // page up
 				38: function(){ this._setMode('query'); this._highlightDropdownItem(-1, true); }, // up arrow
 				34: function(){ this._setMode('query'); this._highlightDropdownItem(5, true);  }, // page down
 				40: function(){ this._setMode('query'); this._highlightDropdownItem(1, true);  }, // down arrow
-				35: function(){ this._setMode('query'); this._highlightDropdownItem('last');   }, // end
+				/*35: function(){ this._setMode('query'); this._highlightDropdownItem('last');   },*/ // end
 				
 				/* escape    */ 27: function() {
 					this._clearQueryInput();
