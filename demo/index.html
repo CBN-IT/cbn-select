@@ -49,6 +49,9 @@
 			<cbn-paper-select style="width: 100px;" label="Small Text" 
 							  name="pthree" free-text options="[[demoOptions1]]"></cbn-paper-select>
 			
+			<cbn-paper-select style="width: 200px;" label="Delayed Options" value="one"
+							  name="pdelayed" free-text options="[[delayedOptions]]"></cbn-paper-select>
+			
 		</form>
 		
 		<p style="font-weight: bold;">Output: </p>
@@ -63,6 +66,9 @@
 	for (i=0; i<30; i++) {
 		tpl.demoOptions1.push("xasdasdas dasdasdasd asdasdasdasdasd asd asd " + i);
 	}
+	setTimeout(function() {
+		tpl.delayedOptions = [ "one", "two", "three" ];
+	}, 3000);
 	
 	tpl.addEventListener('dom-change', function(){
 		/** @namespace tpl.$.demoForm */
