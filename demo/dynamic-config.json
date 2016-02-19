@@ -76,7 +76,7 @@
 			"dataSource": "#simpleData",
 			"itemHashProperty": "value",
 			"preview": true,
-			"defaultValue": "0",
+			"defaultValue": "Zero",
 			"alwaysShowChips": true
 		},
 		{
@@ -88,7 +88,6 @@
 			"label": "With Ajax Source, Multiple, iron-list",
 			"itemHashProperty": "value",
 			"multiple": true,
-			"freeText": true,
 			"dataSource": "#ajaxData",
 			"preview": true
 		}
