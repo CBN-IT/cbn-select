@@ -9,6 +9,7 @@
 	
 	<script src="../../test-fixture/test-fixture-mocha.js"></script>
 	<link rel="import" href="../../test-fixture/test-fixture.html" />
+	<link rel="import" href="../../cbn-form/cbn-form.html" />
 	
 	<!-- Elements to be tested -->
 	<link rel="import" href="../cbn-select.html">
@@ -18,11 +19,10 @@
 
 <test-fixture id="simpleSelect">
 	<template is="dom-template">
-		<cbn-form>
-			<cbn-select id="select" name="test" data-source="#testDs">
-				<cbn-data-source id="testDS" data="{{testData}}"></cbn-data-source>
-			</cbn-select>
-		</cbn-form>
+		<form is="cbn-form" action="#" model>
+			<cbn-select id="select" name="test" data-source="#testDS"></cbn-select>
+			<cbn-data-source id="testDS" data="{{testData}}"></cbn-data-source>
+		</form>
 	</template>
 </test-fixture>
 
@@ -30,26 +30,48 @@
 	
 	suite('options from cbn-data-source', function () {
 		var f;
+		var testData = [
+			{ value: 1, label: "One" },
+			{ value: 2, label: "Two" },
+			{ value: 3, label: "Three" },
+			{ value: 4, label: "Four" }
+		];
 		
-		test('normal operation', function () {
-			var testData = [
-					{ value: 1, label: "One" },
-					{ value: 2, label: "Two" },
-					{ value: 3, label: "Three" },
-					{ value: 4, label: "Four" }
-				];
+		test('normal operation', function (done) {
 			f = fixture('simpleSelect', {
 				testData: testData
 			});
-			f = f.querySelector('#select');
-			// TODO: fix this
-			console.log(f._dataSource);
+			var select = Polymer.dom(f).querySelector('#select');
 			
-			f.value = testData[0];
-			assert.deepEqual(f.value, '', testData[0]);
+			flush(function() {
+				select.value = testData[0];
+				flush(function() {
+					assert.deepEqual(select.value, testData[0]);
+					
+					done();
+				});
+			});
 		});
 		
-		
+		test('delayed value', function (done) {
+			f = fixture('simpleSelect', {
+				testData: []
+			});
+			var select = Polymer.dom(f).querySelector('#select');
+			var ds = Polymer.dom(f).querySelector('#testDS');
+			
+			flush(function() {
+				select.value = testData[0];
+				assert.deepEqual(select.value, '', 'value delayed');
+				
+				ds.data = testData;
+				flush(function() {
+					assert.deepEqual(select.value, testData[0], 'delayed value restored');
+					
+					done();
+				});
+			});
+		});
 		
 	});
 
