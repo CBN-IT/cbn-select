@@ -47,7 +47,6 @@
 				select.value = testData[0];
 				flush(function() {
 					assert.deepEqual(select.value, testData[0]);
-					
 					done();
 				});
 			});
@@ -67,7 +66,6 @@
 				ds.data = testData;
 				flush(function() {
 					assert.deepEqual(select.value, testData[0], 'delayed value restored');
-					
 					done();
 				});
 			});
