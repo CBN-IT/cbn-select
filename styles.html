@@ -1,0 +1,204 @@
+<link rel="import" href="../iron-flex-layout/iron-flex-layout.html">
+
+<dom-module id="cbn-select-styles"><template>
+	<style>
+		
+		:host {
+			display: block;
+			outline: 0;
+		}
+		
+		/* The container for all element's components */
+		#container {
+			@apply(--layout-horizontal);
+			@apply(--layout-center);
+			@apply(--layout-wrap);
+			
+			position: relative;
+			outline: none;
+			
+			@apply(--cbn-select-container);
+		}
+		#container:hover {
+			cursor: text;
+		}
+		
+		/* 
+		 * Selected items' bubbles.
+		 */
+		.selected-item {
+			@apply(--layout-horizontal);
+			@apply(--layout-center);
+			
+			/*font-size: 0.9em;*/
+			color: #333333;
+			background: #E7E7E7;
+			padding: 0.0em 0.5em;
+			margin: 0.1em 0.2em 0.15em 0;
+			line-height: 17px;
+			vertical-align: middle;
+			cursor: pointer;
+			border-radius: 0.7em;
+			overflow: hidden;
+			white-space: nowrap;
+			@apply(--cbn-select-ed-item);
+		}
+		
+		.selected-item:hover {
+			background: #EFEFEF;
+			box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.37);
+			@apply(--cbn-select-ed-item-hover);
+		}
+		
+		.selected-item.highlighted {
+			background: #ffffcc;
+			box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.37);
+			@apply(--cbn-select-ed-item-hlight);
+		}
+		
+		.selected-item.editing {
+			overflow: visible;
+		}
+		
+		.selected-item > span {
+			overflow: hidden;
+			flex: 1;
+		}
+		
+		/* Remove selection button */
+		.removeBtn {
+			margin-left: 3px;
+			display: inline-flex;
+			vertical-align: middle;
+		}
+		
+		.removeBtn > iron-icon {
+			height: 14px;
+			width: 14px;
+			margin-bottom: 1px;
+			fill: #666666;
+		}
+		.removeBtn:hover > iron-icon {
+			fill: #FF0000;
+		}
+		
+		/* The edit selection input displayed for the currently edited selected-item */
+		.option-editor {
+			/* !important is a shady dom fix */
+			font-size: inherit !important;
+			font-weight: inherit !important;
+			line-height: inherit !important;
+			width: auto !important;
+			min-width: 50px !important;
+			background: rgba(0,0,0,0.05) !important;
+			border: none !important;
+			outline: none !important;
+			padding: 0 0.3em !important;
+			@apply(--cbn-select-edit-item);
+		}
+		.selected-item.editing {
+			padding: 1px;
+		}
+		
+		/*
+		 * The input extends to the length of the element.
+		 */
+		input#input {
+			display: inline-block;
+			flex: 1 1;
+			border: none;
+			box-sizing: border-box;
+			outline: none;
+			vertical-align: middle;
+			min-width: 4em;
+			padding: 0 14px 0 0 ;
+			font: inherit;
+			background-color: transparent;
+			@apply(--cbn-select-input);
+		}
+		.text-input[readonly] {
+			text-decoration: line-through;
+		}
+		
+		.text-input.unmatched {
+			color: #DDDDDD;
+		}
+		
+		/* 
+		 * Drop-down/options box styles.
+		 */
+		#optionsWrapper {
+			position: fixed;
+			z-index: 9999;
+			min-width: var(--cbn-select-min-width, 15em);
+			min-height: 10em;
+			max-height: 40em;
+			display: none;
+			overflow-y: auto;
+			
+			box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.37);
+			background: #ffffff;
+			
+			@apply(--cbn-select-opts-list);
+		}
+		
+		.options-list {
+			position: relative;
+		}
+		
+		/* The non-iron-list dropdown element */
+		#options {
+		}
+		
+		/* CSS for the iron-list dropdown */
+		#ironList {
+			position: absolute;
+			top: 0;
+			left: 0;
+			right: 0;
+			bottom: 0;
+		}
+		
+		/* Select option/item styles */
+		.options-list .item {
+			display: block;
+			padding: 0.3em 0.5em;
+			margin: 0;
+			background: white;
+			cursor: pointer;
+			box-sizing: border-box;
+			@apply(--cbn-select-options-item);
+		}
+		.options-list .item:hover {
+			color: #FFFFFF;
+			background: #9FBFFF;
+			@apply(--cbn-select-options-item-hover);
+		}
+		
+		.options-list .item.highlighted {
+			color: #FFFFFF;
+			background: #3f7fff;
+		}
+		
+		/* Other dropdown styles */
+		
+		.options-list .loading, .empty {
+			padding: 5px;
+			font-style: italic;
+		}
+		.options-list .loading {
+			background: 5px center no-repeat url("resources/loading.gif");
+			padding-left: 28px;
+			@apply(--cbn-select-loading);
+		}
+		
+		#dropdownBtn {
+			position: absolute;
+			right: -5px;
+			bottom: 0;
+			cursor: pointer;
+			@apply(--cbn-select-dropdown-btn);
+		}
+		
+	</style>
+</template></dom-module>

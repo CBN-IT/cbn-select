@@ -1,0 +1,80 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+	
+	<script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+	<script src="../../web-component-tester/browser.js"></script>
+	
+	<script src="../../test-fixture/test-fixture-mocha.js"></script>
+	<link rel="import" href="../../test-fixture/test-fixture.html" />
+	<link rel="import" href="../../cbn-form/cbn-form.html" />
+	
+	<!-- Elements to be tested -->
+	<link rel="import" href="../cbn-select.html">
+	
+</head>
+<body>
+
+<test-fixture id="simpleSelect">
+	<template is="dom-template">
+		<form is="cbn-form" action="#" model>
+			<cbn-select id="select" name="test" data-source="#testDS"></cbn-select>
+			<cbn-data-source id="testDS" data="{{testData}}"></cbn-data-source>
+		</form>
+	</template>
+</test-fixture>
+
+<script>
+	
+	suite('options from cbn-data-source', function () {
+		var f;
+		var testData = [
+			{ value: 1, label: "One" },
+			{ value: 2, label: "Two" },
+			{ value: 3, label: "Three" },
+			{ value: 4, label: "Four" }
+		];
+		
+		test('normal operation', function (done) {
+			f = fixture('simpleSelect', {
+				testData: testData
+			});
+			var select = Polymer.dom(f).querySelector('#select');
+			
+			flush(function() {
+				select.value = testData[0];
+				flush(function() {
+					assert.deepEqual(select.value, testData[0]);
+					done();
+				});
+			});
+		});
+		
+		test('delayed value', function (done) {
+			f = fixture('simpleSelect', {
+				testData: []
+			});
+			var select = Polymer.dom(f).querySelector('#select');
+			var ds = Polymer.dom(f).querySelector('#testDS');
+			
+			flush(function() {
+				select.value = testData[0];
+				assert.deepEqual(select.value, '', 'value delayed');
+				
+				ds.data = testData;
+				flush(function() {
+					assert.deepEqual(select.value, testData[0], 'delayed value restored');
+					done();
+				});
+			});
+		});
+		
+	});
+
+
+</script>
+
+</body>
+</html>

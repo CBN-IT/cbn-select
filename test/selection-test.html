@@ -1,0 +1,246 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+	
+	<script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+	<script src="../../web-component-tester/browser.js"></script>
+	
+	<script src="../../test-fixture/test-fixture-mocha.js"></script>
+	<link rel="import" href="../../test-fixture/test-fixture.html" />
+	
+	<!-- Elements to be tested -->
+	<link rel="import" href="../cbn-select.html">
+	
+</head>
+<body>
+
+<test-fixture id="simpleSelect">
+	<template>
+		<cbn-select name="test" options='[ "One", "Two", "Three" ]'></cbn-select>
+	</template>
+</test-fixture>
+
+<test-fixture id="emptySelect">
+	<template>
+		<cbn-select name="testE"></cbn-select>
+	</template>
+</test-fixture>
+
+<test-fixture id="multipleSelect">
+	<template>
+		<cbn-select name="test2" multiple options='[ "One", "Two", "Three" ]'></cbn-select>
+	</template>
+</test-fixture>
+
+<test-fixture id="objectSelect">
+	<template>
+		<cbn-select name="test3" options='[
+			{ "value": "1", "label": "One" },
+			{ "value": "2", "label": "Two" },
+			{ "value": "3", "label": "Three" },
+			{ "value": "4", "label": "Four" }
+		]'></cbn-select>
+	</template>
+</test-fixture>
+
+<script>
+	
+	suite('single selection', function () {
+		var f;
+		
+		test('value property change', function () {
+			f = fixture('simpleSelect');
+			
+			f.value = null;
+			assert.equal(f.value, '', 'empty value');
+			
+			f.value = 'One';
+			assert.equal(f.value, 'One', 'value selected');
+			
+			f.value = 'Invalid';
+			assert.equal(f.value, 'One', 'invalid value not selected');
+			
+			f.value = 'Two';
+			assert(f.value, 'Two', 'value changed');
+			
+			f.value = null;
+			assert.deepEqual(f.value, '', 'empty value');
+		});
+		
+		test('selection API', function () {
+			f = fixture('simpleSelect');
+			
+			f.select('One');
+			assert.equal(f.value, 'One', 'select()');
+			assert.deepEqual(f.getSelectedOptions(), ['One'], 'getSelectedOptions()');
+			
+			f.select('Two');
+			assert.equal(f.value, 'Two', 'select() another');
+			
+			f.deselect('One');
+			assert.equal(f.value, 'Two', 'deselect() on wrong value');
+			
+			f.deselect('Two');
+			assert.equal(f.value, '', 'deselect() on current value');
+			
+			f.value = '';
+			assert.deepEqual(f.getSelectedOptions(), [], 'empty selected options');
+		});
+		
+		test('freeText', function () {
+			f = fixture('simpleSelect');
+			
+			f.freeText = true;
+			
+			f.value = 'One';
+			assert.equal(f.value, 'One', 'existing option');
+			
+			f.select('Two222');
+			assert.equal(f.value, 'Two222', 'free text');
+		});
+		
+		test('delayed value', function () {
+			f = fixture('emptySelect');
+			
+			f.value = 'One';
+			assert.equal(f.value, '', 'no options initialized');
+			
+			f.options = [ "One", "Two", "Three" ];
+			f.select('Two');
+			assert.equal(f.value, 'Two', 'value selected');
+		});
+	});
+	
+	suite('multiple selection', function () {
+		var f;
+		
+		test('value property change', function () {
+			f = fixture('multipleSelect');
+			
+			f.value = null;
+			assert.deepEqual(f.value, [], 'empty value');
+			
+			f.value = 'One';
+			assert.deepEqual(f.value, ['One'], 'single value selected');
+			
+			f.value = ['One', 'Three'];
+			assert.deepEqual(f.value, ['One', 'Three'], 'multiple values selected');
+			
+			f.value = ['One', 'Invalid'];
+			assert.deepEqual(f.value, ['One'], 'invalid value not selected');
+			
+			f.value = ['Two'];
+			assert.deepEqual(f.value, ['Two'], 'value changed');
+			
+			f.value = null;
+			assert.deepEqual(f.value, [], 'empty value');
+		});
+		
+		test('selection API', function () {
+			f = fixture('multipleSelect');
+			
+			f.value = [];
+			
+			f.select('One');
+			assert.deepEqual(f.value, ['One'], 'select()');
+			assert.deepEqual(f.getSelectedOptions(), ['One'], 'getSelectedOptions()');
+			
+			f.select('Two');
+			assert.deepEqual(f.value, ['One', 'Two'], 'select() another');
+			
+			f.deselect('One');
+			assert.deepEqual(f.value, ['Two'], 'deselect()');
+			
+			f.deselect('Invalid');
+			assert.deepEqual(f.value, ['Two'], 'deselect() on invalid value');
+			
+			f.deselect('Two');
+			assert.deepEqual(f.value, [], 'deselect() till empty');
+			assert.deepEqual(f.getSelectedOptions(), [], 'empty selected options');
+		});
+		
+		test('freeText', function () {
+			f = fixture('multipleSelect');
+			
+			f.freeText = true;
+			
+			f.value = ['One'];
+			assert.deepEqual(f.value, ['One'], 'existing option');
+			
+			f.select('Two222');
+			assert.deepEqual(f.value, ['One', 'Two222'], 'free text');
+			
+			f.value = [ 'Multiple', 'Invalid', 'One' ];
+			assert.deepEqual(f.value, [ 'Multiple', 'Invalid', 'One' ], 'free text multiple values');
+		});
+		
+	});
+	
+	
+	suite('object selection', function () {
+		var f;
+		
+		var testOptions = [
+			{ "value": "1", "label": "One" },
+			{ "value": "2", "label": "Two" },
+			{ "value": "3", "label": "Three" },
+			{ "value": "4", "label": "Four" }
+		];
+		
+		test('objects as values', function () {
+			f = fixture('objectSelect');
+			
+			f.value = testOptions[0];
+			assert.deepEqual(f.value, testOptions[0], 'object value');
+			
+			f.value = { "value": "x", "label": "Invalid" };
+			assert.deepEqual(f.value, testOptions[0], 'invalid object not set');
+			
+			// freeText
+			f.freeText = true;
+			var freeTextObj = { value: "333", label: "FreeText" };
+			f.value = freeTextObj;
+			assert.deepEqual(f.value, freeTextObj, 'free object set');
+			
+			// multiple
+			f.multiple = true;
+			f.freeText = false;
+			f.value = [ testOptions[0], testOptions[2] ];
+			assert.deepEqual(f.value, [ testOptions[0], testOptions[2]  ], 'multiple object values');
+			
+			f.freeText = true;
+			f.value = [ testOptions[0], "mixx" ];
+			assert.deepEqual(f.value, [ testOptions[0], "mixx" ], 'mixed values');
+			
+		});
+		
+		test('objects & itemValueProperty', function () {
+			f = fixture('objectSelect');
+			f.itemValueProperty = 'value';
+			
+			f.value = testOptions[0];
+			assert.equal(f.value, testOptions[0].value, 'text value on object options');
+			
+			f.value = "2";
+			assert.deepEqual(f.value, testOptions[1].value, 'selection using object value property');
+			assert.deepEqual(f.getSelectedOptions(), [ testOptions[1] ], 'selection using object value property');
+		});
+		
+		test('item hashing', function () {
+			f = fixture('objectSelect');
+			f.itemHashProperty = 'value';
+			f.itemValueProperty = 'value';
+			
+			f.value = { label: "Custom One", value: "1" };
+			assert.equal(f.value, "1", 'text value on object options');
+		});
+		
+	});
+
+
+</script>
+
+</body>
+</html>

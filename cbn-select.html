@@ -15,1465 +15,602 @@ Example:
     </cbn-select>
 ```
 
-@group cbn-form
+<br />
+### Styling
+
+The stock `cbn-select` has paper-like look. 
+You can customize it using the following CSS mixins: 
+
+Custom property                | Description                             | Default
+-------------------------------|-----------------------------------------|--------------------
+`--cbn-select-min-width`       | Minimum width for the options dropdown  | `{ }`
+`--cbn-select-container`       | Main select container                   | `{ }`
+`--cbn-select-ed-item`         | Selected item                           | `{ }`
+`--cbn-select-ed-item-hover`   | Selected item (hovered)                 | `{ }`
+`--cbn-select-ed-item-hlight`  | Selected item (highlighted)             | `{ }`
+`--cbn-select-edit-item`       | Item edit input                         | `{ }`
+`--cbn-select-input`           | Main select input                       | `{ }`
+`--cbn-select-options-item`    | Dropdown item / line                    | `{ }`
+`--cbn-select-options-item-hover`| Dropdown item (hovered)               | `{ }`
+`--cbn-select-loading`         | Loading message                         | `{ }`
+`--cbn-select-dropdown-btn`    | Dropdown button                         | `{ }`
+
+
+@group CBN Elements
 @element cbn-form
+@demo demo/index.html
 -->
 
-<link rel="import" href="../polymer/polymer.html">
-<link rel="import" href="../core-icons/core-icons.html">
+<link rel="import" href="lib/include.html" />
 
-<link rel="import" href="../cbn-form/cbn-form-abstract.html">
-<link rel="import" href="../cbn-form/cbn-form-validator.html">
-<link rel="import" href="../cbn-data-source/cbn-data-source.html">
-<link rel="import" href="../cbn-data-source/cbn-data-filter.html">
+<link rel="import" href="../iron-icon/iron-icon.html" />
+<link rel="import" href="../iron-icons/iron-icons.html" />
+<link rel="import" href="../cbn-data-source/cbn-data-source.html" />
+<link rel="import" href="../cbn-data-source/consumer-behavior.html" />
+<link rel="import" href="../cbn-polymer-extensions/lib/position-behavior.html">
+<link rel="import" href="../cbn-polymer-extensions/lib/focusable-behavior.html">
+<link rel="import" href="../iron-list/iron-list.html" />
 
+<link rel="import" href="styles.html" />
 
-<polymer-element name="cbn-select" tabindex="-1">
+<dom-module id="cbn-select">
 	<template>
-		<link href="cbn-select.css" rel="stylesheet">
+		<style include="cbn-select-styles"></style>
 		
 		<cbn-data-filter id="filter" auto="false"
-				filterProperty="{{filterProperty}}" filterMode="{{filterMode}}"></cbn-data-filter>
+				filter-property="filterValue" filter-mode="[[filterMode]]"></cbn-data-filter>
 		
-		<div id="container" tabindex="-1"
-				class="{{ { focused: _status.focused, open: _status.open } | tokenList }}">
+		<div id="container" tabindex="-1" class$="[[_computeContainerClass(_status.open)]]">
 			
-			<template if="{{ _showChips }}">
-				<template repeat="{{ item in _selectedOptions }}">
-
-					<template if="{{ item.editing }}">
-					<div class="selected-item {{ { highlighted: item.highlighted, editing: item.editing } | tokenList }} {{ item.classes }}"
-							on-tap="{{ _selectedOptionTap }}"
-							on-dblclick="{{ _selectedOptionDblClick }}" style="width:100%">
-							<input class="option-editor" type="text"  title="Edit value" value="{{ _editQuery }}"
-								   style="width:90%" autocomplete="off">
+			<template is="dom-if" if="[[_computeShowChips(multiple,alwaysShowChips)]]">
+				<template is="dom-repeat" items="[[_displaySelectedOptions]]" as="item">
+					<div class$="[[_computeSelectedItemClass(item.highlighted,item.editing)]]"
+							on-tap="_selectedOptionTap" on-dblclick="_selectedOptionDblClick">
 						
-							
-
-							<a class="removeBtn" on-tap="{{ _removeBtnTap }}">
-								<core-icon icon="highlight-remove"></core-icon>
-							</a>
-						</div>
+						<template is="dom-if" if="[[item.editing]]">
+							<input class="option-editor" type="text" title="Edit value" value="{{_editQuery::input}}"
+								   autocomplete="nope" size$="[[_computeEditInputSize(_editQuery)]]">
 						</template>
+						<template is="dom-if" if="[[!item.editing]]"><span>[[item.label]]</span></template>
 						
-
-					<template if="{{ !item.editing }}">
-						<div class="selected-item {{ { highlighted: item.highlighted, editing: item.editing } | tokenList }} {{ item.classes }}"
-							 on-tap="{{ _selectedOptionTap }}"
-							 on-dblclick="{{ _selectedOptionDblClick }}">
-
-							{{ item.label }}
-
-						<a class="removeBtn" on-tap="{{ _removeBtnTap }}">
-							<core-icon icon="highlight-remove"></core-icon>
+						<a class="removeBtn" on-tap="_removeBtnTap">
+							<iron-icon icon="icons:backspace"></iron-icon>
 						</a>
 					</div>
 				</template>
-					
-					
-					
-				</template>
 			</template>
 			
-			<input id="input" type="text" value="{{ _addQuery }}"
-					placeholder="{{ placeholder ? placeholder : '' }}"
-					class="{{ { 'text-input':true } | tokenList }}"
-					readonly?="{{ readonly }}"
-					on-mousedown="{{ _focusHandler }}" on-input="{{ _queryInputHandler }}" autocomplete="off">
+			<input id="input" type="text" value="{{_inputValue::input}}" class="text-input" autocomplete="nope"
+					title="[[placeholder]]" placeholder$="[[placeholder]]" readonly$="[[readonly]]"
+					on-tap="_dropDownButtonTap" on-input="_queryInputHandler">
 			
-			<div id="options-wrapper">
-				<div id="options">
-					<template repeat="{{ item in _filteredOptions }}">
-						<div class="item {{ { highlighted: item.highlighted } | tokenList }}"
-							 on-tap="{{ _dropdownOptionTap }}">
-							{{ item.label }}
-						</div>
-					</template>
-					<template if="{{ _status.optionsLoading }}">
-						<div class="loading">
-							Loading options ...
-						</div>
-					</template>
-					<template if="{{ !_status.optionsLoading && !_filteredOptions.length }}">
-						<div class="empty">
-							No available options.
-						</div>
-					</template>
-				</div>
+			<div id="dropdownBtn" on-tap="_dropDownButtonTap">
+				<iron-icon icon="icons:arrow-drop-down"></iron-icon>
 			</div>
-			<div id="dropdownBtn" on-tap="{{ _dropDownButtonTap }}">
-				<core-icon icon="arrow-drop-down"></core-icon>
+			
+			<div id="optionsWrapper">
+				<template is="dom-if" if="[[useIronList]]">
+					<iron-list id="ironList" class="options-list" items="[[_filteredOptions]]" as="item">
+						<template>
+							<div class$="[[_computeDropdownItemClass(item.highlighted)]]"
+								 on-tap="_dropdownOptionTap">[[item.label]]</div>
+						</template>
+						<div class="options-status">
+							<template is="dom-if" if="[[_optionsLoading]]">
+								<div class="loading">Loading options ...</div>
+							</template>
+							<template is="dom-if" if="[[_computeEmptyOptionsList(_optionsLoading, _filteredOptions)]]">
+								<div class="empty">No available options</div>
+							</template>
+						</div>
+					</iron-list>
+				</template>
+				<template is="dom-if" if="[[!useIronList]]">
+					<div id="options" class="options-list">
+						<template is="dom-repeat" items="[[_filteredOptions]]" as="item">
+							<div class$="[[_computeDropdownItemClass(item.highlighted)]]"
+								 on-tap="_dropdownOptionTap">[[item.label]]</div>
+						</template>
+						<template is="dom-if" if="[[_optionsLoading]]">
+							<div class="loading">Loading options ...</div>
+						</template>
+						<template is="dom-if" if="[[_computeEmptyOptionsList(_optionsLoading, _filteredOptions)]]">
+							<div class="empty">No available options</div>
+						</template>
+					</div>
+				</template>
 			</div>
 		</div>
 		
 	</template>
-	
-	<script>
-		(function () {
+</dom-module>
+
+<script>
+	(function (scope) {
+		
+		//noinspection JSUnusedGlobalSymbols
+		scope.CbnSelectPrototype = {
+			is: 'cbn-select',
 			
-			//noinspection JSUnusedGlobalSymbols
-			Polymer('cbn-select', CbnForm.implement({
-				
-				publish: { // Published attributes:
-					
-					/**
-					 * The input's name.
-					 * 
-					 * @attribute name
-					 * @type {String}
-					 */
-					name: '', 
-					
-					/**
-					 * The selected item's value / values.
-					 * 
-					 * @attribute value
-					 * @type {String|Array}
-					 */
-					value: '',
-					
-					/**
-					 * Whether multiple selected values are allowed.
-					 * If true, {@link #value} will be an Array.
-					 * 
-					 * @attribute multiple
-					 * @type {Boolean}
-					 */
-					multiple: false,
-					
-					/**
-					 * Whether the entered value needs to be strictly found inside the options array (false) or any 
-					 * text can be freely entered by the user (true).
-					 * Should only be used if the option items are String (and *not* Object).
-					 * 
-					 * @attribute freeText
-					 * @type {Boolean}
-					 */
-					freeText: false,
-					
-					/**
-					 * Whether duplicate options are allowed to be selected. Only used if the `multiple` attribute is true.
-					 * If this is false (default), the selected options are removed from the dropdown list and inserting duplicate value is a no-op.
-					 * 
-					 * @attribute allowDuplicates
-					 * @type {Boolean}
-					 */
-					allowDuplicates: false,
-					
-					/**
-					 * An array with the select options.
-					 * Also accepts a callback function (as property).
-					 * 
-					 * Cannot be used together with {@link #dataSource}.
-					 * 
-					 * @attribute options
-					 * @type {Array}
-					 * @default []
-					 */
-					options: null,
-					
-					/**
-					 * The selector or reference to a `cbn-data-source` element that supplies the available options.
-					 * Exclusive with {@link #options}.
-					 * 
-					 * The element is searched for inside the parent form.
-					 * 
-					 * @attribute dataSource
-					 * @type {String|HTMLElement}
-					 */
-					dataSource: '',
-					
-					/**
-					 * Specifies the path to an option item to get the item label text from.
-					 * Only used if the option is an Object (if String, then its value will be used as both label and 
-					 * output value).
-					 * 
-					 * @attribute itemLabelProperty
-					 * @type {String}
-					 * @default 'label'
-					 */
-					itemLabelProperty: 'label',
-					
-					/**
-					 * Specifies what property of the option object to set as model value.
-					 * 
-					 * Use empty/false if you want the entire object to be used.
-					 * 
-					 * @attribute itemValueProperty
-					 * @type {String}
-					 * @default ''
-					 */
-					itemValueProperty: '',
-					
-					/**
-					 * Specifies what property of the option object to set as model hash.
-					 * 
-					 * @attribute itemHashProperty
-					 * @type {String}
-					 * @default ''
-					 */
-					itemHashProperty: 'value',
-					
-					/**
-					 * Specify the option item property to use to filter the options list.
-					 * Specify empty value if your data is a String list and you want to compare the items directly.
-					 * 
-					 * @attribute filterProperty
-					 * @type {String}
-					 * @default 'value'
-					 */
-					filterProperty: 'label',
-					
-					/**
-					 * The mode to use for filtering the displayed options. 
-					 * 
-					 * Check {@link cbn-data-filter.html#filterMode} for all available modes.
-					 * 
-					 * @attribute filterMode
-					 * @type {String}
-					 */
-					filterMode: 'contains-cid',
-					
-					/**
-					 * The placeholder to show when there is no value entered.
-					 * 
-					 * @attribute placeholder
-					 * @type {String}
-					 */
-					placeholder: '',
-					
-					/**
-					 * Set this to true to always show the selection chips.
-					 * Automatically set to true when multiple selection is enabled.
-					 * 
-					 * @attribute alwaysShowChips
-					 * @type {Boolean}
-					 */
-					alwaysShowChips: false
-					
-				},
+			properties: {
 				
 				/**
-				 * Element's dynamically-configurable attributes.
+				 * Whether multiple selected values are allowed.
+				 * If true, `value` will be an Array.
 				 */
-				dynamicAttributes: {
-					"multiple": {type: 'attribute'},
-					"freeText": {type: 'attribute'},
-					"allowDuplicates": {type: 'attribute'},
-					"options": {type: 'property'},
-					"dataSource": {type: 'attribute'},
-					"itemLabelProperty": {type: 'attribute'},
-					"itemValueProperty": {type: 'attribute'},
-					"filterProperty": {type: 'attribute'},
-					"filterMode": {type: 'attribute'},
-					"placeholder": {type: 'attribute'},
-					"alwaysShowChips": {type: 'attribute'}
+				multiple: {
+					type: Boolean,
+					value: false,
+					reflectToAttribute: true
 				},
 				
-				
-				// Private properties:
+				/**
+				 * Whether the entered value needs to be strictly found inside the options array (false) or any 
+				 * text can be freely entered by the user (true).
+				 * Should only be used if the option items are String (and *not* Object).
+				 */
+				freeText: {
+					type: Boolean,
+					value: false
+				},
 				
 				/**
-				 * The type definition of the option (incl. metadata) object.
+				 * Whether duplicate options are allowed to be selected. Only used if the `multiple` attribute is true.
+				 * If this is false (default), the selected options are removed from the dropdown list and inserting duplicate value is a no-op.
+				 */
+				allowDuplicates: {
+					type: Boolean,
+					value: false
+				},
+				
+				/**
+				 * An array with the select options.
+				 * Also accepts a callback function (as property).
 				 * 
-				 * @typedef  {Object}        SelectOptionMeta
-				 * @memberof cbn-select
-				 * @property {Object|String} item The actual data item's object.
-				 * @property {String}        [label] The display label of the item.
-				 * @property {Object|String} [value] The item's value (to set as input value).
-				 * @property {String}        [hashValue] The value that will be used for comparing item objects.
-				 * @property {String}        [filterValue] The value used for filtering.
-				 * @property {Boolean}       [highlight] Whether the item is currently highlighted.
+				 * Cannot be used together with {@link #dataSource}.
 				 */
+				options: {
+					type: Array,
+					value: function() { return []; }
+				},
 				
 				/**
-				 * Stores all option items, together with metadata.
-				 * @private
-				 * @type { Array<SelectOptionMeta> }
+				 * The position to show the dropdown box at.
+				 *
+				 * See `PositionBehavior` for mode details.
 				 */
-				_options: null,
+				position: {
+					type: String,
+					value: "bottom+3 left, top left"
+				},
 				
 				/**
-				 * The currently active `cbn-data-source` element.
-				 * @type {HTMLElement}
+				 * Whether to use iron-list for rendering the dropdown options.
 				 */
-				_dataSource: null,
+				useIronList: {
+					type: Boolean,
+					value: false
+				},
 				
 				/**
-				 * Stores all possible option values (only used if freeText is disabled to quickly check if the value 
-				 * entered is allowed).
-				 * @private
-				 * @type { String[] }
-				 */
-				_optionValues: null,
-				
-				/**
-				 * Stores the filtered items, together with metadata.
-				 * @type { Array<SelectOptionMeta> }
-				 * @private
-				 */
-				_filteredOptions: null,
-				
-				/**
-				 * Stores the selected values and their metadata inside a special Item object.
-				 * Regardless of the multiple attribute, this value is always an array (with length=1 if multiple is false).
-				 * @private
-				 * @type { Array<SelectOptionMeta> }
-				 */
-				_selectedOptions: null,
-				
-				/**
-				 * Stores the hash values of the selected options (see {@link #_getItemHash} for the motivation behind this.
-				 * @private
-				 * @type { String[] }
-				 */
-				_selectedOptionsHash: null,
-				
-				/**
-				 * Stores the add/query input's current value.
-				 * @private
-				 * @type {String}
-				 */
-				_addQuery: '',
-				
-				/**
-				 * Stores the last query used to filter by when the data is available.
-				 * @private
-				 * @type {String}
-				 */
-				_filterValue: '',
-				
-				/**
-				 * Stores the edit option input's current value.
-				 * @private
-				 * @type {String}
-				 */
-				_editQuery: '',
-				
-				/**
-				 * Whether the select {@link #value} is currently being updated internally.
+				 * The selector or reference to a `cbn-data-source` element that supplies the available options.
+				 * Exclusive with {@link #options}.
 				 * 
-				 * Used for detecting whether the value was updated externally and/or transactionally firing 'change' 
-				 * events.
+				 * The element is searched for inside the parent form.
 				 */
-				_transaction: false,
+				dataSource: {
+					type: String
+				},
 				
 				/**
-				 * Stores the value to set when the list of options has finished loading.
+				 * Specifies the path to an option item to get the item label text from.
+				 * Only used if the option is an Object (if String, then its value will be used as both label and 
+				 * output value).
 				 */
-				_delayedValue: null,
+				itemLabelProperty: {
+					type: String,
+					value: 'label'
+				},
 				
 				/**
-				 * Stores the status properties of the select element. 
-				 * Mainly used for data bindings (element UI) / event handler methods to define the element's behavior.
+				 * Specifies what property of the option object to set as model value.
 				 * 
-				 * @private
+				 * Use empty/false if you want the entire object to be used.
 				 */
-				_status: {
-					
-					/**
-					 * The mode gives the overall behavior of the element and reflects the current focused sub-component.
-					 * 
-					 * Available modes:
-					 * - '': the initial state, used when not focused;
-					 * - 'view': when a selected option is selected;
-					 * - 'query': when the add/query input is focused;
-					 * - 'edit': When editing a selected option.
-					 * 
-					 * @type {String}
-					 */
-					mode: '',
-					
-					/**
-					 * Whether the select element is focused.
-					 */
-					focused: false,
-					
-					/**
-					 * Whether the dropdown (options) menu is open.
-					 */
-					open: false,
-					
-					/**
-					 * Will be set true while the options array is loading.
-					 */
-					optionsLoading: false
-					
+				itemValueProperty: {
+					type: String,
+					value: ''
 				},
 				
 				/**
-				 * Whether to display/use the selected option chips or just a simple input containing the selected value.
+				 * Specifies what property of the option object to set as hash (used for comparing two item objects).
 				 */
-				get _showChips() {
-					return this.multiple || this.alwaysShowChips;
+				itemHashProperty: {
+					type: String,
+					value: ''
 				},
 				
 				/**
-				 * Maps the highlightable items to their current indices.
+				 * Specify the option item property to use to filter the options list.
+				 * If empty, will autodetect it based on `itemLabelProperty`.
 				 */
-				_highlighted: {
-					/**
-					 * Stores the index of the highlighted option inside the selected options list 
-					 * ({@link #_selectedOptions}).
-					 */
-					selectedOptionIdx: -1,
-					
-					/**
-					 * Stores the index of the selected option inside the drop-down options list 
-					 * ({@link #_filteredOptions}).
-					 */
-					filteredOptionIdx: -1,
-					
-					/**
-					 * Stores the currently edited option (inside {@link #_selectedOptions}).
-					 */
-					editOptionIdx: -1
+				filterProperty: {
+					type: String,
+					value: ''
 				},
 				
-				
-				// Public API:
-				
 				/**
-				 * Selects the specified item.
-				 * If the multiple attribute is true, the value is appended to the selected values list.
-				 * Otherwise, the old selected value is replaced.
+				 * The mode to use for filtering the displayed options. 
 				 * 
-				 * @param {String|Object|null} item The item to select.
-				 * @param {Number}             [idx] If multiple=true, specifies the index where to append the value. 
-				 * @return {Boolean} True if the item was successfully selected, false otherwise.
+				 * Check cbn-data-filter's `filterMode` for all available modes.
 				 */
-				select: function(item, idx) {
-					var result = false;
-					var value = this._getItemValue(item);
-					var hash = this._getItemHash(item);
-					if (this._isNUE(item) || this._isNUE(this._getItemLabel(item))) {
-						this._updateAddQuery();
-						return false;
-					}
-					
-					var i, found, foundIdx;
-					var oldTransaction = this._transaction;
-					this._startTransaction();
-					
-					try {
-						if (item != null) {
-							if (this.options != null && this.options.length > 0 && (this._options==null || this._options.length!=this.options.length)){
-								this._setOptions(this.options);
-								//sometimes valueChanged happens before _setOptions even tho this.options is populated
-							}
-							// check if the option exists inside the options list
-							found = (this._optionValues && (foundIdx = this._optionValues.indexOf(value)) > -1);
-							// otherwise, search by hash/label
-							for (i = 0; i < this._options.length; i++) {
-								if (this._options[i].hashValue == hash) {
-									found = true; foundIdx = i;
-									break;
-								}
-								if ((this._options[i].label+'').toLowerCase() == (item+'').toLowerCase()) {
-									found = true; foundIdx = i;
-								}
-							}
-							if (!found && !this.freeText) // the specified option wasn't found in the options list
-								return false;
-							if (found && foundIdx >= 0) {
-								// replace it with the object found
-								item = this._options[foundIdx].item;
-								value = this._getItemValue(item);
-								hash = this._getItemHash(item);
-							}
-						}
-						if (!this.multiple || !this.allowDuplicates) {
-							// check if the value has already been selected
-							for (i = 0; i < this._selectedOptions.length; i++) {
-								if (this._selectedOptions[i].value == value)
-									return false;
-							}
-							for (i = 0; i < this._selectedOptionsHash.length; i++) {
-								if (this._selectedOptionsHash[i] == hash)
-									return false;
-							}
-						}
-						
-						if (this.multiple) {
-							if (item == null) {
-								this.value = [];
-								this._selectedOptions = [];
-								this._selectedOptionsHash = [];
-								
-							} else {
-								if (!Array.isArray(this.value)) {
-									this.value = [];
-								} else {
-									this.value = this.value.slice();
-								}
-								if (idx === undefined) 
-									idx = this._selectedOptions.length;
-								this.value.splice(idx, 0, value);
-								this._selectedOptions.splice(idx, 0, {
-									item: item,
-									value: value,
-									label: this._getItemLabel(item)
-								});
-								this._selectedOptionsHash.splice(idx, 0, hash);
-							}
-							
-						} else { // multiple == false:
-							this.value = value;
-							if (item != null) {
-								this._selectedOptions = [{
-									item: item,
-									value: value,
-									label: this._getItemLabel(item)
-								}];
-								this._selectedOptionsHash = [hash];
-							} else {
-								this.value = '';
-								this._selectedOptions = [];
-								this._selectedOptionsHash = [];
-							}
-						}
-						
-						if (this.multiple && !this.allowDuplicates) {
-							this._filterOptions(this._showChips ? this._addQuery : '');
-						}
-						this._updateAddQuery();
-						
-						result = true;
-						return true;
-						
-					} finally {
-						if (!oldTransaction) { // only finish the transaction if it was started here
-							if (result) 
-								this._commitValue();
-							else this._endTransaction();
-						}
-					}
+				filterMode: {
+					type: String,
+					value: 'contains-cid'
 				},
 				
 				/**
-				 * Removes (deselects) a single value from the list of selected items. 
-				 * If the element's multiple attribute is false, the value is set to null.
-				 * 
-				 * If the specified value was not selected, the function does nothing and returns false.
-				 * 
-				 * @param {String|Object} item The item to deselect.
-				 * @return {Boolean} True if the value was found, false otherwise.
+				 * The placeholder to show when there is no value entered.
 				 */
-				deselect: function(item) {
-					var result = false;
-					var oldTransaction = this._transaction;
-					this._startTransaction();
-					
-					try {
-						var hash = this._getItemHash(item);
-						if (this.multiple) {
-							if (!Array.isArray(this.value)) return false;
-							var i = this._selectedOptionsHash.indexOf(hash);
-							if (i < 0) return false;
-							
-							this.value.splice(i, 1);
-							this._selectedOptions.splice(i, 1);
-							this._selectedOptionsHash.splice(i, 1);
-							
-						} else { // multiple == false: 
-							if (this._selectedOptionsHash.length != 1 || this._selectedOptionsHash[0] != hash)
-								return false;
-							this.value = '';
-							this._selectedOptions = [];
-							this._selectedOptionsHash = [];
-						}
-						
-						if (this.multiple && !this.allowDuplicates) {
-							this._filterOptions(this._showChips ? this._addQuery : '');
-						}
-						this._updateAddQuery();
-						
-						result = true;
-						return true;
-						
-					} finally {
-						if (!oldTransaction) {
-							if (result) 
-								this._commitValue();
-							else this._endTransaction();
-						}
-					}
+				placeholder: {
+					type: String,
+					value: ''
 				},
 				
 				/**
-				 * Returns the list of selected option objects.
-				 * This is different from the {@link #value} property because it always returns an array, and contains 
-				 * the option objects as passed via the options array / data source (i.e. doesn't select the value using 
-				 * {@link #itemValueProperty})
-				 * 
-				 * @return {Array<Object>} An array with the selected options.
+				 * Set this to true to always show the selection chips.
+				 * Automatically set to true when multiple selection is enabled.
 				 */
-				getSelectedOptions: function() {
-					var selected = [];
-					this._selectedOptions.forEach(function(item){
-						selected.push(item.item);
-					});
-					return selected;
-				},
-				
-				
-				// Private methods: 
-				
-				/**
-				 * Used to initialize element's default property values and event handler methods.
-				 */
-				created: function() {
-					this.options = [];
-					this._options = [];
-					this._filteredOptions = [];
-					this._selectedOptions = [];
-					this._selectedOptionsHash = [];
-					
-					// those objects need to have a private instance 
-					// (they have been declared as shared for documentation purposes) 
-					this._status = {
-						mode: '',
-						focused: false, open: false,
-						optionsLoading: false
-					};
-					this._highlighted = {
-						selectedOptionIdx: -1,
-						filteredOptionIdx: -1
-					};
-					
-					// bind some internally used handlers to 'this'
-					this._focusHandler = this._focusHandler.bind(this);
-					this._blurHandler = this._blurHandler.bind(this);
-					this._keyDownHandler = this._keyDownHandler.bind(this);
-					this._dataSourceAvailable = this._dataSourceAvailable.bind(this);
-					this._inputHandler = this._inputHandler.bind(this);
-					this._changeHandler = this._changeHandler.bind(this);
+				alwaysShowChips: {
+					type: Boolean,
+					value: false
 				},
 				
 				/**
-				 * Fired when the element is fully initialized.
+				 * The element that should retain the focus.
 				 */
-				ready: function() {
-					if (this.multiple) {
-						this._startTransaction();
-						this.value = [];
-						this._endTransaction();
-					}
+				focusTarget: {
+					type: Object,
+					value: function() { //noinspection JSUnresolvedVariable
+						return ( this.$ && this.$.input ? this.$.input : this ); }
 				},
 				
 				/**
-				 * Callback when an element instance is attached to the DOM. Used to set up event handlers.
+				 * The element that should retain the focus.
 				 */
-				attached: function() {
-					// capture those events for the element itself and all its children
-					this.addEventListener('focus', this._focusHandler, true);
-					this.addEventListener('blur', this._blurHandler, true);
-					this.addEventListener('keydown', this._keyDownHandler, true);
-					
-					// prevent propagation of children's input/change events
-					this.addEventListener('input', this._inputHandler);
-					this.addEventListener('change', this._changeHandler);
-				},
-				
-				/**
-				 * Called when the parent / light DOM tree is fully initialized.
-				 */
-				domReady: function() {
-					// the data source element might have not been initialized; np, we'll do it now
-					if (this.dataSource && !this._dataSource) {
-						this.dataSourceChanged();
-					}
-				},
-				
-				/**
-				 * Callback when an element instance is attached to the DOM. Used to clean up event handlers.
-				 */
-				detached: function() {
-					this.removeEventListener('focus', this._focusHandler, true);
-					this.removeEventListener('blur', this._blurHandler, true);
-					this.removeEventListener('keydown', this._keyDownHandler, true);
-					
-					this.removeEventListener('input', this._inputHandler);
-					this.removeEventListener('change', this._changeHandler);
-					
-					if (this._dataSource) {
-						this._dataSource.removeEventListener('cbn-data-available', this._dataSourceAvailable);
-					}
-				},
-				
-				/**
-				 * Called when the value is changed externally.
-				 * 
-				 * @param {*} oldVal The old value.
-				 * @param {*} newVal The new value.
-				 */
-				valueChanged: function(oldVal, newVal) {
-					if (this._transaction) // quit if value was changed internally
-						return;
-					
-					var result = false;
-					if (this.dataSource) {
-						if (!this._options || !this._options.length) {
-							this._delayedValue = newVal;
-							this._queryOptions('');
-							return;
-						}
-					}
-					
-					// start an external transaction
-					this._startTransaction();
-					
-					try {
-						// clear the value / internal selected fields
-						if (this.multiple) {
-							this.value = [];
-						} else {
-							this.value = '';
-						}
-						this._selectedOptions = [];
-						this._selectedOptionsHash = [];
-						
-						if (this.multiple && Array.isArray(newVal)) {
-							newVal.forEach(function(val) {
-								this.select(val);
-							}, this);
-						} else {
-							if(!this._showChips) {
-								this._addQuery = newVal;
-							}
-							this.select(newVal);
-						}
-						
-						result = true;
-						
-					} finally {
-						if (result) 
-							this._commitValue();
-						else this._endTransaction();
-					}
-				},
-				
-				/**
-				 * Starts a new transaction for changing the {@link #value} property.
-				 */
-				_startTransaction: function() {
-					this._transaction = true;
-				},
-				
-				/**
-				 * Ends/commits the current transaction, without firing the input / change events.
-				 * Uses async to wait for the changed handlers to be processed before stopping it (they are part of the 
-				 * transaction, too).
-				 * @param {Function} [callback] An optional callback function to call after the transaction is committed.
-				 */
-				_endTransaction: function(callback) {
-					this.async(function(){
-						this._transaction = false;
-						if (callback)
-							callback.call(this);
-					});
-				},
-				
-				/**
-				 * Commits the value of the select, firing the 'input' and 'change' events.
-				 */
-				_commitValue: function() {
-					this._endTransaction(function(){
-						this.fire('input');
-						this.fire('change');
-					});
-				},
-				
-				/**
-				 * Automatically fired when the {@link #options} property is changed.
-				 */
-				optionsChanged: function() {
-					this._status.optionsLoading = false;
-					this._setOptions(this.options);
-					this._filterOptions(this._showChips ? this._addQuery : '');
-				},
-				
-				/**
-				 * Automatically fired when the {@link #dataSource} property is changed.
-				 */
-				dataSourceChanged: function() {
-					// disable the current data source
-					if (this._dataSource) {
-						this._dataSource.removeEventListener('cbn-data-available', this._dataSourceAvailable);
-						this._dataSource = null;
-					}
-					
-					if (this.dataSource) {
-						// search for a dataSource
-						if (typeof this.dataSource == 'string') {
-							if (!this.parentForm) return;
-							this._dataSource = this.parentForm.querySelector(this.dataSource);
-						} else {
-							this._dataSource = this.dataSource;
-						}
-						if (!this._dataSource) return;
-						
-						this._dataSource.addEventListener('cbn-data-available', this._dataSourceAvailable);
-						
-						// the loading parameter will be set back to false when the `cbn-data-available` event is fired
-						this._status.optionsLoading = true;
-						
-						if (this._dataSource.data && this._dataSource.data.length>0){
-							this._dataSourceAvailable();
-						} else if (this._delayedValue) {
-							this._queryOptions(this._showChips ? this._addQuery : '');
-						} else {
-							this._setOptions([]);
-							this._filterOptions(this._showChips ? this._addQuery : '');
-						}
-					} else {
-						this._filter(this._addQuery);
-						this._status.optionsLoading = false;
-					}
-				},
-				
-				/**
-				 * Called when the `cbn-data-source` element has new data available.
-				 */
-				_dataSourceAvailable: function() {
-					this._status.optionsLoading = false;
-					this._setOptions(this._dataSource.filteredData);
-					this._filterOptions(this._filterValue);
-				},
-				
-				/**
-				 * Interrogates the data source for options that match the specified query.
-				 * This will set both the {@link #_options} and {@link #_filteredOptions} properties 
-				 * (the former is changed only if a datasource is used).
-				 * 
-				 * @private
-				 * @param {String} query The query to run.
-				 */
-				_queryOptions: function(query) {
-					this._filterValue = query;
-					if (this._dataSource) {
-						this._status.optionsLoading = true;
-						var isDataAvailable = this._dataSource.query(query);
-						if (isDataAvailable) {
-							this._dataSourceAvailable();
-						} // otherwise, wait for the data-available event
-						
-					} else {
-						// just filter them using the locally configured filter
-						this._filterOptions(this._filterValue);
-					}
-				},
-				
-				// Event handlers: 
-				
-				/**
-				 * Captures the focus event on any of the element's children.
-				 */
-				_focusHandler: function(event) {
-					if (event.target == this || event.target == this.$.input)
-						this._setMode('query');
-					event.stopPropagation();
-				},
-				
-				/**
-				 * Captures the blur event on any of the element's children.
-				 */
-				_blurHandler: function() {
-					if (this._addQuery) {
-						// try to select the item types
-						this.select(this._addQuery);
-						this._clearAddQuery();
-					}
-					this._saveEditedOption();
-					this._setMode('');
-					this._status.focused = false;
-					this._status.open = false;
-				},
-				
-				/**
-				 * Captures the keyDown for the select element or any of its children.
-				 * @param {Event} event The captured event.
-				 */
-				_keyDownHandler: function(event) {
-					function isPrintable(event) {
-						var keycode = event.keyCode;
-						return (keycode > 47 && keycode < 58)   || // number keys
-							keycode == 32 || keycode == 13   || // spacebar & return key(s) (if you want to allow carriage returns)
-							(keycode > 64 && keycode < 91)   || // letter keys
-							(keycode > 95 && keycode < 112)  || // numpad keys
-							(keycode > 185 && keycode < 193) || // ;=,-./` (in order)
-							(keycode > 218 && keycode < 223);   // [\]' (in order)
-					}
-					
-					var proceed, dispatch = this._keyDispatch[this._status.mode][event.keyCode] || this._keyDispatch[event.keyCode];
-					var hasModifiers = event['altGraphKey'] || event['metaKey'] || event.altKey || event.shiftKey;
-					if (dispatch && !hasModifiers) {
-						if (typeof dispatch == 'number' || typeof dispatch == 'string') {
-							dispatch = this._keyDispatch[this._status.mode][dispatch];
-						}
-						if (typeof dispatch == 'function') {
-							proceed = dispatch.call(this, event);
-						}
-						if (!proceed) {
-							event.preventDefault();
-						}
-						
-					} else if (isPrintable(event) && this._status.mode == 'view') {
-						// focus the input
-						this._setMode('query');
-						this.$.input.value += String.fromCharCode(event.charCode);
-					}
-				},
-				
-				/**
-				 * A map of keydown event handlers, indexed by element mode and keyCode.
-				 */
-				_keyDispatch: {
-					
-					view: { // when one of the chosen options is highlighted
-						
-						/* backspace */  8: function(){ /* Deselects the currently highlighted value. */
-							this._removeSelectedOption();
-						},
-						
-						/* enter     */ 13: function() {
-							if (this._highlighted.selectedOptionIdx < 0 || 
-									this._highlighted.selectedOptionIdx >= this._selectedOptions.length) 
-								return;
-							this._setMode('edit', this._highlighted.selectedOptionIdx);
-						},
-						
-						/* escape    */ 27: function() {
-							this._setMode('query');
-						},
-						
-						/* left arr  */ 37: function() { this._highlightSelectedItem(-1, true); },
-						/* right arr */ 39: function() {
-							if (this._highlighted.selectedOptionIdx >= (this._selectedOptions.length - 1)) {
-								this._setMode('query');
-							} else {
-								this._highlightSelectedItem(1, true);
-							}
-						},
-						/* delete    */ 46: function() { this._removeSelectedOption(); }
-					},
-					
-					query: { // when the add/query input is focused
-						
-						/* backspace */ 8: function() {
-							if (!this._addQuery.length) {
-								// another backspace removes the last selected item 
-								if (this._selectedOptions.length) {
-									this.deselect(this._selectedOptions[this._selectedOptions.length-1].item);
-								}
-								return false;
-							}
-							return true;
-						},
-						
-						/* enter     */ 13: function() {
-							if (this._highlighted.filteredOptionIdx > -1) {
-								this.select(this._filteredOptions[this._highlighted.filteredOptionIdx].item);
-							} else {
-								this.select(this._addQuery);
-							}
-							this._clearAddQuery();
-							if (!this._showChips) {
-								this.blur();
-							}
-						},
-						
-						/* left arr  */ 37: function() {
-							if (this._addQuery.length || !this._selectedOptions.length)
-								return true;
-							this._setMode('view');
-							this._highlightSelectedItem('last');
-							return false;
-						}
-					},
-					
-					edit: { // when a selected option is currently being edited
-						
-						/* enter  */ 13: function() { this._saveEditedOption(); },
-						
-						/* escape */ 27: function() {
-							this._setMode('view', this._highlighted.selectedOptionIdx);
-						}
-					},
-					36: function(){ this._highlightDropdownItem('first');  }, // home
-					33: function(){ this._highlightDropdownItem(-5, true); }, // page up
-					38: function(){ this._highlightDropdownItem(-1, true); }, // up arrow
-					34: function(){ this._highlightDropdownItem(5, true);  }, // page down
-					40: function(){ this._highlightDropdownItem(1, true);  }, // down arrow
-					35: function(){ this._highlightDropdownItem('last');   }, // end
-					
-					/* escape    */ 27: function() {
-						this._clearAddQuery();
-						this.blur();
-					}
-				},
-				
-				/**
-				 * Called when a dropdown option has been clicked / tapped.
-				 * 
-				 * @param {Event}  event The captured event.
-				 * @param {Object} detail The event's detail.
-				 * @param {Node}   sender The event sender DOM node.
-				 */
-				_dropdownOptionTap: function(event, detail, sender) {
-					var item = sender.templateInstance.model.item;
-					this.select(item.item);
-					this._clearAddQuery();
-					if (!this.multiple) {
-						this._setMode('view');
-						this._status.open = false;
-					}
-				},
-				
-				/**
-				 * Called when a selected option has been clicked / tapped.
-				 * 
-				 * @param {Event}  event The captured event.
-				 * @param {Object} detail The event's detail.
-				 * @param {Node}   sender The event sender DOM node.
-				 */
-				_selectedOptionTap: function(event, detail, sender) {
-					var item = sender.templateInstance.model.item;
-					if (!item) return;
-					if (item.editing) return; // don't interrupt the edit!
-					var idx = this._selectedOptions.indexOf(item);
-					this._setMode('view', idx);
-				},
-				
-				/**
-				 * Called when a selected option has been double clicked.
-				 * Triggers the edit mode on the clicked item.
-				 * 
-				 * @param {Event}  event The captured event.
-				 * @param {Object} detail The event's detail.
-				 * @param {HTMLElement} sender The event sender DOM node.
-				 */
-				_selectedOptionDblClick: function(event, detail, sender) {
-					if (this._status.mode != 'view' && this._status.mode != 'query') 
-						return;
-					var item = sender.templateInstance.model.item;
-					var idx = this._selectedOptions.indexOf(item);
-					if (!item) return;
-					this._highlightSelectedItem(idx);
-					this._setMode('edit', this._highlighted.selectedOptionIdx);
-					this.onMutation(sender, function() {
-						var optionEditor = sender.querySelector('.option-editor');
-						if (optionEditor) {
-							optionEditor.focus();
-							optionEditor.setSelectionRange(0, optionEditor.value.length);
-						}
-					});
-				},
-				
-				/**
-				 * Called when the remove selected option button has been clicked.
-				 * 
-				 * @param {Event}  event The captured event.
-				 * @param {Object} detail The event's detail.
-				 * @param {Node}   sender The event sender DOM node.
-				 */
-				_removeBtnTap: function(event, detail, sender) {
-					event.stopPropagation();
-					var item = sender.parentNode.templateInstance.model.item;
-					if (!item) return;
-					this.deselect(item.item);
-				},
-				
-				/**
-				 * Called when the dropdown opener button is clicked/tapped.
-				 */
-				_dropDownButtonTap: function() {
-					this._setMode('query');
-				},
-				
-				/**
-				 * Called when the query input has been modified.
-				 */
-				_queryInputHandler: function() {
-					// clear any dropdown option selection
-					this._highlightDropdownItem(null);
-					
-					// query/filter the options on the fly
-					this._queryOptions(this._addQuery);
-					if (!this.freeText) {
-						// highlight the first option found
-						this._highlightDropdownItem('first');
-					}
-				},
-				
-				/**
-				 * Catches any 'input' events and stops them from propagating further if they belong to shadow children.
-				 * 
-				 * @param {Event} event The event object.
-				 */
-				_inputHandler: function(event) {
-					if (event.target != this || event.path[0] != this) {
-						event.stopPropagation();
-					}
-				},
-				
-				/**
-				 * Catches any 'change' events and stops them from propagating further if they belong to shadow children.
-				 * 
-				 * @param {Event} event The event object.
-				 */
-				_changeHandler: function(event) {
-					if (event.target != this || event.path[0] != this) {
-						event.stopPropagation();
-					}
-				},
-				
-				// Behavioral methods
-				
-				/**
-				 * Changes the element's mode (see {@link #_status}).
-				 * 
-				 * @param {String} mode The new mode to activate.
-				 * @param {*}      [param] Optional mode parameters.
-				 * @return {Boolean} True if the mode change succeeded.
-				 */
-				_setMode: function(mode, param) {
-					// first, reset all status variables to their default values
-					this._status.focused = true;
-					if (this._highlighted.editOptionIdx > -1) {
-						if (this._selectedOptions[this._highlighted.editOptionIdx]) {
-							this._selectedOptions[this._highlighted.editOptionIdx].editing = false;
-						}
-						this._highlighted.editOptionIdx = -1;
-						
-					}
-					
-					var oldMode = this._status.mode;
-					this._status.mode = mode;
-					
-					switch (mode) {
-						case 'view':
-							if (param !== undefined) {
-								this._highlightSelectedItem(param);
-							}
-							// else: keep all highlights intact
-							break;
-						
-						case 'query':
-							// show the auto-complete box
-							this._status.open = true;
-							
-							// reset all highlights
-							this._highlightSelectedItem(null);
-							this._highlightDropdownItem(null);
-							
-							// query for options
-							if (oldMode != mode)
-								this._queryOptions(this._showChips ? this._addQuery : '');
-							
-							// focus the add/query input
-							this.$.input.focus();
-							break;
-						
-						case 'edit':
-							// long list of conditions for edit to apply: 
-							if (!this.freeText) return false;
-							if (param === undefined) return false;
-							var item = this._selectedOptions[param];
-							if (!item) return false;
-							
-							this._editQuery = item.label;
-							this._highlighted.editOptionIdx = param;
-							item.editing = true;
-							
-							break;
-					}
-					
-					return true;
-				},
-				
-				/**
-				 * Clears the add/query input text.
-				 */
-				_clearAddQuery: function() {
-					this._addQuery = '';
-					this._queryOptions('');
-					
-					this._updateAddQuery();
-				},
-				
-				/**
-				 * If {@link #_showChips} is true, updates `_addQuery` to the currently selected value.
-				 * @private
-				 */
-				_updateAddQuery: function() {
-					if (!this._showChips) {
-						// show the final selected value
-						if(this.freeText){
-						 	this._addQuery = (this._selectedOptions.length ? this._selectedOptions[0].label : this._addQuery );
-						}	else {
-						 	this._addQuery = (this._selectedOptions.length ? this._selectedOptions[0].label : '' );
-						}
-					}
-				},
-				
-				/**
-				 * Saves the currently edited option and disabled edit mode.
-				 */
-				_saveEditedOption: function() {
-					if (this._status.mode != 'edit') 
-						return false;
-					var item = this._selectedOptions[this._highlighted.editOptionIdx];
-					if (!item) return false;
-					
-					if (!this._editQuery) {
-						this.deselect(item.item);
-						this._setMode('view');
-					} else {
-						this._transaction = true;
-						
-						this.deselect(item.item);
-						this.select(this._editQuery, this._highlighted.editOptionIdx);
-						this._commitValue();
-						this._setMode('view', this._highlighted.editOptionIdx);
-					}
-				},
-				
-				// Navigation methods
-				
-				/**
-				 * Highlights an option in the dropdown options box.
-				 * See {@link #_calcHighlightIndex}.
-				 * 
-				 * @param {int|String} idx The index of the option to highlight.
-				 * @param {Boolean}    [relative] Whether the index is relative to the currently highlighted item.
-				 */
-				_highlightDropdownItem: function(idx, relative) {
-					var curIdx = this._highlighted.filteredOptionIdx;
-					idx = this._calcHighlightIndex(idx, relative, this._filteredOptions, curIdx);
-					
-					if (curIdx > -1 && curIdx < this._filteredOptions.length) {
-						this._filteredOptions[curIdx].highlighted = false;
-					}
-					if (idx > -1) {
-						this._filteredOptions[idx].highlighted = true;
-					}
-					this._highlighted.filteredOptionIdx = idx;
-				},
-				
-				/**
-				 * Highlights a selected option in the view mode.
-				 * See {@link #_calcHighlightIndex}.
-				 * 
-				 * @param {int|String} idx The index of the option to highlight.
-				 * @param {Boolean}    [relative] Whether the index is relative to the currently highlighted item.
-				 */
-				_highlightSelectedItem: function(idx, relative) {
-					var curIdx = this._highlighted.selectedOptionIdx;
-					idx = this._calcHighlightIndex(idx, relative, this._selectedOptions, curIdx);
-					
-					if (curIdx > -1 && curIdx < this._selectedOptions.length) {
-						this._selectedOptions[curIdx].highlighted = false;
-					}
-					if (idx > -1) {
-						this._selectedOptions[idx].highlighted = true;
-					}
-					this._highlighted.selectedOptionIdx = idx;
-				},
-				
-				/**
-				 * Generic highlight computation routine that returns the absolute index of the item to be highlighted.
-				 * 
-				 * @param {int|String} idx The index of the option to highlight.
-				 * @param {Boolean}    relative Whether the index is relative to the currently highlighted item.
-				 * @param {Array}      arr The target options array.
-				 * @param {int}        curIdx The index of the currently highlighted item.
-				 * @return {int} The absolute index of the item to highlight.
-				 */
-				_calcHighlightIndex: function(idx, relative, arr, curIdx) {
-					var absIdx = idx;
-					
-					if (!arr.length) // nothing to select
-						return -1;
-					if (idx === null) // de-highlight
-						return -1;
-					
-					if (curIdx == -1 && relative) {
-						if (idx > 0) idx = 'first';
-						if (idx < 0) idx = 'last';
-					}
-					if (idx == 'first') {
-						absIdx = 0;
-					} else if (idx == 'last') {
-						absIdx = arr.length-1;
-					} else if (relative) {
-						absIdx = curIdx + idx;
-					}
-					if (absIdx < 0) absIdx = 0;
-					if (absIdx >= arr.length) absIdx = arr.length-1;
-					
-					return absIdx;
-				},
-				
-				/**
-				 * Removes the current highlighted option from the selected options list.
-				 */
-				_removeSelectedOption: function() {
-					if (this._highlighted.selectedOptionIdx < 0) 
-						return;
-					if (this._highlighted.selectedOptionIdx >= this._selectedOptions.length) 
-						return;
-					this.deselect(this._selectedOptions[this._highlighted.selectedOptionIdx].item);
-					
-					// try to highlight the next item
-					// (if not possible, the last item will be chosen)
-					this._highlightSelectedItem(this._highlighted.selectedOptionIdx);
-				},
-				
-				// Options data manipulation methods
-				
-				/**
-				 * Replaces the current select options with the specified items array.
-				 * 
-				 * @private
-				 * @param {Array} items The options list to replace with.
-				 */
-				_setOptions: function(items) {
-					this._options = [];
-					this._optionValues = [];
-					this._filteredOptions = [];
-					
-					for (var i=0; i<items.length; i++) {
-						var itemMeta = {
-							item: items[i],
-							label: this._getItemLabel(items[i]),
-							filterValue: this._getItemFilterValue(items[i]),
-							hashValue: this._getItemHash(items[i])
-						};
-						this._options.push(itemMeta);
-						this._optionValues.push(this._getItemValue(itemMeta.item));
-					}
-					
-					if (this._delayedValue) {
-						var aux = this._delayedValue;
-						this._delayedValue = null;
-						if (this._options.length != 0) {
-							this.valueChanged(this.value, aux);
-						}
-						
-					} else {
-						this.select(this.value || this.defaultValue || "");
-					}
-				},
-				
-				/**
-				 * Applies the local filter to the options list and outputs the filtered results to the 
-				 * {@link #_filteredOptions} property.
-				 * 
-				 * @param {String} query The filter query to apply.
-				 */
-				_filterOptions: function(query) {
-					if (this._highlighted.filteredOptionIdx > -1) {
-						// un-highlight the currently active element
-						if (this._filteredOptions[this._highlighted.filteredOptionIdx])
-							this._filteredOptions[this._highlighted.filteredOptionIdx].highlighted = false;
-					}
-					var temp  = this.$.filter.filter(this._options, query);
-					this._filteredOptions = [];
-					for (var i in temp) {
-						this._filteredOptions.push(temp[i]);
-					}
-					
-					if (this.freeText) {
-						var isExactMatch = this.$.filter.filter(this._options, query, "exact-ci",true).length!==0;
-						if(!isExactMatch) {
-							/*var qItem = {
-								label: query,
-								value: query
-							};
-							this._filteredOptions.push(qItem);*/
-						}
-					}
-					if (this.multiple && !this.allowDuplicates) {
-						// remove the selected options from the filtered list
-						this._filteredOptions = this._filteredOptions.filter(function(item) {
-							return !this._selectedOptionsHash || (this._selectedOptionsHash.indexOf(item.hashValue) == -1);
-						}, this);
-					}
-					
-					if (this._highlighted.filteredOptionIdx > -1) {
-						this._highlightDropdownItem(this._highlighted.filteredOptionIdx);
-					}
-				},
-				
-				/**
-				 * Returns the model value of an item.
-				 * @private
-				 * @param {Object|String} item The item to fetch the property for.
-				 */
-				_getItemValue: function(item) {
-					if (typeof item != 'object') 
-						return item;
-					return (this.itemValueProperty ? item[this.itemValueProperty] : item );
-				},
-				
-				/**
-				 * Returns the hash value of an item (that is used for comparing the item objects).
-				 * If the option item is an Object, the hash is the stringified value.
-				 * 
-				 * This is required instead of comparing the objects by reference because if an AJAX datasource is used, the 
-				 * references would change when new objects are returned!
-				 * 
-				 * @private
-				 * @param {Object|String} item The item to fetch the property for.
-				 */
-				_getItemHash: function(item) {
-					if (typeof item != 'object') 
-						return item;
-					if (this.itemHashProperty && item && item[this.itemHashProperty]) {
-						return item[this.itemHashProperty];
-					}
-					return JSON.stringify(item);
-				},
-				
-				/**
-				 * Returns the value used to filter an item by.
-				 * @private
-				 * @param {Object|String} item The item to fetch the property for.
-				 */
-				_getItemFilterValue: function(item) {
-					if (typeof item != 'object') 
-						return item;
-					return (this.filterProperty ? item[this.filterProperty] : item );
-				},
-				
-				/**
-				 * Returns the display label of a select option/item.
-				 * @private
-				 * @param {Object|String} item The item to fetch the property for.
-				 */
-				_getItemLabel: function(item) {
-					if (typeof item != 'object') 
-						return item;
-					return (this.itemLabelProperty ? item[this.itemLabelProperty] : item );
-				},
-				
-				/**
-				 * is null, undefined or empty string
-				 * @private
-				 */
-				_isNUE: function(val){
-					return val === undefined || val === null || 
-						(typeof val === "string" && val.trim().length === 0) ||
-						((val instanceof Array) && val.length === 0);
+				focusableContainer: {
+					type: Object,
+					value: function() { //noinspection JSUnresolvedVariable
+						return ( this.$ && this.$.container ? this.$.container : this ); }
 				}
 				
-			}, CbnForm.AbstractInput, CbnForm.ValidatableInput, CbnForm.DynamicControl));
+			},
 			
-			CbnForm.registerElement('cbn-select', {
-				types: ['select']
-			});
+			behaviors: [
+				CbnForm.InputElement,
+				CbnForm.Validatable,
+				CbnForm.DynamicElement,
+				CbnDataSource.ConsumerBehavior,
+				Cbn.PositionBehavior,
+				Cbn.FocusableBehavior,
+				scope.SelectUIBehavior,
+				scope.SelectOptionsBehavior
+			],
 			
-		})();
-	</script>
-</polymer-element>
+			/**
+			 * Element's dynamic attributes.
+			 */
+			dynamicAttributes: {
+				"multiple": { type: 'attribute' },
+				"freeText": { type: 'attribute' },
+				"allowDuplicates": { type: 'attribute' },
+				"options": { type: 'property' },
+				"dataSource": { type: 'property' },
+				"itemLabelProperty": { type: 'attribute' },
+				"itemValueProperty": { type: 'attribute' },
+				"filterProperty": { type: 'attribute' },
+				"filterMode": { type: 'attribute' },
+				"placeholder": { type: 'attribute' },
+				"alwaysShowChips": { type: 'attribute' }
+			},
+			
+			hostAttributes: {
+				'tab-index': -1
+			},
+			
+			listeners: {
+				'keydown': '_keyDownHandler',
+				'focus-in': '_focusIn',
+				'focus-out': '_focusOut'
+			},
+			
+			// Private methods: 
+			
+			/**
+			 * Search scope for `CbnDataSource.ConsumerBehavior`.
+			 */
+			get _searchScope() { return this.parentForm; },
+			
+			
+			// Event handlers: 
+			
+			/**
+			 * Captures the focus event on any of the element's children.
+			 */
+			_focusIn: function() {
+				this._setMode('query');
+			},
+			
+			/**
+			 * Captures the blur event on any of the element's children.
+			 */
+			_focusOut: function() {
+				this._saveEditedOption();
+				if (this._inputValue || (!this._showChips && this._inputModified)) {
+					if (!this.isItemSelected(this._inputValue)) {
+						var res = this.select(this._inputValue);
+						this._updateQueryInputChanged(res);
+					}
+				} else {
+					this._setInternalValidationState(true);
+				}
+				this._setMode('');
+			},
+			
+			/**
+			 * Captures the keyDown for the select element or any of its children.
+			 * @param {Event} event The captured event.
+			 */
+			_keyDownHandler: function(event) {
+				function isPrintable(event) {
+					var keycode = event.keyCode;
+					return (keycode > 47 && keycode < 58)   || // number keys
+						keycode == 32 || keycode == 13   || // spacebar & return key(s) (if you want to allow carriage returns)
+						(keycode > 64 && keycode < 91)   || // letter keys
+						(keycode > 95 && keycode < 112)  || // numpad keys
+						(keycode > 185 && keycode < 193) || // ;=,-./` (in order)
+						(keycode > 218 && keycode < 223);   // [\]' (in order)
+				}
+				var domEvent = Polymer.dom(event);
+				if (isPrintable(event) && this._status.mode == 'view') {
+					this._setMode('query');
+					if (domEvent.rootTarget != this.$.input) {
+						// focus the input
+						event.preventDefault();
+						this.$.input.value += String.fromCharCode(1 * event.charCode);
+					}
+				}
+				
+				var proceed, dispatch = this._keyDispatch[this._status.mode][event.keyCode] || this._keyDispatch[event.keyCode];
+				var hasModifiers = event['altGraphKey'] || event['metaKey'] || event.altKey || event.shiftKey;
+				if (dispatch && !hasModifiers) {
+					if (typeof dispatch == 'number' || typeof dispatch == 'string') {
+						dispatch = this._keyDispatch[this._status.mode][dispatch];
+					}
+					if (typeof dispatch == 'function') {
+						proceed = dispatch.call(this, event);
+					}
+					if (!proceed) {
+						event.preventDefault();
+					}
+					
+				} else if (this._status.mode == 'view') {
+					// unknown command was received, switch to query
+					this._setMode('query');
+				}
+			},
+			
+			/**
+			 * A map of keydown event handlers, indexed by element mode and keyCode.
+			 */
+			_keyDispatch: {
+				'': {
+				},
+				
+				view: { // when one of the chosen options is highlighted
+					
+					/* backspace */  8: function() { /* Deselects the currently highlighted value. */
+						if (this._highlighted.selectedOptionIdx) {
+							this._setMode('query');
+							if (!this._inputValue.length) {
+								// another backspace removes the last selected item 
+								if (this._displaySelectedOptions.length) {
+									this.deselect(this._displaySelectedOptions[this._displaySelectedOptions.length-1].item);
+								}
+								return false;
+							}
+						} else {
+							this._removeSelectedOption();
+						}
+					},
+					
+					/* enter     */ 13: function() {
+						if (this._highlighted.selectedOptionIdx < 0 || 
+								this._highlighted.selectedOptionIdx >= this._displaySelectedOptions.length) 
+							return;
+						this._setMode('edit', this._highlighted.selectedOptionIdx);
+					},
+					
+					/* escape    */ 27: function() {
+						this._setMode('query');
+					},
+					
+					/* left arr  */ 37: function() { this._highlightSelectedItem(-1, true); },
+					/* right arr */ 39: function() {
+						if (this._highlighted.selectedOptionIdx >= (this._displaySelectedOptions.length - 1)) {
+							this._setMode('query');
+						} else {
+							this._highlightSelectedItem(1, true);
+						}
+					},
+					/* delete    */ 46: function() { this._removeSelectedOption(); }
+				},
+				
+				query: { // when the main/query input is focused
+					
+					/* backspace */ 8: function() {
+						if (!this._inputValue.length) {
+							// another backspace removes the last selected item 
+							if (this._displaySelectedOptions.length) {
+								this.deselect(this._displaySelectedOptions[this._displaySelectedOptions.length-1].item);
+							}
+							return false;
+						}
+						return true;
+					},
+					
+					/* escape    */ 27: function() {
+						this._setMode('');
+					},
+					
+					/* enter     */ 13: function() {
+						var res;
+						if (this._highlighted.filteredOptionIdx > -1) {
+							res = this.select(this._filteredOptions[this._highlighted.filteredOptionIdx].item);
+						} else {
+							res = this.select(this._inputValue);
+						}
+						this._updateQueryInputChanged(res);
+						if (!this.multiple) {
+							this.blur();
+							this._setMode('');
+						}
+					},
+					
+					/* left arr  */ 37: function() {
+						if (this._inputValue.length || !this._displaySelectedOptions.length)
+							return true;
+						this._setMode('view');
+						this._highlightSelectedItem('last');
+						return false;
+					}
+				},
+				
+				edit: { // when a selected option is currently being edited
+					
+					/* enter  */ 13: function() { this._saveEditedOption(); },
+					
+					/* escape */ 27: function() {
+						this._setMode('view', this._highlighted.selectedOptionIdx);
+					}
+				},
+				/*36: function(){ this._setMode('query'); this._highlightDropdownItem('first');  },*/ // home
+				33: function(){ this._setMode('query'); this._highlightDropdownItem(-5, true); }, // page up
+				38: function(){ this._setMode('query'); this._highlightDropdownItem(-1, true); }, // up arrow
+				34: function(){ this._setMode('query'); this._highlightDropdownItem(5, true);  }, // page down
+				40: function(){ this._setMode('query'); this._highlightDropdownItem(1, true);  }, // down arrow
+				/*35: function(){ this._setMode('query'); this._highlightDropdownItem('last');   },*/ // end
+				
+				/* escape    */ 27: function() {
+					this._clearQueryInput();
+					this.blur();
+					this._setMode('');
+				}
+			},
+			
+			/**
+			 * Called when a dropdown option has been clicked / tapped.
+			 * 
+			 * @param {Object} event The captured event.
+			 */
+			_dropdownOptionTap: function(event) {
+				var item = event.model.item;
+				var res = this.select(item.item);
+				this._updateQueryInputChanged(res);
+				if (!this.multiple) {
+					this._closeDropdown();
+				}
+			},
+			
+			/**
+			 * Called when a selected option has been clicked / tapped.
+			 * 
+			 * @param {Object} event The captured event.
+			 */
+			_selectedOptionTap: function(event) {
+				/** @namespace event.model */
+				var item = event.model.item;
+				if (!item) return;
+				if (item.editing) return; // don't interrupt the edit!
+				var idx = this._displaySelectedOptions.indexOf(item);
+				this._setMode('view', idx);
+			},
+			
+			/**
+			 * Called when a selected option has been double clicked.
+			 * Enables the edit mode on the clicked item.
+			 * 
+			 * @param {Object} event The captured event.
+			 */
+			_selectedOptionDblClick: function(event) {
+				if (this._status.mode != 'view' && this._status.mode != 'query') 
+					return;
+				
+				/** @namespace event.model */
+				var item = event.model.item;
+				var idx = this._displaySelectedOptions.indexOf(item);
+				if (!item) return;
+				this._highlightSelectedItem(idx);
+				this._setMode('edit', this._highlighted.selectedOptionIdx);
+				
+				// wait for the UI to update
+				this.async(function() {
+					var optionEditor = event.target.querySelector('.option-editor');
+					if (optionEditor) {
+						optionEditor.focus();
+						optionEditor.setSelectionRange(0, optionEditor.value.length);
+					}
+				});
+			},
+			
+			/**
+			 * Called when the remove selected option button has been clicked.
+			 * 
+			 * @param {Object} event The captured event.
+			 */
+			_removeBtnTap: function(event) {
+				/** @namespace event.model */
+				var item = event.model.item;
+				event.stopPropagation();
+				if (!item) return;
+				this.deselect(item.item);
+			},
+			
+			/**
+			 * Called when the dropdown opener button is clicked/tapped.
+			 */
+			_dropDownButtonTap: function() {
+				this._setMode('query');
+			},
+			
+			/**
+			 * Called when the query input has been modified.
+			 * 
+			 * @param {Event} event The input event object.
+			 */
+			_queryInputHandler: function(event) {
+				this._inputModified = true;
+				
+				// clear any dropdown option selection
+				this._highlightDropdownItem(null);
+				
+				// query/filter the options on the fly
+				this._queryOptions(event.target.value);
+				if (!this.freeText) {
+					// highlight the first option found
+					this._highlightDropdownItem('first');
+				}
+			}
+			
+		};
+		
+		Polymer(scope.CbnSelectPrototype);
+		
+		CbnForm.registerElement('cbn-select', {
+			types: [ 'select' ],
+			priority: 1
+		});
+		
+	})(window.CbnForm.CbnSelect);
+	
+</script>

@@ -1,0 +1,95 @@
+{
+	"types": { 
+		"select": "cbn-paper-select"
+	},
+	"elements": [
+		{
+			"name": "select1",
+			"type": "select",
+			"floatingLabel": true,
+			"label": "Simple",
+			"multiple": false,
+			"options": [ "One", "Two", "Three", "Four" ],
+			"preview": true,
+			"alwaysShowChips": false,
+			"freeText":false,
+			"defaultValue": "Two"
+		},
+		{
+			"name": "select2",
+			"type": "select",
+			"style": "width: 200px; float: left;",
+			"useIronList": true,
+			"floatingLabel": true,
+			"label": "show clips, iron-list",
+			"multiple": false,
+			"options": [ "One", "Two", "Three", "Four" ],
+			"defaultValue": "Two",
+			"preview": true,
+			"alwaysShowChips": true
+		},
+		{
+			"name": "text2",
+			"type": "text",
+			"label": "Sample text",
+			"style": "float: left; display: block; width: 200px; margin-left: 10px;"
+		},
+		{
+			"name": "select3",
+			"type": "select",
+			"floatingLabel": true,
+			"label": "free text",
+			"style": "clear: both;",
+			"multiple": false,
+			"options": [ "One", "Two", "Three", "Four" ],
+			"preview": true,
+			"freeText":true
+		},
+		{
+			"name": "select4",
+			"type": "select",
+			"floatingLabel": true,
+			"label": "free text show chips",
+			"multiple": false,
+			"options": [ "One", "Two", "Three", "Four" ],
+			"preview": true,
+			"alwaysShowChips": true,
+			"freeText":true
+		},
+		{
+			"name": "select5",
+			"type": "select",
+			"floatingLabel": true,
+			"label": "With Data Source, FreeText",
+			"multiple": false,
+			"freeText": true,
+			"dataSource": "#simpleData",
+			"preview": true
+		},
+		{
+			"name": "select6",
+			"type": "select",
+			"floatingLabel": true,
+			"label": "With Data Source, FreeText, AlwaysShowChips",
+			"multiple": false,
+			"freeText": true,
+			"dataSource": "#simpleData",
+			"itemHashProperty": "value",
+			"preview": true,
+			"defaultValue": "Zero",
+			"alwaysShowChips": true
+		},
+		{
+			"name": "select7",
+			"type": "select",
+			"useIronList": true,
+			"defaultValue": [ 6, 7 ],
+			"floatingLabel": true,
+			"label": "With Ajax Source, Multiple, iron-list",
+			"itemHashProperty": "value",
+			"multiple": true,
+			"dataSource": "#ajaxData",
+			"preview": true
+		}
+	]
+}
