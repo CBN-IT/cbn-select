@@ -69,7 +69,7 @@ Custom property                | Description                             | Defau
 						
 						<template is="dom-if" if="[[item.editing]]">
 							<input class="option-editor" type="text" title="Edit value" value="{{_editQuery::input}}"
-								   autocomplete="nope" size$="[[_computeEditInputSize(_editQuery)]]">
+								   autocomplete="off" size$="[[_computeEditInputSize(_editQuery)]]">
 						</template>
 						<template is="dom-if" if="[[!item.editing]]"><span>[[item.label]]</span></template>
 						
@@ -80,7 +80,7 @@ Custom property                | Description                             | Defau
 				</template>
 			</template>
 			
-			<input id="input" type="text" value="{{_inputValue::input}}" class="text-input" autocomplete="nope"
+			<input id="input" type="text" value="{{_inputValue::input}}" class="text-input" autocomplete="off"
 					title="[[placeholder]]" placeholder$="[[placeholder]]" readonly$="[[readonly]]"
 					on-tap="_dropDownButtonTap" on-input="_queryInputHandler">
 			
