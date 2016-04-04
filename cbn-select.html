@@ -49,6 +49,7 @@ Custom property                | Description                             | Defau
 <link rel="import" href="../cbn-data-source/consumer-behavior.html" />
 <link rel="import" href="../cbn-polymer-extensions/lib/position-behavior.html">
 <link rel="import" href="../cbn-polymer-extensions/lib/focusable-behavior.html">
+<link rel="import" href="../cbn-polymer-extensions/lib/dom-proxy.html">
 <link rel="import" href="../iron-list/iron-list.html" />
 
 <link rel="import" href="styles.html" />
@@ -61,26 +62,31 @@ Custom property                | Description                             | Defau
 				filter-property="filterValue" filter-mode="[[filterMode]]"></cbn-data-filter>
 		
 		<div id="container" tabindex="-1" class$="[[_computeContainerClass(_status.open)]]">
+			<template id="defaultSelectedTemplate">
+				<div class$="[[_computeSelectedItemClass(item.highlighted,item.editing)]]"
+						on-tap="_selectedOptionTap" on-dblclick="_selectedOptionDblClick">
+					
+					<template is="dom-if" if="[[item.editing]]">
+						<input class="option-editor" type="text" title="Edit value" value="{{_editQuery::input}}"
+							   autocomplete="off" size$="[[_computeEditInputSize(_editQuery)]]">
+					</template>
+					<template is="dom-if" if="[[!item.editing]]"><span>[[item.label]]</span></template>
+					
+					<a class="removeBtn" on-tap="_removeBtnTap">
+						<iron-icon icon="icons:backspace"></iron-icon>
+					</a>
+				</div>
+			</template>
 			
 			<template is="dom-if" if="[[_computeShowChips(multiple,alwaysShowChips)]]">
 				<template is="dom-repeat" items="[[_displaySelectedOptions]]" as="item">
-					<div class$="[[_computeSelectedItemClass(item.highlighted,item.editing)]]"
-							on-tap="_selectedOptionTap" on-dblclick="_selectedOptionDblClick">
-						
-						<template is="dom-if" if="[[item.editing]]">
-							<input class="option-editor" type="text" title="Edit value" value="{{_editQuery::input}}"
-								   autocomplete="nope" size$="[[_computeEditInputSize(_editQuery)]]">
-						</template>
-						<template is="dom-if" if="[[!item.editing]]"><span>[[item.label]]</span></template>
-						
-						<a class="removeBtn" on-tap="_removeBtnTap">
-							<iron-icon icon="icons:backspace"></iron-icon>
-						</a>
-					</div>
+					<template is="cbn-dom-proxy" ref="[[selectedItemTemplate]]" parent-scope="[[searchScope]]"
+							  instance-props='[ "item", "index" ]'>
+					</template>
 				</template>
 			</template>
 			
-			<input id="input" type="text" value="{{_inputValue::input}}" class="text-input" autocomplete="nope"
+			<input id="input" type="text" value="{{_inputValue::input}}" class="text-input" autocomplete="off"
 					title="[[placeholder]]" placeholder$="[[placeholder]]" readonly$="[[readonly]]"
 					on-tap="_dropDownButtonTap" on-input="_queryInputHandler">
 			
@@ -89,11 +95,18 @@ Custom property                | Description                             | Defau
 			</div>
 			
 			<div id="optionsWrapper">
+				<template id="defaultListTemplate">
+					<div class$="[[_computeDropdownItemClass(item.highlighted)]]"
+						 on-tap="_dropdownOptionTap">[[item.label]]</div>
+				</template>
 				<template is="dom-if" if="[[useIronList]]">
 					<iron-list id="ironList" class="options-list" items="[[_filteredOptions]]" as="item">
 						<template>
-							<div class$="[[_computeDropdownItemClass(item.highlighted)]]"
-								 on-tap="_dropdownOptionTap">[[item.label]]</div>
+							<div>
+								<template is="cbn-dom-proxy" ref="[[listItemTemplate]]" parent-scope="[[searchScope]]"
+										  instance-props='[ "item", "index" ]'>
+								</template>
+							</div>
 						</template>
 						<div class="options-status">
 							<template is="dom-if" if="[[_optionsLoading]]">
@@ -108,15 +121,18 @@ Custom property                | Description                             | Defau
 				<template is="dom-if" if="[[!useIronList]]">
 					<div id="options" class="options-list">
 						<template is="dom-repeat" items="[[_filteredOptions]]" as="item">
-							<div class$="[[_computeDropdownItemClass(item.highlighted)]]"
-								 on-tap="_dropdownOptionTap">[[item.label]]</div>
+							<template is="cbn-dom-proxy" ref="[[listItemTemplate]]" parent-scope="[[searchScope]]"
+									  instance-props='[ "item", "index" ]'>
+							</template>
 						</template>
-						<template is="dom-if" if="[[_optionsLoading]]">
-							<div class="loading">Loading options ...</div>
-						</template>
-						<template is="dom-if" if="[[_computeEmptyOptionsList(_optionsLoading, _filteredOptions)]]">
-							<div class="empty">No available options</div>
-						</template>
+						<div class="options-status">
+							<template is="dom-if" if="[[_optionsLoading]]">
+								<div class="loading">Loading options ...</div>
+							</template>
+							<template is="dom-if" if="[[_computeEmptyOptionsList(_optionsLoading, _filteredOptions)]]">
+								<div class="empty">No available options</div>
+							</template>
+						</div>
 					</div>
 				</template>
 			</div>
@@ -267,6 +283,13 @@ Custom property                | Description                             | Defau
 				},
 				
 				/**
+				 * Override Validatable's validatio type to vary whether the current select is multiple.
+				 */
+				validationType: {
+					type: String
+				},
+				
+				/**
 				 * The element that should retain the focus.
 				 */
 				focusTarget: {
@@ -282,6 +305,22 @@ Custom property                | Description                             | Defau
 					type: Object,
 					value: function() { //noinspection JSUnresolvedVariable
 						return ( this.$ && this.$.container ? this.$.container : this ); }
+				},
+				
+				// Template extension properties
+				
+				/**
+				 * The template to use for displaying selected items.
+				 */
+				selectedItemTemplate: {
+					type: Object
+				},
+				
+				/**
+				 * The template to use for displaying dropdown items.
+				 */
+				listItemTemplate: {
+					type: Object
 				}
 				
 			},
@@ -322,6 +361,17 @@ Custom property                | Description                             | Defau
 				'keydown': '_keyDownHandler',
 				'focus-in': '_focusIn',
 				'focus-out': '_focusOut'
+			},
+			
+			ready: function() {
+				if (!this.selectedItemTemplate) {
+					//noinspection JSUnresolvedVariable
+					this.selectedItemTemplate = this.$.defaultSelectedTemplate;
+				}
+				if (!this.listItemTemplate) {
+					//noinspection JSUnresolvedVariable
+					this.listItemTemplate = this.$.defaultListTemplate;
+				}
 			},
 			
 			// Private methods: 
