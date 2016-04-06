@@ -465,7 +465,7 @@ Custom property                | Description                             | Defau
 							if (!this._inputValue.length) {
 								// another backspace removes the last selected item 
 								if (this._displaySelectedOptions.length) {
-									this.deselect(this._displaySelectedOptions[this._displaySelectedOptions.length-1].item);
+									this._removeSelectedOption(this._displaySelectedOptions.length-1);
 								}
 								return false;
 							}
@@ -502,7 +502,7 @@ Custom property                | Description                             | Defau
 						if (!this._inputValue.length) {
 							// another backspace removes the last selected item 
 							if (this._displaySelectedOptions.length) {
-								this.deselect(this._displaySelectedOptions[this._displaySelectedOptions.length-1].item);
+								this._removeSelectedOption(this._displaySelectedOptions.length-1);
 							}
 							return false;
 						}
@@ -623,7 +623,7 @@ Custom property                | Description                             | Defau
 				var item = event.model.item;
 				event.stopPropagation();
 				if (!item) return;
-				this.deselect(item.item);
+				this._removeSelectedOption(event.model.index);
 			},
 			
 			/**
