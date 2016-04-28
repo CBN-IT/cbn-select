@@ -565,6 +565,9 @@ Custom property                | Description                             | Defau
 			 */
 			_dropdownOptionTap: function(event) {
 				var item = event.model.item;
+				// prevent the propagation of the event, the element may be removed from DOM
+				event.stopPropagation();
+				
 				var res = this.select(item.item);
 				this._updateQueryInputChanged(res);
 				if (!this.multiple) {
