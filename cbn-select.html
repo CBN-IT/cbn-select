@@ -22,7 +22,7 @@ The stock `cbn-select` has paper-like look.
 You can customize it using the following CSS mixins: 
 
 Custom property                | Description                             | Default
--------------------------------|-----------------------------------------|--------------------
+------------------------------ |-----------------------------------------|--------------------
 `--cbn-select-min-width`       | Minimum width for the options dropdown  | `{ }`
 `--cbn-select-container`       | Main select container                   | `{ }`
 `--cbn-select-ed-item`         | Selected item                           | `{ }`
@@ -40,7 +40,6 @@ Custom property                | Description                             | Defau
 @element cbn-form
 @demo demo/index.html
 -->
-
 <link rel="import" href="lib/include.html" />
 
 <link rel="import" href="../iron-icon/iron-icon.html" />
@@ -648,7 +647,12 @@ Custom property                | Description                             | Defau
 				this._highlightDropdownItem(null);
 				
 				// query/filter the options on the fly
-				this._queryOptions(event.target.value);
+				try {
+					this._skipReSelection = true;
+					this._queryOptions(event.target.value);
+				} finally {
+					this._skipReSelection = false;
+				}
 				if (!this.freeText) {
 					// highlight the first option found
 					this._highlightDropdownItem('first');
