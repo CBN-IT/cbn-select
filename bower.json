@@ -1,6 +1,10 @@
 {
     "name": "cbn-select",
     "version": "1.0.0",
+    "main": [
+        "cbn-select.html",
+        "cbn-paper-select.html"
+    ],
     "private": true,
     "dependencies": {
         "polymer": "Polymer/polymer#>=1.5.0 <1.7.0",

@@ -1,22 +1,35 @@
+<link rel="import" href="lib/include.html" />
+
+<link rel="import" href="../iron-icon/iron-icon.html" />
+<link rel="import" href="../iron-icons/iron-icons.html" />
+<link rel="import" href="../cbn-data-source/cbn-data-source.html" />
+<link rel="import" href="../cbn-data-source/consumer-behavior.html" />
+<link rel="import" href="../cbn-polymer-extensions/lib/position-behavior.html">
+<link rel="import" href="../cbn-polymer-extensions/lib/focusable-behavior.html">
+<link rel="import" href="../cbn-polymer-extensions/lib/dom-proxy.html">
+<link rel="import" href="../iron-list/iron-list.html" />
+
+<link rel="import" href="styles.html" />
+
 <!--
 `cbn-select` is a highly-customizable input with selectable dropdown values.
 
-Features:
+### Features:
+
 - options can be specified using the "options" attribute (as a JSON array) or by using the `cbn-data-source` element;
 - supports single/multiple values to be selected;
 - dropdown is filterable;
 - options are editable (optional, when "freeText" is enabled);
 - you can use it to select from any JSON objects list; you can override the value, label and filter properties.
 
-Example:
+### Example:
 ```
-    <cbn-select name="numbers" multiple freeText
-                options="[ "One", "Two", "Three" ]">
-    </cbn-select>
+<cbn-select name="numbers" multiple freeText
+            options="[ "One", "Two", "Three" ]">
+</cbn-select>
 ```
 
-<br />
-### Styling
+## Styling
 
 The stock `cbn-select` has paper-like look. 
 You can customize it using the following CSS mixins: 
@@ -35,23 +48,11 @@ Custom property                | Description                             | Defau
 `--cbn-select-loading`         | Loading message                         | `{ }`
 `--cbn-select-dropdown-btn`    | Dropdown button                         | `{ }`
 
-
 @group CBN Elements
 @element cbn-select
-@demo demo/index.html
+@demo demo/index.html Standard select inputs
+@demo demo/dynamic.html Select input in dynamic form
 -->
-<link rel="import" href="lib/include.html" />
-
-<link rel="import" href="../iron-icon/iron-icon.html" />
-<link rel="import" href="../iron-icons/iron-icons.html" />
-<link rel="import" href="../cbn-data-source/cbn-data-source.html" />
-<link rel="import" href="../cbn-data-source/consumer-behavior.html" />
-<link rel="import" href="../cbn-polymer-extensions/lib/position-behavior.html">
-<link rel="import" href="../cbn-polymer-extensions/lib/focusable-behavior.html">
-<link rel="import" href="../cbn-polymer-extensions/lib/dom-proxy.html">
-<link rel="import" href="../iron-list/iron-list.html" />
-
-<link rel="import" href="styles.html" />
 
 <dom-module id="cbn-select">
 	<template>
@@ -156,8 +157,7 @@ Custom property                | Description                             | Defau
 <script>
 	(function (scope) {
 		
-		//noinspection JSUnusedGlobalSymbols
-		scope.CbnSelectPrototype = {
+		Polymer({
 			is: 'cbn-select',
 			
 			properties: {
@@ -195,7 +195,7 @@ Custom property                | Description                             | Defau
 				 * An array with the select options.
 				 * Also accepts a callback function (as property).
 				 * 
-				 * Cannot be used together with {@link #dataSource}.
+				 * Cannot be used together with `dataSource`.
 				 */
 				options: {
 					type: Array,
@@ -222,7 +222,7 @@ Custom property                | Description                             | Defau
 				
 				/**
 				 * The selector or reference to a `cbn-data-source` element that supplies the available options.
-				 * Exclusive with {@link #options}.
+				 * Exclusive with `options`.
 				 * 
 				 * The element is searched for inside the parent form.
 				 */
@@ -672,9 +672,7 @@ Custom property                | Description                             | Defau
 				}
 			}
 			
-		};
-		
-		Polymer(scope.CbnSelectPrototype);
+		});
 		
 		CbnForm.registerElement('cbn-select', {
 			types: [ 'select' ],
