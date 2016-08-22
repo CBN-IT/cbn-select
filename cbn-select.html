@@ -393,6 +393,15 @@ Custom property                | Description                             | Defau
 			 */
 			get _searchScope() { return this.parentForm; },
 			
+
+			/**
+			 * Fired before the selected value is changed.
+			 * 
+			 * Allows cancelling the value modification.
+			 * 
+			 * @event cbn-before-select
+			 * @detail {*} newValue The newly selected value.
+			 */
 			
 			// Event handlers: 
 			
