@@ -1,27 +1,28 @@
 {
-    "name": "cbn-select",
-    "version": "1.0.0",
-    "main": [
-        "cbn-select.html",
-        "cbn-paper-select.html"
-    ],
-    "private": true,
-    "dependencies": {
-        "polymer": "Polymer/polymer#>=1.5.0 <1.7.0",
-        "iron-list": "PolymerElements/iron-list#~1.3.4",
-        "iron-icon": "PolymerElements/iron-icon#^1.0.0",
-        "iron-icons": "PolymerElements/iron-icons#^1.1.0",
-        "paper-input": "PolymerElements/paper-input#^1.1.0",
-        "iron-flex-layout": "PolymerElements/iron-flex-layout#^1.3.0",
-        "cbn-form": "git@bitbucket.org:cbn-it/cbn-form.git#master",
-        "cbn-data-source": "git@bitbucket.org:cbn-it/cbn-data-source.git#master",
-        "cbn-polymer-extensions": "git@bitbucket.org:cbn-it/cbn-polymer-extensions.git#master"
-    },
-    "devDependencies": {
-        "web-component-tester": "Polymer/web-component-tester",
-        "iron-component-page": "PolymerElements/iron-component-page#^1.0",
-        "test-fixture": "PolymerElements/test-fixture#^1.0",
-        "iron-ajax": "PolymerElements/iron-ajax#^1.0",
-        "font-roboto-local": "PolymerElements/font-roboto-local#^1.0.0"
-    }
+  "name": "cbn-select",
+  "version": "1.0.0",
+  "main": [
+    "cbn-select.html",
+    "cbn-paper-select.html"
+  ],
+  "private": true,
+  "dependencies": {
+    "polymer": "Polymer/polymer#>=1.5.0 <1.7.0",
+    "iron-list": "PolymerElements/iron-list#~1.3.4",
+    "iron-icon": "PolymerElements/iron-icon#^1.0.0",
+    "iron-icons": "PolymerElements/iron-icons#^1.1.0",
+    "paper-input": "PolymerElements/paper-input#^1.1.0",
+    "iron-flex-layout": "PolymerElements/iron-flex-layout#^1.3.0",
+    "cbn-form": "git@bitbucket.org:cbn-it/cbn-form.git#master",
+    "cbn-data-source": "git@bitbucket.org:cbn-it/cbn-data-source.git#master",
+    "cbn-polymer-extensions": "git@bitbucket.org:cbn-it/cbn-polymer-extensions.git#master",
+    "iron-demo-helpers": "PolymerElements/iron-demo-helpers#^1.2.5"
+  },
+  "devDependencies": {
+    "web-component-tester": "Polymer/web-component-tester",
+    "iron-component-page": "PolymerElements/iron-component-page#^1.0",
+    "test-fixture": "PolymerElements/test-fixture#^1.0",
+    "iron-ajax": "PolymerElements/iron-ajax#^1.0",
+    "font-roboto-local": "PolymerElements/font-roboto-local#^1.0.0"
+  }
 }

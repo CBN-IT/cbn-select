@@ -16,21 +16,28 @@
 	<link rel="import" href="../../cbn-form/elements/polymer-elements.html">
 	<link rel="import" href="../cbn-select.html">
 	<link rel="import" href="../cbn-paper-select.html">
+
+	<link rel="import" href="../../iron-demo-helpers/demo-snippet.html">
+	<link rel="import" href="../../iron-demo-helpers/demo-pages-shared-styles.html">
 </head>
 <body>
 
 <div  style="width: 500px; margin: 50px auto;">
 	<h1>Dynamic select inputs, advanced demo</h1>
-	
-	<template is="dom-bind">
-		<iron-ajax auto url="dynamic-config.json" handle-as="json" last-response="{{formConfig}}"></iron-ajax>
-		
 		<form is="cbn-form" id="demoForm" model style="width: 100%;">
+			<demo-snippet class="centered-demo" style="position:relative">
+				<template is="dom-bind">
+					<iron-ajax auto url="dynamic-config.json" handle-as="json" last-response="{{formConfig}}"></iron-ajax>
+					
+					<cbn-dynamic-form config="{{formConfig}}"></cbn-dynamic-form>
+				</template>
+			</demo-snippet>
+			<br/>
 			
-			<cbn-dynamic-form config="{{formConfig}}">
-			</cbn-dynamic-form>
-			
-			<cbn-data-source id="simpleData" data='[
+			<p>The following code adds options to the "With Data Source, FreeText, AlwaysShowChips" select.</p>
+			<demo-snippet class="centered-demo" style="position:relative">
+				<template>
+					<cbn-data-source id="simpleData" data='[
 				{ "value":"0", "label": "Zero" },
 				{ "value":"0", "label": "Zero" },
 				{ "value":"0", "label": "Zero" },
@@ -42,31 +49,40 @@
 				{ "value":"5", "label": "Third With hash", "_hash":"hash" },
 				{ "value":"4", "label": "Fourth with a very long name should fit right? we&#39;ll see, I guess... lorem ipsum dolor sit amet lalala lalala" }
 			]'></cbn-data-source>
+				</template>
+			</demo-snippet>
+			<br/>
 			
-			<cbn-data-source id="ajaxData">
-				<iron-ajax url="data.json" handle-as="json"></iron-ajax>
-			</cbn-data-source>
-			
+			<p>The code below takes the data from the data.json file and creates the options for the "With Ajax Source, Multiple, iron-list" select.</p>
+			<demo-snippet class="centered-demo" style="position:relative">
+				<template>
+					<cbn-data-source id="ajaxData">
+						<iron-ajax url="data.json" handle-as="json"></iron-ajax>
+					</cbn-data-source>
+				</template>
+			</demo-snippet>
+			<br/>
+			<p>The data regarding each select element in the dynamic form is found in the dynamic-config.json.Each element has "name","type","label" etc.</p>
 		</form>
-		
+	
 		<p style="font-weight: bold;">Output: </p>
 		<pre id="stringifiedJson"></pre>
-		
-	</template>
+	
 </div>
 
 <script>
 	var tpl = document.querySelector('template[is=dom-bind]');
+	var form = document.querySelector('form[is=cbn-form]');
+	var output = document.getElementById("stringifiedJson");
 	
 	tpl.addEventListener('dom-change', function(){
 		/** @namespace tpl.$.demoForm */
-		var form = tpl.$.demoForm;
 		
 		function updateOutput(ev) {
 			if (ev)
 				console.trace('value changed', ev.target.name, ev.detail);
 			/** @namespace tpl.$.stringifiedJson */
-			tpl.$.stringifiedJson.textContent = JSON.stringify(form.model, null, 4);
+			output.textContent = JSON.stringify(form.model, null, 4);
 		}
 		
 		form.addEventListener('value-changed', updateOutput);

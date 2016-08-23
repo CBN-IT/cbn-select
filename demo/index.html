@@ -3,27 +3,31 @@
 <head lang="en">
 	<meta charset="UTF-8">
 	<title>Cbn-Select Demo</title>
-	
+
 	<script src="../../webcomponentsjs/webcomponents-lite.js"></script>
-	
-	<link rel="import" href="../../font-roboto-local/roboto.html" />
-	
+
+	<link rel="import" href="../../font-roboto-local/roboto.html"/>
+
 	<link rel="import" href="../../cbn-form/cbn-form.html">
-	<link rel="import" href="../cbn-select.html" />
-	<link rel="import" href="../cbn-paper-select.html" />
-	
+	<link rel="import" href="../cbn-select.html"/>
+	<link rel="import" href="../cbn-paper-select.html"/>
+	<link rel="import" href="../../iron-demo-helpers/demo-snippet.html">
+	<link rel="import" href="../../iron-demo-helpers/demo-pages-shared-styles.html">
+
 	<style>
 		body {
 			font-family: Roboto, 'Helvetica Neue', Helvetica, Arial, sans-serif;
 			font-size: 14px;
 		}
 	</style>
-	
+
 	<style is="custom-style">
 		* {
-			--paper-input-container {
-				padding: 0 !important;
-			}
+
+		--paper-input-container {
+			padding: 0 !important;
+		}
+
 		}
 	</style>
 </head>
@@ -31,60 +35,110 @@
 
 <div style="margin: 20px auto; width: 500px;">
 	<h1>Cbn-Select Demo</h1>
-	
-	<template is="dom-bind">
-		
-		<form id="demoForm" is="cbn-form" model>
-			
-			<cbn-paper-select style="position: absolute; width: 100px;;right: 10px; top: 10px;" 
-							  label="Multiple" name="ptwoabs" multiple options="[[demoOptions1]]"></cbn-paper-select>
-			
-			<cbn-paper-select use-iron-list auto-validate validation='{ "required": true }'
-							  label="Single" name="pone" options="[[demoOptions1]]"></cbn-paper-select>
-			
-			<cbn-paper-select label="Multiple" name="ptwo" multiple options="[[demoOptions1]]"></cbn-paper-select>
-			
-			<cbn-paper-select label="Multiple FreeText" name="pthree" multiple free-text options="[[demoOptions1]]"></cbn-paper-select>
-			
-			<cbn-paper-select style="width: 100px;" label="Small Text" 
-							  name="pthree" free-text options="[[demoOptions1]]"></cbn-paper-select>
-			
-			<cbn-paper-select style="width: 200px;" label="Delayed Options" value="one"
-							  name="pdelayed" free-text options="[[delayedOptions]]"></cbn-paper-select>
-			
-		</form>
-		
-		<p style="font-weight: bold;">Output: </p>
-		<pre id="stringifiedJson"></pre>
-		
-	</template>
+
+	<form id="demoForm" is="cbn-form" model>
+		<demo-snippet class="centered-demo" style="position:relative">
+			<template is="dom-bind">
+				<cbn-paper-select use-iron-list auto-validate validation='{ "required": true }'
+								  label="Single" name="single-select" options="[[demoOptions1]]"></cbn-paper-select>
+			</template>
+		</demo-snippet>
+		<br/>
+		<demo-snippet class="centered-demo" style="position:relative">
+			<template is="dom-bind">
+				<cbn-paper-select use-iron-list auto-validate validation='{ "required": true }'
+								  label="Single FreeText" name="single-freeText-select" free-text
+								  options="[[demoOptions1]]"></cbn-paper-select>
+			</template>
+		</demo-snippet>
+		<br/>
+		<demo-snippet class="centered-demo" style="position:relative">
+			<template is="dom-bind">
+				<cbn-paper-select use-iron-list auto-validate validation='{ "required": true }'
+								  label="Single FreeText" name="single-freeText-alwaysShowChips-select" free-text always-show-chips
+								  options="[[demoOptions1]]"></cbn-paper-select>
+			</template>
+		</demo-snippet>
+		<br/>
+		<demo-snippet class="centered-demo" style="position:relative">
+			<template is="dom-bind">
+				<cbn-paper-select use-iron-list auto-validate validation='{ "required": true }'
+								  label="Single Always Show Chips" name="single-alwaysShowChips-select" always-show-chips
+								  options="[[demoOptions1]]"></cbn-paper-select>
+			</template>
+		</demo-snippet>
+		<br/>
+		<demo-snippet class="centered-demo" style="position:relative">
+			<template is="dom-bind">
+				<cbn-paper-select style="position: absolute; width: 100px;right: 10px; top: -10%;"
+								  label="Multiple" name="multiple-select" multiple
+								  options="[[demoOptions1]]"></cbn-paper-select>
+			</template>
+			<br style="clear:both"/>
+		</demo-snippet>
+		<br/>
+		<demo-snippet class="centered-demo" style="position:relative">
+			<template is="dom-bind">
+				<cbn-paper-select label="Multiple" name="multiple-noStyle-select" multiple options="[[demoOptions1]]"></cbn-paper-select>
+			</template>
+		</demo-snippet>
+		<br/>
+		<demo-snippet class="centered-demo" style="position:relative">
+			<template is="dom-bind">
+				<cbn-paper-select label="Multiple FreeText" name="multiple-freeText-select" multiple free-text
+								  options="[[demoOptions1]]"></cbn-paper-select>
+			</template>
+		</demo-snippet>
+		<br/>
+		<demo-snippet class="centered-demo" style="position:relative">
+			<template is="dom-bind">
+				<cbn-paper-select style="width: 100px;" label="Small Text"
+								  name="smallText-select" free-text options="[[demoOptions1]]"></cbn-paper-select>
+			</template>
+		</demo-snippet>
+		<br/>
+		<demo-snippet class="centered-demo" style="position:relative">
+			<template is="dom-bind">
+				<cbn-paper-select style="width: 200px;" label="Delayed Options" value="one"
+								  name="delayed-select" free-text options="[[delayedOptions]]"></cbn-paper-select>
+			</template>
+		</demo-snippet>
+		<br/>
+
+	</form>
+
+	<p style="font-weight: bold;">Output: </p>
+	<pre id="stringifiedJson"></pre>
 </div>
 
 <script>
-	var tpl = document.querySelector('template[is=dom-bind]');
-	tpl.demoOptions1 = [];
-	for (i=0; i<30; i++) {
-		tpl.demoOptions1.push("xasdasdas dasdasdasd asdasdasdasdasd asd asd " + i);
-	}
-	setTimeout(function() {
-		tpl.delayedOptions = [ "one", "two", "three" ];
-	}, 3000);
-	
-	tpl.addEventListener('dom-change', function(){
-		/** @namespace tpl.$.demoForm */
-		var form = tpl.$.demoForm;
-		
-		function updateOutput(ev) {
-			if (ev)
-				console.trace('value changed', ev.target.name, ev.detail);
-			/** @namespace tpl.$.stringifiedJson */
-			tpl.$.stringifiedJson.textContent = JSON.stringify(form.model, null, 4);
+	var form = document.querySelector('form[is=cbn-form]');
+	var tpls = document.querySelectorAll('template[is=dom-bind]');
+	var output = document.getElementById("stringifiedJson");
+	tpls.forEach(function (tpl, index) {
+		tpl.demoOptions1 = [];
+		for (var i = 0; i < 30; i++) {
+			tpl.demoOptions1.push("xasdasdas dasdasdasd asdasdasdasdasd asd asd " + i);
 		}
-		
-		form.addEventListener('value-changed', updateOutput);
-		updateOutput();
-	});
-	
+		setTimeout(function () {
+			tpl.delayedOptions = ["one", "two", "three"];
+		}, 3000);
+
+		tpl.addEventListener('dom-change', function () {
+			/** @namespace tpl.$.demoForm */
+			function updateOutput(ev) {
+				if (ev)
+					console.trace('value changed', ev.target.name, ev.detail);
+				/** @namespace tpl.$.stringifiedJson */
+				output.textContent = JSON.stringify(form.model, null, 4);
+			}
+
+			form.addEventListener('value-changed', updateOutput);
+			updateOutput();
+		});
+
+	})
+
 </script>
 
 </body>
