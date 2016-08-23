@@ -420,7 +420,7 @@ Custom property                | Description                             | Defau
 				if (this._inputValue || (!this._showChips && this._inputModified)) {
 					if (!this.isItemSelected(this._inputValue)) {
 						var res = this.select(this._inputValue);
-						this._updateQueryInputChanged(true);
+						this._updateQueryInputChanged(res);
 					}
 				} else {
 					this._setInternalValidationState(true);
@@ -541,7 +541,7 @@ Custom property                | Description                             | Defau
 						} else {
 							res = this.select(this._inputValue);
 						}
-						this._updateQueryInputChanged(true);
+						this._updateQueryInputChanged(res);
 						if (!this.multiple) {
 							this.blur();
 							this._setMode('');
@@ -590,7 +590,7 @@ Custom property                | Description                             | Defau
 				event.stopPropagation();
 				
 				var res = this.select(item.item);
-				this._updateQueryInputChanged(true);
+				this._updateQueryInputChanged(res);
 				if (!this.multiple) {
 					this._closeDropdown();
 				}
