@@ -111,6 +111,26 @@
 			f.select('Two');
 			assert.equal(f.value, 'Two', 'value selected');
 		});
+		
+		test('before select event', function () {
+			f = fixture('simpleSelect');
+			var beforeSelect = sinon.spy();
+			f.addEventListener('cbn-before-select', beforeSelect);
+			
+			f.options = [ "One", "Two", "Three" ];
+			f.value = 'One';
+			assert.ok(beforeSelect.called, 'before-select fired');
+			assert.equal(beforeSelect.args[beforeSelect.args.length-1][0].detail.newValue, 'One', 'event value');
+			
+			// test preventDefault
+			f.addEventListener('cbn-before-select', function(event) {
+				event.preventDefault();
+			});
+			f.select('Two');
+			assert.equal(f.value, 'One', 'value selection prevented');
+			assert.ok(f.validate(), 'previous value valid');
+		});
+		
 	});
 	
 	suite('multiple selection', function () {
