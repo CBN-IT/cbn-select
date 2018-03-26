@@ -367,16 +367,17 @@
                      }
                      if(this.$.filter.value === "") {
                          this.splice("value", this.value.length - 1, 1);
+                         this.shadowRoot.querySelector(".tari").classList.remove("displayTari");
+                         this.$.linieSpeciala.classList.remove("linieSpeciala");
+                         this.shadowRoot.querySelector(".arrow-left").classList.remove("arrow-down");
+                         this.indexTabel = -1;
                      }
-                     this.shadowRoot.querySelector(".tari").classList.remove("displayTari");
-                     this.$.linieSpeciala.classList.remove("linieSpeciala");
-                     this.shadowRoot.querySelector(".arrow-left").classList.remove("arrow-down");
-                    this.indexTabel = -1;
                  }
              }
 
 
              filter(event) {
+                 this.shadowRoot.querySelector(".tari").classList.add("displayTari");
                  var val = this.$.filter.value;
                  let arrayLength = this.options.length;
                  this.memArray = [];
@@ -416,10 +417,10 @@
                      for(let i = 0; i < this.options.length; i++) {
                          var found = false;
                          for(let x = 0; x< this.value.length; x++) {
-                             if (this.options[i].value === this.value[x].value){
-                                 found = true;
-                                 break;
-                             }
+                                if (this.options[i].value === this.value[x].value) {
+                                    found = true;
+                                    break;
+                                }
                          }
                          if(!found){
                              this.push("elemRamase", this.options[i]);
