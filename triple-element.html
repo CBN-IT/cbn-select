@@ -1,0 +1,387 @@
+<link rel="import" href="../polymer/polymer-element.html">
+<link rel="import" href="../paper-input/paper-input.html">
+
+<dom-module id="triple-element">
+    <template>
+        <style>
+            :host {
+                display: block;
+            }
+
+            #hr2{
+                margin-bottom: 20px;
+                position:relative;
+                top:-34px;
+            }
+
+            #orase{
+                position:absolute;
+                top:442px;
+                background-color: whitesmoke;
+                width:80px;
+                display:none;
+                z-index:3;
+                cursor:pointer;
+            }
+            #municipiu{
+                margin-left: 105px;
+                position:absolute;
+                top:442px;
+                background-color: whitesmoke;
+                width:80px;
+                display:none;
+                z-index:3;
+                cursor:pointer;
+            }
+            #sector{
+                margin-left: 208px;
+                position:absolute;
+                top:442px;
+                background-color: whitesmoke;
+                width:70px;
+                display:none;
+                z-index:3;
+                cursor:pointer;
+            }
+
+            #orase>div:hover{
+                background-color:darkgrey;
+            }
+
+            #municipiu>div:hover{
+                background-color: darkgrey;
+            }
+
+            #sector>div:hover{
+                background-color:darkgrey;
+            }
+
+            #input2{
+                background-color: white;
+                width:80px;
+                position:relative;
+                top:5px;
+                border:none;
+                outline:none;
+            }
+            #input3{
+                background-color:white;
+                width:80px;
+                position:relative;
+                left:104px;
+                top:-12px;
+                border:none;
+                outline:none;
+            }
+            #input4{
+                background-color:white;
+                width:70px;
+                position:relative;
+                left:208px;
+                top:-29px;
+                border:none;
+                outline:none;
+            }
+            .scrisMic2{
+                font-size:12px;
+            }
+            .scrisMic3{
+                font-size:12px;
+                margin-left:50px;
+            }
+            .linieSpeciala2{
+                width: 0px;
+                height: 2px;
+                background: #0066bb;
+                transition: width 0.5s, left 0.5s;
+                position: absolute;
+                top:-34px;
+                left:50%;
+                z-index: 2;
+            }
+            .spanSec1{
+                display:inline-block;
+                width:70px;
+                background-color: #c0c0c0;
+                position: absolute;
+                top:3px;
+                z-index: 1;
+                border-radius:6px;
+            }
+            .spanSec2{
+                display:inline-block;
+                width:70px;
+                background-color:#c0c0c0;
+                position: absolute;
+                top: -15px;
+                left: 100px;
+                z-index: 1;
+                border-radius:8px;
+            }
+            .spanSec3{
+                display:inline-block;
+                width:70px;
+                background-color:#c0c0c0;
+                position: absolute;
+                top: -32px;
+                left: 205px;
+                z-index: 1;
+                border-radius:8px;
+            }
+            .delete {
+                width: 24px;
+                height: 20px;
+                border: solid black 1px;
+                position:absolute;
+                left:65px;
+                z-index: 2;
+                cursor:pointer;
+            }
+
+        </style>
+
+        <span class="scrisMic2">Localitate</span>
+        <span class="scrisMic3">Municipiu</span>
+        <span class="scrisMic3">Sector</span>
+        <br/>
+        <div id="container1" style="position:relative;">
+        </div>
+        <input id="input2" type="text" on-keyup="filter2" for="orase" on-focus="displayBlock" on-blur="displayNone"/>
+        <div id="orase" name="Orase">
+        </div>
+        <div id="container2" style="position:relative;">
+        </div>
+        <input id="input3" type="text" on-keyup="filter3" for="municipiu" on-focus="displayBlock" on-blur="displayNone"/>
+        <div id="municipiu" name="Municipiu">
+        </div>
+        <div id="container3" style="position:relative;">
+        </div>
+        <input id="input4" type="text" on-keyup="filter4" for="sector" on-focus="displayBlock" on-blur="displayNone"/>
+        <div id="sector" name="Sector">
+        </div>
+        <br />
+        <div style="position:relative;">
+            <div class="linieSpeciala2" id="linieSpeciala2"></div>
+            <hr id="hr2">
+        </div>
+
+
+    </template>
+
+<script>
+    /**
+     * `triple-element`
+     *
+     *
+     * @customElement
+     * @polymer
+     * @demo demo/index.html
+     */
+    class TripleElement extends Polymer.Element {
+        static get is() {
+            return 'triple-element';
+        }
+
+        static get properties() {
+            return {
+                prop1: {
+                    type: String,
+                    value: 'triple-element'
+
+                },
+                indexTabel: {
+                    type: Number,
+                    value: -1
+                },
+
+                options21: {
+                    type: Array,
+                    value: [
+                        "Bucuresti",
+                        "Roma",
+                        "Paris",
+                        "Berlin",
+                        "Madrid"
+                    ]
+                },
+                options22: {
+                    type:Array,
+                    value: [
+                        "Bucuresti",
+                        "Roma",
+                        "Paris",
+                        "Berlin",
+                        "Madrid"
+                    ]
+                },
+                options23: {
+                    type:Array,
+                    value: [
+                        "Sector 1",
+                        "Sector 2",
+                        "Sector 3",
+                        "Sector 4",
+                        "Sector 5",
+                        "Sector 6"
+                    ]
+                }
+
+
+            };
+        }
+
+        connectedCallback() {
+            super.connectedCallback();
+
+            this.options21.sort(
+                function(a,b){
+                    return a.toLowerCase().localeCompare(b.toLowerCase());
+                }
+            );
+            var str2 = "";
+            for (let i = 0; i < this.options21.length; i++) {
+                str2 = str2 + "<div>" + this.options21[i] + "</div>";
+            }
+            this.$.orase.innerHTML = str2;
+            var optiuni1 = this.$.orase.querySelectorAll("div");
+            for(let i = 0 ; i < optiuni1.length ; i++) {
+
+                optiuni1[i].addEventListener("click", function (event){
+                    this.selectFunction1(event);
+                }.bind(this));
+            }
+
+            this.options22.sort(
+                function(a,b){
+                    return a.toLowerCase().localeCompare(b.toLowerCase());
+                }
+            );
+            var str3="";
+            for(let i = 0 ; i<this.options22.length ; i++){
+                str3=str3 + "<div>" + this.options22[i] + "</div>";
+            }
+            this.$.municipiu.innerHTML = str3;
+            var optiuni2 = this.$.municipiu.querySelectorAll("div");
+            for(let i = 0 ; i < optiuni2.length ; i++) {
+
+                optiuni2[i].addEventListener("click", function (event){
+                    this.selectfunction2(event);
+                }.bind(this));
+            }
+
+            this.options23.sort(
+                function(a,b){
+                    return a.toLowerCase().localeCompare(b.toLowerCase());
+                }
+            );
+            var str4="";
+            for(let i = 0 ; i<this.options23.length ; i++){
+                str4=str4 + "<div>" + this.options23[i] + "</div>";
+            }
+            this.$.sector.innerHTML = str4;
+            var optiuni3 = this.$.sector.querySelectorAll("div");
+            for(let i = 0 ; i < optiuni3.length ; i++) {
+
+                optiuni3[i].addEventListener("click", function (event){
+                    this.selectFunction3(event);
+                }.bind(this));
+            }
+        }
+
+        displayNone(event){
+            setTimeout(function(){
+                this.$[event.path[0].getAttribute("for")].style.display="none";
+                this.$.linieSpeciala2.style.width="0%";
+                this.$.linieSpeciala2.style.left="50%";
+            }.bind(this),100)
+        }
+
+
+        displayBlock(event){
+            this.$[event.path[0].getAttribute("for")].style.display = "block";
+            if(event.path[0].id !== "filter") {
+                this.$.linieSpeciala2.style.width = "100%";
+                this.$.linieSpeciala2.style.left = "0%";
+            }
+        }
+
+
+        filter2()  {
+            var val2 = this.$.input2.value;
+            this.$.orase.innerHTML = "";
+            for (let x = 0; x < this.options21.length; x++) {
+                if (this.options21[x].toLowerCase().indexOf(val2.toLowerCase()) !== -1) {
+                    this.$.orase.innerHTML = this.$.orase.innerHTML + "<div>" + this.options21[x] + "</div>";
+                }
+            }
+        }
+        filter3()  {
+            var val3 = this.$.input3.value;
+            this.$.municipiu.innerHTML = "";
+            for (let y = 0; y < this.options22.length; y++) {
+                if (this.options22[y].toLowerCase().indexOf(val3.toLowerCase()) !== -1) {
+                    this.$.municipiu.innerHTML = this.$.municipiu.innerHTML + "<div>" + this.options22[y] + "</div>";
+                }
+            }
+        }
+        filter4()  {
+            var val4 = this.$.input4.value;
+            this.$.sector.innerHTML = "";
+            for (let z = 0; z < this.options23.length; z++) {
+                if (this.options23[z].toLowerCase().indexOf(val4.toLowerCase()) !== -1) {
+                    this.$.sector.innerHTML = this.$.sector.innerHTML + "<div>" + this.options23[z] + "</div>";
+                }
+            }
+        }
+
+            selectFunction1(event) {
+                this.$.container1.innerHTML = `
+            <span class="spanSec1" >
+                <span id="spanSec1" style="padding-left: 5px;">${event.path[0].innerHTML}</span>
+                <button class="delete" type="button">X</button>
+            </span>`
+                var deleteAll = this.$.container1.querySelectorAll(".delete");
+                for (let i = 0; i < deleteAll.length; i++) {
+                    deleteAll[i].addEventListener("click", function (event) {
+                        this.parentNode.remove(i - 1);
+                    });
+                }
+            }
+
+            selectfunction2(event) {
+                this.$.container2.innerHTML = `
+            <span class="spanSec2" >
+                <span id="spanSec2" style="padding-left: 5px;">${event.path[0].innerHTML}</span>
+                <button class="delete" type="button">X</button>
+            </span>`
+                var deleteAll = this.$.container2.querySelectorAll(".delete");
+                for (let i = 0; i < deleteAll.length; i++) {
+                    deleteAll[i].addEventListener("click", function (event) {
+                        this.parentNode.remove(i - 1);
+                    });
+                }
+            }
+
+            selectFunction3(event){
+                this.$.container3.innerHTML = `
+            <span class="spanSec3" >
+                <span id="spanSec3" style="padding-left: 5px;">${event.path[0].innerHTML}</span>
+                <button class="delete" type="button">X</button>
+            </span>`
+                var deleteAll = this.$.container3.querySelectorAll(".delete");
+                for(let i = 0; i < deleteAll.length; i++) {
+                    deleteAll[i].addEventListener("click", function (event) {
+                        this.parentNode.remove(i - 1);
+                    });
+                }
+            }
+
+    }
+
+    window.customElements.define(TripleElement.is, TripleElement);
+</script>
+</dom-module>
+
+
+
+

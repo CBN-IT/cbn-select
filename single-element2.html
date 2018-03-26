@@ -1,0 +1,467 @@
+<link rel="import" href="../polymer/polymer-element.html">
+<link rel="import" href="../paper-input/paper-input.html">
+
+
+<dom-module id="single-element2">
+        <template>
+    <style>
+      :host {
+        display: block;
+      }
+      #hr1 {
+        margin-bottom: 30px;
+        position:relative;
+        top:-12px;
+      }
+
+       #filter {
+        border: none;
+        margin-bottom:6px;
+        position: relative;
+         display:inline-block;
+         width:100%;
+         height: 20px;
+         outline:none;
+      }
+
+      .tari {
+        border: none;
+        width: 560px;
+          position:absolute;
+          background-color:whitesmoke ;
+        display:none;
+        z-index: 100;
+        cursor:pointer;
+      }
+      .tariSelectate{
+          background-color:darkgrey;
+      }
+      .displayTari{
+          display:block;
+      }
+
+      .arrow-left {
+        width: 0;
+        height: 0;
+        border-top: 5px solid transparent;
+        border-bottom: 5px solid transparent;
+        border-right:10px solid black;
+        z-index:1;
+        position: absolute;
+        right: 12px;
+        top: -24px;
+        transition: transform 0.5s;
+      }
+      .arrow-down {
+          transform: rotate(-90deg);
+      }
+
+      .faraLinie {
+          width: 0%;
+          height: 2px;
+          background: #0066bb;
+          transition: width 0.5s, left 0.5s;
+          position: absolute;
+          left:50%;
+          top: -12px;
+          z-index: 2;
+      }
+      .linieSpeciala{
+          width: 100%;
+          left:0%;
+      }
+
+      .spanPrincipal{
+          position:relative;
+          padding-right:30px;
+        background-color:#c0c0c0;
+        border-radius:8px;
+        display:inline-block;
+        height:20px;
+          z-index:1;
+      }
+
+      .delete {
+        width: 24px;
+        height: 20px;
+        border: solid black 1px;
+        position:absolute;
+          top:0px;
+        right:0px;
+        z-index:2;
+        cursor:pointer;
+      }
+        #container{
+            display:flex;
+            flex-direction: row;
+        }
+
+    </style>
+            <span class="scrisMic" on-click="getFocus">Tara</span>
+          <div id="container" style="position:relative;">
+
+              <template is="dom-repeat" items="{{value}}">
+              <span class="spanPrincipal" for="spanPrincipal" >
+                        <span id="spanPrincipal" style="padding-left: 5px;">[[item.label]]</span>
+                        <button class="delete" type="button" on-click="delete">X</button>
+              </span>
+              </template>
+              <input id="filter" type="text" for="tari" on-input="filter" on-click="displayBlock" on-keydown="keyCode" on-blur="displayNone" />
+          </div>
+          <div style="position:relative;">
+                 <div class="arrow-left"></div>
+          </div>
+          <div class="tari" for="spanPrincipal" on-mouseover="changeColor" on-mouseout="colorBack" >
+              <template is="dom-repeat" items ="{{memArray}}">
+                  <div on-mousedown="selectFunction">[[item.label]]</div>
+              </template>
+          </div>
+          <div style="position:relative;">
+              <div class="faraLinie" id="linieSpeciala"></div>
+              <hr id="hr1" >
+          </div>
+
+       </template>
+
+       <script>
+         /**
+          * `single-element2`
+          *
+          *
+          * @customElement
+          * @polymer
+          * @demo demo/index.html
+          */
+         class SingleElement2 extends Polymer.Element {
+             static get is() {
+                 return 'single-element2';
+             }
+
+             static get properties() {
+                 return {
+                     prop1: {
+                         type: String,
+                         value: 'single-element2'
+
+                     },
+                     indexTabel: {
+                         type: Number,
+                         value: -1
+                     },
+
+                     options: {
+                         type: Array,
+                         value: function(){return[
+                             "Romania",
+                             "Spania",
+                             "Germania",
+                             "Franta",
+                             "Anglia"
+                         ]},
+                         observer:"optionsChange"
+                     },
+
+                     elemRamase: {
+                       type: Array,
+                       value: function () {return[]}
+                     },
+
+                     value: {
+                         type: Array,
+                         value: function () {return []}
+                     },
+
+                     memArray:{
+                       type:Array,
+                       value:function(){return[]}
+                     },
+
+                     multiple: {
+                         type: Boolean,
+                         value:false
+                     },
+
+                     combo: {
+                         type:Boolean,
+                         value:false
+                     },
+
+                     userinput:{
+                         type:Boolean,
+                         value:false
+                     },
+                 };
+             }
+
+             connectedCallback() {
+                 super.connectedCallback();
+                 this.options.sort(
+                     function (a, b) {
+                         return a.label.toLowerCase().localeCompare(b.label.toLowerCase());
+                     }
+                 );
+             }
+
+             optionsChange(){
+                 for(let i = 0; i < this.options.length ; i++ ){
+                     if(typeof this.options[i] === 'string'){
+                         this.options[i] = { "label" : this.options[i] , "value" : this.options[i] };
+                     }
+                 }
+                 this.memArray = JSON.parse(JSON.stringify(this.options));
+                 this.orderList();
+             }
+
+             orderList(){
+                 this.memArray.sort(
+                     function (a, b) {
+                         return a.label.toLowerCase().localeCompare(b.label.toLowerCase());
+                     }
+                 );
+             }
+
+             styleDisplay(){
+                 this.shadowRoot.querySelector(".tari").classList.add("displayTari");
+                 this.$.linieSpeciala.classList.add("linieSpeciala");
+                 this.shadowRoot.querySelector(".arrow-left").classList.add("arrow-down");
+                 if((this.value.length < this.options.length || this.combo === false) && this.$.filter.value === "") {
+                     this.shadowRoot.querySelector(".tari div:nth-of-type(" + (this.indexTabel + 1) + ")").classList.add("tariSelectate");
+                 }
+             }
+
+             styleFaraDisplay(){
+                 this.shadowRoot.querySelector(".arrow-left").classList.remove("arrow-down");
+                 this.shadowRoot.querySelector(".tari").classList.remove("displayTari");
+                 this.$.linieSpeciala.classList.remove("linieSpeciala");
+             }
+
+
+             displayNone(event) {
+
+                 setTimeout(function () {
+                     this.styleFaraDisplay();
+                 }.bind(this));
+                this.indexTabel=-1;
+             }
+
+
+             displayBlock(event) {
+                 if(this.indexTabel === -1) {
+                     this.indexTabel++;
+                 }
+                 this.styleDisplay()
+             }
+
+                getFocus(event){
+                    event.path[0].parentNode.querySelector("#filter").focus();
+                    this.styleDisplay();
+                }
+
+
+             changeColor(event) {
+                 for (let i = 0; i < this.memArray.length; i++) {
+                     if (event.path[0].innerHTML === this.memArray[i].label) {
+                         if (this.indexTabel !== -1) {
+                             this.shadowRoot.querySelector(".tari div:nth-of-type(" + (this.indexTabel + 1) + ")").classList.remove("tariSelectate");
+                         }
+                         event.path[0].classList.add("tariSelectate");
+                         this.indexTabel = i;
+                     }
+                 }
+             }
+
+             colorBack(event) {
+                 event.path[0].classList.remove("tariSelectate");
+             }
+
+             keyCode(event) {
+                 var key = event.which || event.keyCode;
+                 var inputUser = { "label" : this.$.filter.value , "value" : this.$.filter.value };
+                 if(this.memArray.length !== 0) {
+                    if (key === 40) {
+                        if (this.indexTabel !== -1) {
+                             this.shadowRoot.querySelector(".tari div:nth-of-type(" + (this.indexTabel + 1) + ")").classList.remove("tariSelectate");
+                         }
+                         this.indexTabel++;
+
+                         if (this.indexTabel >= this.memArray.length) {
+                             this.indexTabel = 0;
+                         }
+
+                         this.shadowRoot.querySelector(".tari").classList.add("displayTari");
+                         this.shadowRoot.querySelector(".tari div:nth-of-type(" + (this.indexTabel + 1) + ")").classList.add("tariSelectate");
+                     }
+
+                     if (key === 38) {
+                         if (this.indexTabel === -1) {
+                             this.indexTabel = this.memArray.length;
+                         }
+                         if (this.indexTabel !== this.memArray.length) {
+                             this.shadowRoot.querySelector(".tari div:nth-of-type(" + (this.indexTabel + 1) + ")").classList.remove("tariSelectate");
+                         }
+                         this.indexTabel--;
+
+                         if (this.indexTabel <= -1) {
+                             this.indexTabel = this.memArray.length - 1;
+                         }
+                         this.shadowRoot.querySelector(".tari").classList.add("displayTari");
+                         this.shadowRoot.querySelector(".tari div:nth-of-type(" + (this.indexTabel + 1) + ")").classList.add("tariSelectate");
+                     }
+                 }
+
+                 if (key === 13) {
+                     if(this.combo === false && this.$.filter.value === ""){
+                        this.memArray = this.options;
+                     }
+                     if(this.memArray.length !== 0) {
+
+                         if (this.indexTabel === -1 && this.$.filter.value === "") {
+                             this.indexTabel ++;
+                             this.styleDisplay();
+                         }
+                         else {
+                             this.$.filter.value = "";
+                             this.selectFunction(
+                                {
+                                    model: {
+                                        item: this.memArray[this.indexTabel]
+                                    }
+                                }
+                            );
+                             this.shadowRoot.querySelector(".tari div:nth-of-type(" + (this.indexTabel + 1) + ")").classList.remove("tariSelectate");
+                             this.styleFaraDisplay();
+                            this.indexTabel = -1;
+                        }
+                     }
+                     if(this.userinput === true && this.$.filter.value !== ""){
+                         if(this.multiple === false && this.combo === false) {
+                             this.splice("value", 0, 1, inputUser);
+                             this.$.filter.value = "";
+                             this.memArray = this.options;
+                         }
+                         if(this.multiple === true && this.combo === false){
+                             this.push("value", inputUser);
+                             this.$.filter.value = "";
+                             this.memArray = this.options;
+                         }
+                         if(this.combo === true){
+                             this.push("value", inputUser);
+                             this.$.filter.value = "";
+                             if(this.elemRamase.length !== 0){
+                                 this.memArray = this.elemRamase;
+                             }
+                             else if(this.value.length < this.options.length){
+                                 this.memArray = this.options;
+                             }
+                         }
+                         this.styleFaraDisplay();
+                         this.indexTabel = -1;
+                     }
+                 }
+
+                 if(key === 8){
+                     if(this.combo === true) {
+                         if(this.value.length !== 0 && this.$.filter.value === "") {
+                             this.push("memArray", this.value[this.value.length-1]);
+                         }
+                         if(!this.options.includes(inputUser)) {
+                             this.push("options", inputUser);
+                         }
+                         this.orderList();
+                     }
+                     if(this.$.filter.value === "") {
+                         this.splice("value", this.value.length - 1, 1);
+                     }
+                     this.shadowRoot.querySelector(".tari").classList.remove("displayTari");
+                     this.$.linieSpeciala.classList.remove("linieSpeciala");
+                     this.shadowRoot.querySelector(".arrow-left").classList.remove("arrow-down");
+                    this.indexTabel = -1;
+                 }
+             }
+
+
+             filter(event) {
+                 var val = this.$.filter.value;
+                 let arrayLength = this.options.length;
+                 this.memArray = [];
+                 if(this.combo === false) {
+                     for (let i = 0; i < arrayLength; i++) {
+                         if (this.options[i].label.toLowerCase().indexOf(val.toLowerCase()) !== -1) {
+                             this.push("memArray", this.options[i]);
+                         }
+                     }
+                 }
+                 if(this.combo === true && this.elemRamase.length === 0 && this.value.length !== this.options.length){
+                     for(let i = 0; i < arrayLength; i++){
+                         if (this.options[i].label.toLowerCase().indexOf(val.toLowerCase()) !== -1) {
+                             this.push("memArray", this.options[i]);
+                         }
+                     }
+                 }
+
+                 if(this.combo === true && this.elemRamase.length !== 0){
+                     for(let i = 0; i < this.elemRamase.length; i++){
+                         if (this.elemRamase[i].label.toLowerCase().indexOf(val.toLowerCase()) !== -1) {
+                             this.push("memArray", this.elemRamase[i]);
+                         }
+                     }
+                 }
+             }
+
+             selectFunction(event) {
+                 this.$.filter.value = "";
+                 if(this.multiple === true) {
+                     this.push("value", event.model.item);
+                 }
+
+                 if(this.combo === true) {
+                     this.push("value", event.model.item);
+                     this.elemRamase = [];
+                     for(let i = 0; i < this.options.length; i++) {
+                         var found = false;
+                         for(let x = 0; x< this.value.length; x++) {
+                             if (this.options[i].value === this.value[x].value){
+                                 found = true;
+                                 break;
+                             }
+                         }
+                         if(!found){
+                             this.push("elemRamase", this.options[i]);
+                         }
+                     }
+                     this.memArray = this.elemRamase;
+                 }
+
+                 if(this.combo === false && this.value.length < 1 && this.multiple === false ){
+                     this.push("value", event.model.item);
+                 }
+
+                 if(this.combo === false && this.value.length === 1 && this.multiple === false){
+                     this.splice("value", 0 , 1, event.model.item );
+                 }
+                 setTimeout(function() {
+                     this.$.filter.focus();
+                 }.bind(this));
+
+                 if(this.combo === false) {
+                     this.memArray = this.options;
+                 }
+                 this.orderList();
+             }
+
+             delete(event) {
+
+                 this.splice("value", event.model.index, 1);
+                     if (this.combo === true ) {
+                                 this.push("memArray", event.model.item);
+                                 if(!this.options.includes(event.model.item)) {
+                                     this.push("options", event.model.item);
+                                 }
+                                 this.orderList();
+                             }
+             }
+         }
+
+         window.customElements.define(SingleElement2.is, SingleElement2);
+       </script>
+     </dom-module>
