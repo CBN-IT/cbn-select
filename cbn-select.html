@@ -1,5 +1,7 @@
 <link rel="import" href="../polymer/polymer-element.html">
 <link rel="import" href="../paper-input/paper-input.html">
+<link rel="import" href="../iron-icons/iron-icons.html">
+<link rel="import" href="../iron-icon/iron-icon.html">
 
 
 <dom-module id="cbn-select">
@@ -26,7 +28,6 @@
 
       .tari {
         border: none;
-        width: 560px;
           position:absolute;
           background-color:whitesmoke ;
         display:none;
@@ -74,27 +75,31 @@
       .spanPrincipal{
           position:relative;
           padding-right:30px;
-        background-color:#c0c0c0;
+        background-color:#E7E7E7;
         border-radius:8px;
         display:inline-block;
         height:20px;
           z-index:1;
       }
 
-      .delete {
-        width: 24px;
-        height: 20px;
-        border: solid black 1px;
-        position:absolute;
-          top:0px;
-        right:0px;
-        z-index:2;
-        cursor:pointer;
-      }
+        .closeBtn{
+            flex-shrink: 0;
+            width: 20px;
+            height: 16px;
+            margin-left: 3px;
+            cursor:pointer;
+            position: absolute;
+            top: 2px;
+            right: 0px;
+        }
+
         #container{
             display:flex;
             flex-direction: row;
         }
+      .fiecareDiv{
+          padding: 5px 10px;
+      }
 
     </style>
             <span class="scrisMic" on-click="getFocus">Tara</span>
@@ -103,7 +108,7 @@
               <template is="dom-repeat" items="{{value}}">
               <span class="spanPrincipal" for="spanPrincipal" >
                         <span id="spanPrincipal" style="padding-left: 5px;">[[item.label]]</span>
-                        <button class="delete" type="button" on-click="delete">X</button>
+                        <iron-icon class="closeBtn" icon="icons:backspace" on-click="delete"></iron-icon>
               </span>
               </template>
               <input id="filter" type="text" for="tari" on-input="filter" on-click="displayBlock" on-keydown="keyCode" on-blur="displayNone" />
@@ -113,7 +118,7 @@
           </div>
           <div class="tari" for="spanPrincipal" on-mouseover="changeColor" on-mouseout="colorBack" >
               <template is="dom-repeat" items ="{{memArray}}">
-                  <div on-mousedown="selectFunction">[[item.label]]</div>
+                  <div class="fiecareDiv" on-mousedown="selectFunction">[[item.label]]</div>
               </template>
           </div>
           <div style="position:relative;">
