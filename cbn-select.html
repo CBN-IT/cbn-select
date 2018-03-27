@@ -144,6 +144,11 @@
                          value: 'cbn-select'
 
                      },
+                     name: {
+                         type: String
+
+                     },
+
                      indexTabel: {
                          type: Number,
                          value: -1
@@ -168,7 +173,10 @@
 
                      value: {
                          type: Array,
-                         value: function () {return []}
+                         value: function () {return []},
+                         observer:"valueChange",
+                         notify: false,
+                         readOnly: false
                      },
 
                      memArray:{
@@ -200,6 +208,24 @@
                          return a.label.toLowerCase().localeCompare(b.label.toLowerCase());
                      }
                  );
+             }
+
+             valueChange(event){
+                 if(typeof this.value === 'string'){
+                     if(this.value !== "") {
+                         this.value = [this.value];
+                     }else if(this.value === ""){
+                         this.value = [];
+                     }
+                 }
+                 this.dispatchEvent(new CustomEvent("selected-changed", {
+                     bubbles: true,
+                     composed: true,
+                     detail: {
+                         value: this.value
+                     }
+                 }));
+                 // this.fire("selected-changed", {"value": this.value});
              }
 
              optionsChange(){
