@@ -10,8 +10,7 @@
       :host {
         display: block;
       }
-      #hr1 {
-        margin-bottom: 30px;
+      .hr1 {
         position:relative;
         top:-12px;
       }
@@ -100,17 +99,38 @@
       .fiecareDiv{
           padding: 5px 10px;
       }
+      .mobileDisplayNone{
+          display:none;
+      }
+      .mobileDisplay{
+          display:block;
+      }
+        .label{
+            background-color: red;
+            width:100%;
+            height: 20px;
+            z-index: 2;
+        }
+        #select{
+            z-index:3;
+            position:relative;
+            top:-27px;
+        }
+        .linieLabel{
+            top:-27px;
+        }
 
     </style>
-            <span class="scrisMic" on-click="getFocus">Tara</span>
+            <span class="scrisMic" on-click="getFocus">[[label]]</span>
           <div id="container" style="position:relative;">
 
-              <template is="dom-repeat" items="{{value}}">
+              <template is="dom-repeat" items="{{_value}}">
               <span class="spanPrincipal" for="spanPrincipal" >
                         <span id="spanPrincipal" style="padding-left: 5px;">[[item.label]]</span>
                         <iron-icon class="closeBtn" icon="icons:backspace" on-click="delete"></iron-icon>
               </span>
               </template>
+              <label id="label" for="select"></label>
               <input id="filter" type="text" for="tari" on-input="filter" on-click="displayBlock" on-keydown="keyCode" on-blur="displayNone" />
           </div>
           <div style="position:relative;">
@@ -121,9 +141,14 @@
                   <div class="fiecareDiv" on-mousedown="selectFunction">[[item.label]]</div>
               </template>
           </div>
+            <select id="select" class="mobileDisplayNone">
+                <template is="dom-repeat" items ="{{memArray}}">
+                        <option on-mousedown="selectFunction">[[item.label]]</option>
+                </template>
+            </select>
           <div style="position:relative;">
               <div class="faraLinie" id="linieSpeciala"></div>
-              <hr id="hr1" >
+              <hr class="hr1" >
           </div>
 
        </template>
@@ -178,15 +203,28 @@
 
                      value: {
                          type: Array,
-                         value: function () {return []},
+                         value: function () {return [
+                             {
+                                 test:"asdfff",
+                                 asdasd:"112122"
+                             }
+                         ]},
                          observer:"valueChange",
+
+                     },
+
+                     _value: {
+                         type: Array,
+                         value: function() {return[]},
                          notify: false,
                          readOnly: false
                      },
 
                      memArray:{
                        type:Array,
-                       value:function(){return[]}
+                       value:function(){return[
+
+                       ]}
                      },
 
                      multiple: {
@@ -203,6 +241,19 @@
                          type:Boolean,
                          value:false
                      },
+                     mobile:{
+                         type:Boolean,
+                         value:false
+                     },
+
+                     itemLabelProperty: {
+                         type: String,
+                         value: "test"
+                     },
+                     itemValueProperty: {
+                         type: String,
+                         value: "asdasd"
+                     }
                  };
              }
 
@@ -213,24 +264,68 @@
                          return a.label.toLowerCase().localeCompare(b.label.toLowerCase());
                      }
                  );
+                 if(this.mobile === true){
+                     this.shadowRoot.querySelector(".mobileDisplayNone").classList.add("mobileDisplay");
+                     this.shadowRoot.querySelector("#label").classList.add("label");
+                     this.shadowRoot.querySelector(".hr1").classList.add("linieLabel");
+                 }
+                 if(this.mobile === false){
+                     this.shadowRoot.querySelector("#label").classList.remove("label");
+                 }
              }
 
              valueChange(event){
-                 if(typeof this.value === 'string'){
-                     if(this.value !== "") {
-                         this.value = [this.value];
-                     }else if(this.value === ""){
-                         this.value = [];
+                      for (let i = 0; i < this.value.length; i++) {
+                          if (this.value[i].hasOwnProperty(this.itemLabelProperty) && this.value[i].hasOwnProperty(this.itemValueProperty)) {
+                              if (this.multiple === true || this.combo === true && this.mobile === false) {
+                                  this._value[this._value.length] = {
+                                      "label": this.value[i][this.itemLabelProperty],
+                                      "value": this.value[i][this.itemValueProperty]
+                                  };
+                              }
+                              if(this.multiple === false && this.combo === false && this.mobile === false){
+                                  this._value[0] = {
+                                      "label": this.value[i][this.itemLabelProperty],
+                                      "value": this.value[i][this.itemValueProperty]
+                                  };
+                              }
+                          }
+                      }
+
+                 for(let i = 0; i < this.options.length; i++) {
+                     if (this.value === this.options[i].value) {
+                         if (typeof this.value === 'string') {
+                             if (this.value !== "") {
+                                 this._value = [{label: this.value, value: this.value}];
+                             } else if (this.value === "") {
+                                 this._value = [];
+                             }
+                         }
                      }
                  }
+
+                 if(Array.isArray(this.value)) {
+                     let newArray = [];
+                     for (let x = 0; x < this.value.length; x++) {
+                         newArray[x] = {label: this.value[x], value: this.value[x]};
+                         for(let i = 0; i < this.options.length; i++) {
+                             if(this.freetext === false) {
+                                 if (newArray[x].value === this.options[i].value) {
+                                     this.push("_value", newArray[x]);
+                                 }
+                             }
+                         }
+                       }
+                    }
+
+
                  this.dispatchEvent(new CustomEvent("selected-changed", {
                      bubbles: true,
                      composed: true,
                      detail: {
-                         value: this.value
+                         value: this._value
                      }
                  }));
-                 // this.fire("selected-changed", {"value": this.value});
              }
 
              optionsChange(){
@@ -239,6 +334,7 @@
                          this.options[i] = { "label" : this.options[i] , "value" : this.options[i] };
                      }
                  }
+
                  this.memArray = JSON.parse(JSON.stringify(this.options));
                  this.orderList();
              }
@@ -251,11 +347,12 @@
                  );
              }
 
+
              styleDisplay(){
                  this.shadowRoot.querySelector(".tari").classList.add("displayTari");
                  this.$.linieSpeciala.classList.add("linieSpeciala");
                  this.shadowRoot.querySelector(".arrow-left").classList.add("arrow-down");
-                 if((this.value.length < this.options.length || this.combo === false) && this.$.filter.value === "") {
+                 if((this._value.length < this.options.length || this.combo === false) && this.$.filter.value === "") {
                      this.shadowRoot.querySelector(".tari div:nth-of-type(" + (this.indexTabel + 1) + ")").classList.add("tariSelectate");
                  }
              }
@@ -358,29 +455,31 @@
                                     }
                                 }
                             );
-                             this.shadowRoot.querySelector(".tari div:nth-of-type(" + (this.indexTabel + 1) + ")").classList.remove("tariSelectate");
+                             if(this.indexTabel !== -1) {
+                                 this.shadowRoot.querySelector(".tari div:nth-of-type(" + (this.indexTabel + 1) + ")").classList.remove("tariSelectate");
+                             }
                              this.styleFaraDisplay();
                             this.indexTabel = -1;
                         }
                      }
                      if(this.freetext === true && this.$.filter.value !== ""){
                          if(this.multiple === false && this.combo === false) {
-                             this.splice("value", 0, 1, inputUser);
+                             this.splice("_value", 0, 1, inputUser);
                              this.$.filter.value = "";
                              this.memArray = this.options;
                          }
                          if(this.multiple === true && this.combo === false){
-                             this.push("value", inputUser);
+                             this.push("_value", inputUser);
                              this.$.filter.value = "";
                              this.memArray = this.options;
                          }
                          if(this.combo === true){
-                             this.push("value", inputUser);
+                             this.push("_value", inputUser);
                              this.$.filter.value = "";
                              if(this.elemRamase.length !== 0){
                                  this.memArray = this.elemRamase;
                              }
-                             else if(this.value.length < this.options.length){
+                             else if(this._value.length < this.options.length){
                                  this.memArray = this.options;
                              }
                          }
@@ -391,13 +490,13 @@
 
                  if(key === 8){
                      if(this.combo === true) {
-                         if(this.value.length !== 0 && this.$.filter.value === "") {
-                             this.push("memArray", this.value[this.value.length-1]);
+                         if(this._value.length !== 0 && this.$.filter.value === "") {
+                             this.push("memArray", this._value[this._value.length-1]);
                          }
                          this.orderList();
                      }
                      if(this.$.filter.value === "") {
-                         this.splice("value", this.value.length - 1, 1);
+                         this.splice("_value", this._value.length - 1, 1);
                          this.shadowRoot.querySelector(".tari").classList.remove("displayTari");
                          this.$.linieSpeciala.classList.remove("linieSpeciala");
                          this.shadowRoot.querySelector(".arrow-left").classList.remove("arrow-down");
@@ -405,7 +504,6 @@
                      }
                  }
              }
-
 
              filter(event) {
                  this.shadowRoot.querySelector(".tari").classList.add("displayTari");
@@ -419,7 +517,7 @@
                          }
                      }
                  }
-                 if(this.combo === true && this.elemRamase.length === 0 && this.value.length !== this.options.length){
+                 if(this.combo === true && this.elemRamase.length === 0 && this._value.length !== this.options.length){
                      for(let i = 0; i < arrayLength; i++){
                          if (this.options[i].label.toLowerCase().indexOf(val.toLowerCase()) !== -1) {
                              this.push("memArray", this.options[i]);
@@ -437,18 +535,30 @@
              }
 
              selectFunction(event) {
-                 this.$.filter.value = "";
+                     this.$.filter.value = "";
                  if(this.multiple === true) {
-                     this.push("value", event.model.item);
+                     for(let i = 0; i < this.options.length; i++) {
+                         if(typeof event.model.item !== 'undefined' ) {
+                             if (this.options[i].value === event.model.item.value) {
+                                 this.push("_value", event.model.item);
+                             }
+                         }
+                     }
                  }
 
                  if(this.combo === true) {
-                     this.push("value", event.model.item);
+                     for(let i = 0; i < this.options.length; i++) {
+                         if (typeof event.model.item !== 'undefined') {
+                             if (this.options[i].value === event.model.item.value) {
+                                 this.push("_value", event.model.item);
+                             }
+                         }
+                     }
                      this.elemRamase = [];
                      for(let i = 0; i < this.options.length; i++) {
                          var found = false;
-                         for(let x = 0; x< this.value.length; x++) {
-                                if (this.options[i].value === this.value[x].value) {
+                         for(let x = 0; x< this._value.length; x++) {
+                                if (this.options[i].value === this._value[x].value) {
                                     found = true;
                                     break;
                                 }
@@ -460,12 +570,24 @@
                      this.memArray = this.elemRamase;
                  }
 
-                 if(this.combo === false && this.value.length < 1 && this.multiple === false ){
-                     this.push("value", event.model.item);
+                 if(this.combo === false && this._value.length < 1 && this.multiple === false ) {
+                     for (let i = 0; i < this.options.length; i++) {
+                         if (typeof event.model.item !== 'undefined') {
+                             if (this.options[i].value === event.model.item.value) {
+                                 this.push("_value", event.model.item);
+                             }
+                         }
+                     }
                  }
 
-                 if(this.combo === false && this.value.length === 1 && this.multiple === false){
-                     this.splice("value", 0 , 1, event.model.item );
+                 if(this.combo === false && this._value.length === 1 && this.multiple === false){
+                     for(let i = 0; i < this.options.length; i++) {
+                         if (typeof event.model.item !== 'undefined') {
+                             if (this.options[i].value === event.model.item.value) {
+                                 this.splice("_value", 0, 1, event.model.item);
+                             }
+                         }
+                     }
                  }
                  setTimeout(function() {
                      this.$.filter.focus();
@@ -479,7 +601,7 @@
 
              delete(event) {
 
-                 this.splice("value", event.model.index, 1);
+                 this.splice("_value", event.model.index, 1);
                      if (this.combo === true ) {
                                  this.push("memArray", event.model.item);
                                  if(!this.options.includes(event.model.item) && this.freetext === true) {
