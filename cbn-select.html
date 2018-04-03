@@ -2,6 +2,7 @@
 <link rel="import" href="../paper-input/paper-input.html">
 <link rel="import" href="../iron-icons/iron-icons.html">
 <link rel="import" href="../iron-icon/iron-icon.html">
+<link rel="import" href="../paper-input/paper-input-container.html">
 
 
 <dom-module id="cbn-select">
@@ -122,6 +123,7 @@
 
     </style>
             <span class="scrisMic" on-click="getFocus">[[name]]</span>
+			
           <div class="container" style="position:relative;">
 
               <template is="dom-repeat" items="{{_value}}">
@@ -130,8 +132,10 @@
                         <iron-icon class="closeBtn" icon="icons:backspace" on-click="delete"></iron-icon>
               </span>
               </template>
+			  
               <label id="label" for="select"></label>
-              <input id="filter" type="text" for="tari" on-input="filter" on-click="displayBlock" on-keydown="keyCode" on-blur="displayNone" />
+              <input class="paper-input-input" id="filter" type="text" for="tari" on-input="filter" on-click="displayBlock" on-keydown="keyCode" on-blur="displayNone" />
+			  
           </div>
           <div style="position:relative;">
                  <div class="arrow-left"></div>
@@ -146,6 +150,7 @@
                         <option on-mousedown="selectFunction">[[item.label]]</option>
                 </template>
             </select>
+			
           <div style="position:relative;">
               <div class="faraLinie" id="linieSpeciala"></div>
               <hr class="hr1" >
@@ -187,11 +192,7 @@
                      options: {
                          type: Array,
                          value: function(){return[
-                             "Romania",
-                             "Spania",
-                             "Germania",
-                             "Franta",
-                             "Anglia"
+                             
                          ]},
                          observer:"optionsChange"
                      },
@@ -203,7 +204,10 @@
 
                      value: {
                          type: Array,
-                         value: function () {return []},
+                         value: function () {return [
+							 
+						 ]},
+						 
                          observer:"valueChange",
 
                      },
@@ -217,9 +221,7 @@
 
                      memArray:{
                        type:Array,
-                       value:function(){return[
-
-                       ]}
+                       value:function(){return[]}
                      },
 
                      multiple: {
@@ -243,11 +245,11 @@
 
                      itemLabelProperty: {
                          type: String,
-                         value: "test"
+                         value: "dadada"
                      },
                      itemValueProperty: {
                          type: String,
-                         value: "asdasd"
+                         value: "nununu"
                      }
                  };
              }
