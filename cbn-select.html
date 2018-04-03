@@ -92,7 +92,7 @@
             right: 0px;
         }
 
-        #container{
+        .container{
             display:flex;
             flex-direction: row;
         }
@@ -121,8 +121,8 @@
         }
 
     </style>
-            <span class="scrisMic" on-click="getFocus">[[label]]</span>
-          <div id="container" style="position:relative;">
+            <span class="scrisMic" on-click="getFocus">[[name]]</span>
+          <div class="container" style="position:relative;">
 
               <template is="dom-repeat" items="{{_value}}">
               <span class="spanPrincipal" for="spanPrincipal" >
@@ -203,12 +203,7 @@
 
                      value: {
                          type: Array,
-                         value: function () {return [
-                             {
-                                 test:"asdfff",
-                                 asdasd:"112122"
-                             }
-                         ]},
+                         value: function () {return []},
                          observer:"valueChange",
 
                      },
@@ -264,11 +259,8 @@
                          return a.label.toLowerCase().localeCompare(b.label.toLowerCase());
                      }
                  );
-                 if(this.mobile === true){
-                     this.shadowRoot.querySelector(".mobileDisplayNone").classList.add("mobileDisplay");
-                     this.shadowRoot.querySelector("#label").classList.add("label");
-                     this.shadowRoot.querySelector(".hr1").classList.add("linieLabel");
-                 }
+                 this.styleCuLabel();
+
                  if(this.mobile === false){
                      this.shadowRoot.querySelector("#label").classList.remove("label");
                  }
@@ -294,29 +286,25 @@
 
                  for(let i = 0; i < this.options.length; i++) {
                      if (this.value === this.options[i].value) {
-                         if (typeof this.value === 'string') {
                              if (this.value !== "") {
-                                 this._value = [{label: this.value, value: this.value}];
+                                 this._value = [{label:this.options[i].label , value: this.options[i].value}];
                              } else if (this.value === "") {
                                  this._value = [];
                              }
-                         }
                      }
                  }
 
                  if(Array.isArray(this.value)) {
                      let newArray = [];
                      for (let x = 0; x < this.value.length; x++) {
-                         newArray[x] = {label: this.value[x], value: this.value[x]};
                          for(let i = 0; i < this.options.length; i++) {
-                             if(this.freetext === false) {
-                                 if (newArray[x].value === this.options[i].value) {
+                                 if (this.value[x] === this.options[i].value) {
+                                     newArray[x] = {label: this.options[i].label, value: this.options[i].value};
                                      this.push("_value", newArray[x]);
                                  }
-                             }
-                         }
-                       }
-                    }
+                           }
+                     }
+                 }
 
 
                  this.dispatchEvent(new CustomEvent("selected-changed", {
@@ -363,6 +351,14 @@
                  this.$.linieSpeciala.classList.remove("linieSpeciala");
              }
 
+             styleCuLabel(){
+                 if(this.mobile === true){
+                     this.shadowRoot.querySelector(".mobileDisplayNone").classList.add("mobileDisplay");
+                     this.shadowRoot.querySelector("#label").classList.add("label");
+                     this.shadowRoot.querySelector(".hr1").classList.add("linieLabel");
+                     this.shadowRoot.querySelector(".container").classList.remove("container");
+                 }
+             }
 
              displayNone(event) {
 
@@ -465,16 +461,19 @@
                      if(this.freetext === true && this.$.filter.value !== ""){
                          if(this.multiple === false && this.combo === false) {
                              this.splice("_value", 0, 1, inputUser);
+                             this.push("value", inputUser.value);
                              this.$.filter.value = "";
                              this.memArray = this.options;
                          }
                          if(this.multiple === true && this.combo === false){
                              this.push("_value", inputUser);
+                             this.push("value", inputUser.value);
                              this.$.filter.value = "";
                              this.memArray = this.options;
                          }
                          if(this.combo === true){
                              this.push("_value", inputUser);
+                             this.push("value", inputUser.value);
                              this.$.filter.value = "";
                              if(this.elemRamase.length !== 0){
                                  this.memArray = this.elemRamase;
@@ -541,6 +540,7 @@
                          if(typeof event.model.item !== 'undefined' ) {
                              if (this.options[i].value === event.model.item.value) {
                                  this.push("_value", event.model.item);
+                                 this.push("value", event.model.item.value);
                              }
                          }
                      }
@@ -551,6 +551,7 @@
                          if (typeof event.model.item !== 'undefined') {
                              if (this.options[i].value === event.model.item.value) {
                                  this.push("_value", event.model.item);
+                                 this.push("value", event.model.item.value);
                              }
                          }
                      }
@@ -575,6 +576,7 @@
                          if (typeof event.model.item !== 'undefined') {
                              if (this.options[i].value === event.model.item.value) {
                                  this.push("_value", event.model.item);
+                                 this.push("value", event.model.item.value);
                              }
                          }
                      }
@@ -585,6 +587,7 @@
                          if (typeof event.model.item !== 'undefined') {
                              if (this.options[i].value === event.model.item.value) {
                                  this.splice("_value", 0, 1, event.model.item);
+                                 this.push("value", event.model.item.value);
                              }
                          }
                      }
