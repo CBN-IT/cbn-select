@@ -340,7 +340,7 @@
                  this.shadowRoot.querySelector(".tari").classList.add("displayTari");
                  this.$.linieSpeciala.classList.add("linieSpeciala");
                  this.shadowRoot.querySelector(".arrow-left").classList.add("arrow-down");
-                 if((this._value.length < this.options.length || this.combo === false) && this.$.filter.value === "") {
+                 if((this._value.length < this.options.length || this.combo === false) && this.$.filter.value === "" && this.memArray.length > 0 ) {
                      this.shadowRoot.querySelector(".tari div:nth-of-type(" + (this.indexTabel + 1) + ")").classList.add("tariSelectate");
                  }
              }
@@ -461,7 +461,7 @@
                      if(this.freetext === true && this.$.filter.value !== ""){
                          if(this.multiple === false && this.combo === false) {
                              this.splice("_value", 0, 1, inputUser);
-                             this.push("value", inputUser.value);
+                             this.value = inputUser.value;
                              this.$.filter.value = "";
                              this.memArray = this.options;
                          }
@@ -576,7 +576,7 @@
                          if (typeof event.model.item !== 'undefined') {
                              if (this.options[i].value === event.model.item.value) {
                                  this.push("_value", event.model.item);
-                                 this.push("value", event.model.item.value);
+                                 this.value = event.model.item.value;
                              }
                          }
                      }
@@ -587,7 +587,7 @@
                          if (typeof event.model.item !== 'undefined') {
                              if (this.options[i].value === event.model.item.value) {
                                  this.splice("_value", 0, 1, event.model.item);
-                                 this.push("value", event.model.item.value);
+                                 this.value = event.model.item.value;
                              }
                          }
                      }
