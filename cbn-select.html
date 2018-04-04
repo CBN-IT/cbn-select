@@ -154,7 +154,7 @@
             <div class="arrow-left"></div>
         </div>
         <div class="tari" on-mouseover="changeColor" on-mouseout="colorBack">
-            <template is="dom-repeat" items="{{memArray}}">
+            <template is="dom-repeat" items="{{elemRamase}}">
                 <div class="fiecareDiv" on-mousedown="selectFunction">[[item.label]]</div>
             </template>
         </div>
@@ -283,7 +283,7 @@
             }
 
             valueChange(event) {
-                this._value=[];
+                this._value = [];
                 if (this.value instanceof Array) {
                     for (let i = 0; i < this.value.length; i++) {
                         let position = 0;
@@ -339,7 +339,7 @@
                             }
                         }
                         if (this.freetext && !found) {
-                            this.splice("_value", position, 0, {
+                            this.splice("_value", 0, 0, {
                                 label: this.value,
                                 value: this.value
                             });
@@ -371,27 +371,28 @@
             }
 
             optionsChange() {
-                let memArrayNew=[];
+                let memArrayNew = [];
                 for (let i = 0; i < this.options.length; i++) {
                     if (typeof this.options[i] === 'string') {
                         memArrayNew[i] = {"label": this.options[i], "value": this.options[i]};
-                    }else{
-                        memArrayNew[i]=JSON.parse(JSON.stringify(this.options[i]));
-                        if(this.itemValueProperty!==null && this.options[i].hasOwnProperty(this.itemValueProperty)){
-                            memArrayNew[i]["value"]=this.options[i][this.itemValueProperty];
+                    } else {
+                        memArrayNew[i] = JSON.parse(JSON.stringify(this.options[i]));
+                        if (this.itemValueProperty !== null && this.options[i].hasOwnProperty(this.itemValueProperty)) {
+                            memArrayNew[i]["value"] = this.options[i][this.itemValueProperty];
                         }
-                        if(this.itemLabelProperty!==null && this.options[i].hasOwnProperty(this.itemLabelProperty)){
-                            memArrayNew[i]["label"]=this.options[i][this.itemLabelProperty];
+                        if (this.itemLabelProperty !== null && this.options[i].hasOwnProperty(this.itemLabelProperty)) {
+                            memArrayNew[i]["label"] = this.options[i][this.itemLabelProperty];
                         }
                     }
                 }
 
                 this.memArray = memArrayNew;
+                this.elemRamase = JSON.parse(JSON.stringify(memArrayNew));
                 this.orderList();
             }
 
             orderList() {
-                this.memArray.sort(
+                this.elemRamase.sort(
                     function (a, b) {
                         return a.label.toLowerCase().localeCompare(b.label.toLowerCase());
                     }
@@ -403,7 +404,7 @@
                 this.shadowRoot.querySelector(".tari").classList.add("displayTari");
                 this.$.linieSpeciala.classList.add("linieSpeciala");
                 this.shadowRoot.querySelector(".arrow-left").classList.add("arrow-down");
-                if ((this._value.length < this.options.length || this.combo === true) && this.$.filter.value === "" && this.memArray.length > 0) {
+                if (this.elemRamase.length > this.indexTabel) {
                     this.shadowRoot.querySelector(".tari div:nth-of-type(" + (this.indexTabel + 1) + ")").classList.add("tariSelectate");
                 }
             }
@@ -415,7 +416,6 @@
             }
 
             displayNone(event) {
-
                 setTimeout(function () {
                     this.styleFaraDisplay();
                 }.bind(this));
@@ -434,10 +434,9 @@
                 event.path[0].parentNode.querySelector("#filter").focus();
             }
 
-
             changeColor(event) {
-                for (let i = 0; i < this.memArray.length; i++) {
-                    if (event.path[0].innerHTML === this.memArray[i].label) {
+                for (let i = 0; i < this.elemRamase.length; i++) {
+                    if (event.path[0].innerHTML === this.elemRamase[i].label) {
                         if (this.indexTabel !== -1) {
                             this.shadowRoot.querySelector(".tari div:nth-of-type(" + (this.indexTabel + 1) + ")").classList.remove("tariSelectate");
                         }
@@ -454,14 +453,14 @@
             keyCode(event) {
                 var key = event.which || event.keyCode;
                 var inputUser = {"label": this.$.filter.value, "value": this.$.filter.value};
-                if (this.memArray.length !== 0) {
+                if (this.elemRamase.length !== 0) {
                     if (key === 40) {
                         if (this.indexTabel !== -1) {
                             this.shadowRoot.querySelector(".tari div:nth-of-type(" + (this.indexTabel + 1) + ")").classList.remove("tariSelectate");
                         }
                         this.indexTabel++;
 
-                        if (this.indexTabel >= this.memArray.length) {
+                        if (this.indexTabel >= this.elemRamase.length) {
                             this.indexTabel = 0;
                         }
 
@@ -471,15 +470,15 @@
 
                     if (key === 38) {
                         if (this.indexTabel === -1) {
-                            this.indexTabel = this.memArray.length;
+                            this.indexTabel = this.elemRamase.length;
                         }
-                        if (this.indexTabel !== this.memArray.length) {
+                        if (this.indexTabel !== this.elemRamase.length) {
                             this.shadowRoot.querySelector(".tari div:nth-of-type(" + (this.indexTabel + 1) + ")").classList.remove("tariSelectate");
                         }
                         this.indexTabel--;
 
                         if (this.indexTabel <= -1) {
-                            this.indexTabel = this.memArray.length - 1;
+                            this.indexTabel = this.elemRamase.length - 1;
                         }
                         this.shadowRoot.querySelector(".tari").classList.add("displayTari");
                         this.shadowRoot.querySelector(".tari div:nth-of-type(" + (this.indexTabel + 1) + ")").classList.add("tariSelectate");
@@ -487,60 +486,39 @@
                 }
 
                 if (key === 13) {
-                    if (this.combo === true && this.$.filter.value === "") {
-                        this.memArray = this.options;
-                    }
-                    if (this.memArray.length !== 0) {
-                        if (this.indexTabel === -1 && this.$.filter.value === "") {
-                            this.indexTabel++;
-                            this.styleDisplay();
-                        } else {
-                            this.$.filter.value = "";
-                            this.selectFunction({
-                                model: {
-                                    item: this.memArray[this.indexTabel]
-                                }
-                            });
-                            if (this.indexTabel !== -1) {
-                                this.shadowRoot.querySelector(".tari div:nth-of-type(" + (this.indexTabel + 1) + ")").classList.remove("tariSelectate");
+                    if (this.elemRamase.length !== 0 && this.indexTabel === -1 && this.$.filter.value === "") {
+                        this.indexTabel = 0;
+                        this.styleDisplay();
+                    } else if(this.elemRamase.length !== 0 && this.indexTabel !== -1){
+                        this.selectFunction({
+                            model: {
+                                item: this.elemRamase[this.indexTabel]
                             }
-                            this.styleFaraDisplay();
-                            this.indexTabel = -1;
-                        }
-                    }
-                    if (this.freetext === true && this.$.filter.value !== "") {
-                        if (this.multiple === false && this.combo === true) {
-                            this.splice("_value", 0, 1, inputUser);
-                            this.value = inputUser.value;
-                            this.$.filter.value = "";
-                            this.memArray = this.options;
-                        }
-                        if (this.multiple === true && this.combo === true) {
-                            this.push("_value", inputUser);
-                            this.push("value", inputUser.value);
-                            this.$.filter.value = "";
-                            this.memArray = this.options;
-                        }
-                        if (this.combo === false) {
-                            this.push("_value", inputUser);
-                            this.push("value", inputUser.value);
-                            this.$.filter.value = "";
-                            if (this.elemRamase.length !== 0) {
-                                this.memArray = this.elemRamase;
-                            }
-                            else if (this._value.length < this.options.length) {
-                                this.memArray = this.options;
-                            }
-                        }
+                        });
                         this.styleFaraDisplay();
                         this.indexTabel = -1;
+                        if (this.shadowRoot.querySelector(".tariSelectate") !== null) {
+                            this.shadowRoot.querySelector(".tariSelectate").classList.remove("tariSelectate");
+                        }
+                    }else if(this.freetext){
+                        this.selectFunction({
+                            model: {
+                                item: this.$.filter.value
+                            }
+                        });
+                        this.styleFaraDisplay();
+                        this.indexTabel = -1;
+                        if (this.shadowRoot.querySelector(".tariSelectate") !== null) {
+                            this.shadowRoot.querySelector(".tariSelectate").classList.remove("tariSelectate");
+                        }
+
                     }
                 }
 
                 if (key === 8) {
-                    if (this.combo === false) {
+                    if (this.multiple === true && this.combo === false) {
                         if (this._value.length !== 0 && this.$.filter.value === "") {
-                            this.push("memArray", this._value[this._value.length - 1]);
+                            this.push("elemRamase", this._value[this._value.length - 1]);
                         }
                         this.orderList();
                     }
@@ -557,60 +535,63 @@
             filter(event) {
                 this.shadowRoot.querySelector(".tari").classList.add("displayTari");
                 var val = this.$.filter.value;
-                let arrayLength = this.options.length;
-                this.memArray = [];
-                if (this.combo === true) {
-                    for (let i = 0; i < arrayLength; i++) {
-                        if (this.options[i].label.toLowerCase().indexOf(val.toLowerCase()) !== -1) {
-                            this.push("memArray", this.options[i]);
-                        }
+                this.elemRamase = [];
+                for (let i = 0; i < this.memArray.length; i++) {
+                    if (this.memArray[i].label.toLowerCase().indexOf(val.toLowerCase()) !== -1) {
+                        this.push("elemRamase", this.memArray[i]);
                     }
                 }
-                if (this.combo === false && this.elemRamase.length === 0 && this._value.length !== this.options.length) {
-                    for (let i = 0; i < arrayLength; i++) {
-                        if (this.options[i].label.toLowerCase().indexOf(val.toLowerCase()) !== -1) {
-                            this.push("memArray", this.options[i]);
-                        }
-                    }
-                }
-
-                if (this.combo === false && this.elemRamase.length !== 0) {
-                    for (let i = 0; i < this.elemRamase.length; i++) {
-                        if (this.elemRamase[i].label.toLowerCase().indexOf(val.toLowerCase()) !== -1) {
-                            this.push("memArray", this.elemRamase[i]);
-                        }
-                    }
-                }
+                this.orderList();
             }
 
             selectFunction(event) {
                 this.$.filter.value = "";
+                let found = false;
                 if (this.multiple === true) {
                     for (let i = 0; i < this.memArray.length; i++) {
                         if (typeof event.model.item !== 'undefined') {
                             if (this.memArray[i].value === event.model.item.value) {
                                 this.push("_value", event.model.item);
                                 this.push("value", event.model.item.value);
+                                found = true;
                                 break;
                             }
                         }
+                    }
+                    if (!found && this.freetext) {
+                        this.push("_value", {
+                            value: event.model.item,
+                            label: event.model.item
+                        });
+                        this.push("value", event.model.item);
                     }
                 } else {
                     for (let i = 0; i < this.memArray.length; i++) {
                         if (typeof event.model.item !== 'undefined') {
                             if (this.memArray[i].value === event.model.item.value) {
-                                this._value= [event.model.item];
-                                this.value=event.model.item.value;
+                                this._value = [event.model.item];
+                                this.value = event.model.item.value;
+                                found = true;
                                 break;
                             }
                         }
                     }
+                    if (!found && this.freetext) {
+                        if (!found && this.freetext) {
+                            this._value = [{
+                                value: event.model.item,
+                                label: event.model.item
+                            }];
+                            this.value = event.model.item;
+                        }
+                    }
                 }
 
-                if (this.combo === false) {
+
+                if (this.multiple === true && this.combo === false) {
                     this.elemRamase = [];
                     for (let i = 0; i < this.memArray.length; i++) {
-                        var found = false;
+                        let found = false;
                         for (let x = 0; x < this._value.length; x++) {
                             if (this.memArray[i].value === this._value[x].value) {
                                 found = true;
@@ -634,13 +615,14 @@
             delete(event) {
 
                 this.splice("_value", event.model.index, 1);
-                if (this.combo === false) {
-                    this.push("memArray", event.model.item);
+                if (this.multiple === true && this.combo === false) {
+                    this.push("elemRamase", event.model.item);
                     if (!this.options.includes(event.model.item) && this.freetext === true) {
                         this.push("options", event.model.item);
                     }
-                    this.orderList();
+
                 }
+                this.orderList();
             }
         }
 
