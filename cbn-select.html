@@ -266,8 +266,16 @@
                     itemValueProperty: {
                         type: String,
                         value: "value"
+                    },
+                    required: {
+                        type: Boolean,
+                        value: false
                     }
                 };
+            }
+
+            validate() {
+                return !(this.required && this.value.length <= 0);
             }
 
             valueChange(event) {
@@ -351,12 +359,27 @@
 
                 this.throwEvent();
             }
-            throwEvent(){
+
+            throwEvent() {
+                let value = "";
+                if (this.value === undefined || this.value === null) {
+                    if (this.multiple) {
+                        value = [];
+                    } else {
+                        value = "";
+                    }
+                } else if (this.multiple) {
+                    value = this.value;
+                } else if (this.value.length > 0) {
+                    value = this.value[0];
+                } else {
+                    value = "";
+                }
                 this.dispatchEvent(new CustomEvent("selected-changed", {
                     bubbles: true,
                     composed: true,
                     detail: {
-                        value: this._value
+                        value: value
                     }
                 }));
             }
@@ -392,8 +415,8 @@
 
 
             styleDisplay() {
-                if(this.indexTabel===-1){
-                    this.indexTabel=0;
+                if (this.indexTabel === -1) {
+                    this.indexTabel = 0;
                 }
                 this.shadowRoot.querySelector(".tari").classList.add("displayTari");
                 this.$.linieSpeciala.classList.add("linieSpeciala");
@@ -409,8 +432,6 @@
                 this.$.linieSpeciala.classList.remove("linieSpeciala");
                 this.indexTabel = -1;
             }
-
-
 
             getFocus(event) {
                 event.path[0].parentNode.querySelector("#filter").focus();
@@ -471,7 +492,7 @@
                     if (this.elemRamase.length !== 0 && this.indexTabel === -1 && this.$.filter.value === "") {
                         this.indexTabel = 0;
                         this.styleDisplay();
-                    } else if(this.elemRamase.length !== 0 && this.indexTabel !== -1){
+                    } else if (this.elemRamase.length !== 0 && this.indexTabel !== -1) {
                         this.selectFunction({
                             model: {
                                 item: this.elemRamase[this.indexTabel]
@@ -483,7 +504,7 @@
                         if (this.shadowRoot.querySelector(".tariSelectate") !== null) {
                             this.shadowRoot.querySelector(".tariSelectate").classList.remove("tariSelectate");
                         }
-                    }else if(this.freetext){
+                    } else if (this.freetext) {
                         this.selectFunction({
                             model: {
                                 item: this.$.filter.value
@@ -523,7 +544,7 @@
                 this.elemRamase = [];
                 for (let i = 0; i < this.memArray.length; i++) {
                     if (this.memArray[i].label.toLowerCase().indexOf(val.toLowerCase()) !== -1) {
-                        if(this.multiple && !this.combo) {
+                        if (this.multiple && !this.combo) {
                             let found = false;
                             for (let x = 0; x < this._value.length; x++) {
                                 if (this.memArray[i].value === this._value[x].value) {
