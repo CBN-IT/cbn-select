@@ -273,15 +273,6 @@
                 };
             }
 
-            connectedCallback() {
-                super.connectedCallback();
-                this.options.sort(
-                    function (a, b) {
-                        return a.label.toLowerCase().localeCompare(b.label.toLowerCase());
-                    }
-                );
-            }
-
             valueChange(event) {
                 this._value = [];
                 if (this.value instanceof Array) {
