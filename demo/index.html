@@ -16,8 +16,26 @@
       <style is="custom-style" include="demo-pages-shared-styles">
       </style>
     </custom-style>
+    <script>
+      function setOptions(){
+          var selects= document.querySelectorAll("cbn-select");
+          for(var i=0;i<selects.length;i++){
+              selects[i].options=[
+                  "Romania",
+                  "Spania",
+                  "Germania",
+                  "Franta",
+                  "Anglia"
+              ];
+              selects[i].value=[{
+                  dadada:"peEcran",
+                  nununu:"valoare"
+              }];
+          }
+      }
+    </script>
   </head>
-  <body>
+  <body onload="setOptions()">
     <div class="vertical-section-container centered">
       <h3>Basic new-element demo</h3>
       <demo-snippet>
