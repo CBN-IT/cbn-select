@@ -146,7 +146,7 @@
             </template>
 
             <label id="label" for="select"></label>
-            <input id="filter" type="text" for="tari" on-input="filter" on-click="displayBlock" on-keydown="keyCode"
+            <input id="filter" type="text" for="tari" on-input="filter" on-click="styleDisplay" on-keydown="keyCode"
                    on-blur="displayNone"/>
 
         </div>
@@ -392,6 +392,9 @@
 
 
             styleDisplay() {
+                if(this.indexTabel===-1){
+                    this.indexTabel=0;
+                }
                 this.shadowRoot.querySelector(".tari").classList.add("displayTari");
                 this.$.linieSpeciala.classList.add("linieSpeciala");
                 this.shadowRoot.querySelector(".arrow-left").classList.add("arrow-down");
@@ -400,26 +403,14 @@
                 }
             }
 
-            styleFaraDisplay() {
+            displayNone(event) {
                 this.shadowRoot.querySelector(".arrow-left").classList.remove("arrow-down");
                 this.shadowRoot.querySelector(".tari").classList.remove("displayTari");
                 this.$.linieSpeciala.classList.remove("linieSpeciala");
-            }
-
-            displayNone(event) {
-                setTimeout(function () {
-                    this.styleFaraDisplay();
-                }.bind(this));
                 this.indexTabel = -1;
             }
 
 
-            displayBlock(event) {
-                if (this.indexTabel === -1) {
-                    this.indexTabel++;
-                }
-                this.styleDisplay()
-            }
 
             getFocus(event) {
                 event.path[0].parentNode.querySelector("#filter").focus();
@@ -486,7 +477,8 @@
                                 item: this.elemRamase[this.indexTabel]
                             }
                         });
-                        this.styleFaraDisplay();
+                        this.filter();
+                        this.displayNone();
                         this.indexTabel = -1;
                         if (this.shadowRoot.querySelector(".tariSelectate") !== null) {
                             this.shadowRoot.querySelector(".tariSelectate").classList.remove("tariSelectate");
@@ -498,13 +490,14 @@
                             }
                         });
                         this.filter();
-                        this.styleFaraDisplay();
+                        this.displayNone();
                         this.indexTabel = -1;
                         if (this.shadowRoot.querySelector(".tariSelectate") !== null) {
                             this.shadowRoot.querySelector(".tariSelectate").classList.remove("tariSelectate");
                         }
 
                     }
+
                 }
 
                 if (key === 8) {
@@ -525,8 +518,8 @@
             }
 
             filter(event) {
-                this.shadowRoot.querySelector(".tari").classList.add("displayTari");
-                var val = this.$.filter.value;
+                this.styleDisplay();
+                let val = this.$.filter.value;
                 this.elemRamase = [];
                 for (let i = 0; i < this.memArray.length; i++) {
                     if (this.memArray[i].label.toLowerCase().indexOf(val.toLowerCase()) !== -1) {
