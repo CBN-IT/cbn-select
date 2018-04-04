@@ -351,8 +351,8 @@
                             itemValueProp = this.itemValueProperty;
                         }
                         this.splice("_value", position, 0, {
-                            "label": this.value[this.itemLabelProperty],
-                            "value": this.value[this.itemValueProperty]
+                            "label": this.value[itemLabelProp],
+                            "value": this.value[itemValueProp]
                         });
                     }
                 }
@@ -598,14 +598,12 @@
                         }
                     }
                     if (!found && this.freetext) {
-                        if (!found && this.freetext) {
-                            this._value = [{
-                                value: event.model.item,
-                                label: event.model.item
-                            }];
-                            this.value = [event.model.item];
-                            //this.throwEvent();
-                        }
+                        this._value = [{
+                            value: event.model.item,
+                            label: event.model.item
+                        }];
+                        this.value = [event.model.item];
+                        //this.throwEvent();
                     }
                 }
 
