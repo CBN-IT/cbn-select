@@ -6,603 +6,635 @@
 
 
 <dom-module id="cbn-select">
-        <template>
-    <style>
-      :host {
-        display: block;
-      }
-      .hr1 {
-        position:relative;
-        top:-12px;
-      }
+    <template>
+        <style>
+            :host {
+                display: block;
+            }
 
-       #filter {
-        border: none;
-        margin-bottom:6px;
-        position: relative;
-         display:inline-block;
-         width:100%;
-         height: 20px;
-         outline:none;
-      }
+            .hr1 {
+                position: relative;
+                top: -12px;
+            }
 
-      .tari {
-        border: none;
-          position:absolute;
-          background-color:whitesmoke ;
-        display:none;
-        z-index: 100;
-        cursor:pointer;
-      }
-      .tariSelectate{
-          background-color:darkgrey;
-      }
-      .displayTari{
-          display:block;
-      }
+            #filter {
+                border: none;
+                margin-bottom: 6px;
+                position: relative;
+                display: inline-block;
+                width: 100%;
+                height: 20px;
+                outline: none;
+            }
 
-      .arrow-left {
-        width: 0;
-        height: 0;
-        border-top: 5px solid transparent;
-        border-bottom: 5px solid transparent;
-        border-right:10px solid black;
-        z-index:1;
-        position: absolute;
-        right: 12px;
-        top: -24px;
-        transition: transform 0.5s;
-      }
-      .arrow-down {
-          transform: rotate(-90deg);
-      }
+            .tari {
+                border: none;
+                position: absolute;
+                background-color: whitesmoke;
+                display: none;
+                z-index: 100;
+                cursor: pointer;
+            }
 
-      .faraLinie {
-          width: 0%;
-          height: 2px;
-          background: #0066bb;
-          transition: width 0.5s, left 0.5s;
-          position: absolute;
-          left:50%;
-          top: -12px;
-          z-index: 2;
-      }
-      .linieSpeciala{
-          width: 100%;
-          left:0%;
-      }
+            .tariSelectate {
+                background-color: darkgrey;
+            }
 
-      .spanPrincipal{
-          position:relative;
-          padding-right:30px;
-        background-color:#E7E7E7;
-        border-radius:8px;
-        display:inline-block;
-        height:20px;
-          z-index:1;
-      }
+            .displayTari {
+                display: block;
+            }
 
-        .closeBtn{
-            flex-shrink: 0;
-            width: 20px;
-            height: 16px;
-            margin-left: 3px;
-            cursor:pointer;
-            position: absolute;
-            top: 2px;
-            right: 0px;
-        }
+            .arrow-left {
+                width: 0;
+                height: 0;
+                border-top: 5px solid transparent;
+                border-bottom: 5px solid transparent;
+                border-right: 10px solid black;
+                z-index: 1;
+                position: absolute;
+                right: 12px;
+                top: -24px;
+                transition: transform 0.5s;
+            }
 
-        .container{
-            display:flex;
-            flex-direction: row;
-        }
-      .fiecareDiv{
-          padding: 5px 10px;
-      }
-      .mobileDisplayNone{
-          display:none;
-      }
-      .mobileDisplay{
-          display:block;
-      }
-        .label{
-            background-color: red;
-            width:100%;
-            height: 20px;
-            z-index: 2;
-        }
-        #select{
-            z-index:3;
-            position:relative;
-            top:-27px;
-        }
-        .linieLabel{
-            top:-27px;
-        }
+            .arrow-down {
+                transform: rotate(-90deg);
+            }
 
-    </style>
-            <span class="scrisMic" on-click="getFocus">[[name]]</span>
+            .faraLinie {
+                width: 0%;
+                height: 2px;
+                background: #0066bb;
+                transition: width 0.5s, left 0.5s;
+                position: absolute;
+                left: 50%;
+                top: -12px;
+                z-index: 2;
+            }
 
-          <div class="container" style="position:relative;">
+            .linieSpeciala {
+                width: 100%;
+                left: 0%;
+            }
 
-              <template is="dom-repeat" items="{{_value}}">
-              <span class="spanPrincipal" for="spanPrincipal" >
+            .spanPrincipal {
+                position: relative;
+                padding-right: 30px;
+                background-color: #E7E7E7;
+                border-radius: 8px;
+                display: inline-block;
+                height: 20px;
+                z-index: 1;
+                white-space: nowrap;
+            }
+
+            .closeBtn {
+                flex-shrink: 0;
+                width: 20px;
+                height: 16px;
+                margin-left: 3px;
+                cursor: pointer;
+                position: absolute;
+                top: 2px;
+                right: 0px;
+            }
+
+            .container {
+                display: flex;
+                flex-direction: row;
+            }
+
+            .fiecareDiv {
+                padding: 5px 10px;
+            }
+
+            .mobileDisplayNone {
+                display: none;
+            }
+
+            .mobileDisplay {
+                display: block;
+            }
+
+            .label {
+                background-color: red;
+                width: 100%;
+                height: 20px;
+                z-index: 2;
+            }
+
+            #select {
+                z-index: 3;
+                position: relative;
+                top: -27px;
+            }
+
+            .linieLabel {
+                top: -27px;
+            }
+
+        </style>
+        <span class="scrisMic" on-click="getFocus">[[name]]</span>
+
+        <div class="container" style="position:relative;">
+
+            <template is="dom-repeat" items="{{_value}}">
+              <span class="spanPrincipal" for="spanPrincipal">
                         <span id="spanPrincipal" style="padding-left: 5px;">[[item.label]]</span>
                         <iron-icon class="closeBtn" icon="icons:backspace" on-click="delete"></iron-icon>
               </span>
-              </template>
-			  
-              <label id="label" for="select"></label>
-              <input id="filter" type="text" for="tari" on-input="filter" on-click="displayBlock" on-keydown="keyCode" on-blur="displayNone" />
-			  
-          </div>
-          <div style="position:relative;">
-                 <div class="arrow-left"></div>
-          </div>
-          <div class="tari" for="spanPrincipal" on-mouseover="changeColor" on-mouseout="colorBack" >
-              <template is="dom-repeat" items ="{{memArray}}">
-                  <div class="fiecareDiv" on-mousedown="selectFunction">[[item.label]]</div>
-              </template>
-          </div>
-            <select id="select" class="mobileDisplayNone">
-                <template is="dom-repeat" items ="{{memArray}}">
-                        <option on-mousedown="selectFunction">[[item.label]]</option>
-                </template>
-            </select>
+            </template>
 
-          <div style="position:relative;">
-              <div class="faraLinie" id="linieSpeciala"></div>
-              <hr class="hr1" >
-          </div>
+            <label id="label" for="select"></label>
+            <input id="filter" type="text" for="tari" on-input="filter" on-click="displayBlock" on-keydown="keyCode"
+                   on-blur="displayNone"/>
 
-       </template>
+        </div>
+        <div style="position:relative;">
+            <div class="arrow-left"></div>
+        </div>
+        <div class="tari" on-mouseover="changeColor" on-mouseout="colorBack">
+            <template is="dom-repeat" items="{{memArray}}">
+                <div class="fiecareDiv" on-mousedown="selectFunction">[[item.label]]</div>
+            </template>
+        </div>
+        <select id="select" class="mobileDisplayNone">
+            <template is="dom-repeat" items="{{memArray}}">
+                <option on-mousedown="selectFunction">[[item.label]]</option>
+            </template>
+        </select>
 
-       <script>
-         /**
-          * `cbn-select`
-          *
-          *
-          * @customElement
-          * @polymer
-          * @demo demo/index.html
-          */
-         class CbnSelect extends Polymer.Element {
-             static get is() {
-                 return 'cbn-select';
-             }
+        <div style="position:relative;">
+            <div class="faraLinie" id="linieSpeciala"></div>
+            <hr class="hr1">
+        </div>
 
-             static get properties() {
-                 return {
-                     prop1: {
-                         type: String,
-                         value: 'cbn-select'
+    </template>
 
-                     },
-                     name: {
-                         type: String
+    <script>
+        /**
+         * `cbn-select`
+         *
+         *
+         * @customElement
+         * @polymer
+         * @demo demo/index.html
+         */
+        class CbnSelect extends Polymer.Element {
+            static get is() {
+                return 'cbn-select';
+            }
 
-                     },
+            static get properties() {
+                return {
+                    prop1: {
+                        type: String,
+                        value: 'cbn-select'
 
-                     indexTabel: {
-                         type: Number,
-                         value: -1
-                     },
+                    },
+                    name: {
+                        type: String
 
-                     options: {
-                         type: Array,
-                         value: function(){return[
-                             
-                         ]},
-                         observer:"optionsChange"
-                     },
+                    },
 
-                     elemRamase: {
-                       type: Array,
-                       value: function () {return[]}
-                     },
+                    indexTabel: {
+                        type: Number,
+                        value: -1
+                    },
 
-                     value: {
-                         type: Array,
-                         value: function () {return [
-							 
-						 ]},
-						 
-                         observer:"valueChange",
+                    options: {
+                        type: Array,
+                        value: function () {
+                            return []
+                        },
+                        observer: "optionsChange"
+                    },
 
-                     },
+                    elemRamase: {
+                        type: Array,
+                        value: function () {
+                            return []
+                        }
+                    },
 
-                     _value: {
-                         type: Array,
-                         value: function() {return[]},
-                         notify: false,
-                         readOnly: false
-                     },
+                    value: {
+                        type: Array,
+                        value: function () {
+                            return []
+                        },
 
-                     memArray:{
-                       type:Array,
-                       value:function(){return[]}
-                     },
+                        observer: "valueChange",
 
-                     multiple: {
-                         type: Boolean,
-                         value:false
-                     },
+                    },
 
-                     combo: {
-                         type:Boolean,
-                         value:false
-                     },
+                    _value: {
+                        type: Array,
+                        value: function () {
+                            return []
+                        },
+                        notify: false,
+                        readOnly: false
+                    },
 
-                     freetext:{
-                         type:Boolean,
-                         value:false
-                     },
-                     mobile:{
-                         type:Boolean,
-                         value:false
-                     },
+                    memArray: {
+                        type: Array,
+                        value: function () {
+                            return []
+                        }
+                    },
 
-                     itemLabelProperty: {
-                         type: String,
-                         value: "dadada"
-                     },
-                     itemValueProperty: {
-                         type: String,
-                         value: "nununu"
-                     }
-                 };
-             }
+                    multiple: {
+                        type: Boolean,
+                        value: false
+                    },
 
-             connectedCallback() {
-                 super.connectedCallback();
-                 this.options.sort(
-                     function (a, b) {
-                         return a.label.toLowerCase().localeCompare(b.label.toLowerCase());
-                     }
-                 );
-             }
+                    combo: {
+                        type: Boolean,
+                        value: false
+                    },
 
-             valueChange(event){
-                      for (let i = 0; i < this.value.length; i++) {
-                          if (this.value[i].hasOwnProperty(this.itemLabelProperty) && this.value[i].hasOwnProperty(this.itemValueProperty)) {
-                              if (this.multiple === true || this.combo === true && this.mobile === false) {
-                                  this._value[this._value.length] = {
-                                      "label": this.value[i][this.itemLabelProperty],
-                                      "value": this.value[i][this.itemValueProperty]
-                                  };
-                              }
-                              if(this.multiple === false && this.combo === false && this.mobile === false){
-                                  this._value[0] = {
-                                      "label": this.value[i][this.itemLabelProperty],
-                                      "value": this.value[i][this.itemValueProperty]
-                                  };
-                              }
-                          }
-                      }
+                    freetext: {
+                        type: Boolean,
+                        value: false
+                    },
+                    mobile: {
+                        type: Boolean,
+                        value: false
+                    },
 
-                 for(let i = 0; i < this.options.length; i++) {
-                     if (this.value === this.options[i].value) {
-                             if (this.value !== "") {
-                                 this._value = [{label:this.options[i].label , value: this.options[i].value}];
-                             } else if (this.value === "") {
-                                 this._value = [];
-                             }
-                     }
-                 }
+                    itemLabelProperty: {
+                        type: String,
+                        value: "label"
+                    },
+                    itemValueProperty: {
+                        type: String,
+                        value: "value"
+                    }
+                };
+            }
 
-                 if(Array.isArray(this.value)) {
-                     let newArray = [];
-                     for (let x = 0; x < this.value.length; x++) {
-                         for(let i = 0; i < this.options.length; i++) {
-                                 if (this.value[x] === this.options[i].value) {
-                                     newArray[x] = {label: this.options[i].label, value: this.options[i].value};
-                                     this.push("_value", newArray[x]);
-                                 }
-                           }
-                     }
-                 }
+            connectedCallback() {
+                super.connectedCallback();
+                this.options.sort(
+                    function (a, b) {
+                        return a.label.toLowerCase().localeCompare(b.label.toLowerCase());
+                    }
+                );
+            }
 
+            valueChange(event) {
+                this._value=[];
+                if (this.value instanceof Array) {
+                    for (let i = 0; i < this.value.length; i++) {
+                        let position = 0;
+                        if ((this.multiple === true || this.combo === false) && this.mobile === false) {
+                            position = this._value.length;
+                        }
+                        if (this.multiple === false && this.combo === true && this.mobile === false) {
+                            position = 0;
+                        }
+                        if (typeof this.value[i] === "string") {
+                            let found = false;
+                            for (let j = 0; j < this.options.length; j++) {
+                                if (this.value[i] === this.options[j].value) {
+                                    this.splice("_value", position, 0, {
+                                        label: this.options[j].label,
+                                        value: this.options[j].value
+                                    });
+                                    found = true;
+                                }
+                            }
+                            if (this.freetext && !found) {
+                                this.splice("_value", position, 0, {
+                                    label: this.value[i],
+                                    value: this.value[i]
+                                });
+                            }
+                        } else {
+                            let itemValueProp = "value";
+                            let itemLabelProp = "label";
 
-                 this.dispatchEvent(new CustomEvent("selected-changed", {
-                     bubbles: true,
-                     composed: true,
-                     detail: {
-                         value: this._value
-                     }
-                 }));
-             }
+                            if (this.itemLabelProperty !== null && this.value[i].hasOwnProperty(this.itemLabelProperty)) {
+                                itemLabelProp = this.itemLabelProperty;
+                            }
+                            if (this.itemValueProperty !== null && this.value[i].hasOwnProperty(this.itemValueProperty)) {
+                                itemValueProp = this.itemValueProperty;
+                            }
+                            this.splice("_value", position, 0, {
+                                "label": this.value[i][this.itemLabelProperty],
+                                "value": this.value[i][this.itemValueProperty]
+                            });
+                        }
+                    }
+                } else {
+                    if (typeof this.value === "string") {
+                        let found = false;
+                        for (let j = 0; j < this.options.length; j++) {
+                            if (this.value === this.options[j].value) {
+                                this.splice("_value", 0, 0, {
+                                    label: this.options[j].label,
+                                    value: this.options[j].value
+                                });
+                                found = true;
+                            }
+                        }
+                        if (this.freetext && !found) {
+                            this.splice("_value", position, 0, {
+                                label: this.value,
+                                value: this.value
+                            });
+                        }
+                    } else {
+                        let itemValueProp = "value";
+                        let itemLabelProp = "label";
 
-             optionsChange(){
-                 for(let i = 0; i < this.options.length ; i++ ){
-                     if(typeof this.options[i] === 'string'){
-                         this.options[i] = { "label" : this.options[i] , "value" : this.options[i] };
-                     }
-                 }
-
-                 this.memArray = JSON.parse(JSON.stringify(this.options));
-                 this.orderList();
-             }
-
-             orderList(){
-                 this.memArray.sort(
-                     function (a, b) {
-                         return a.label.toLowerCase().localeCompare(b.label.toLowerCase());
-                     }
-                 );
-             }
-
-
-             styleDisplay(){
-                 this.shadowRoot.querySelector(".tari").classList.add("displayTari");
-                 this.$.linieSpeciala.classList.add("linieSpeciala");
-                 this.shadowRoot.querySelector(".arrow-left").classList.add("arrow-down");
-                 if((this._value.length < this.options.length || this.combo === false) && this.$.filter.value === "" && this.memArray.length > 0 ) {
-                     this.shadowRoot.querySelector(".tari div:nth-of-type(" + (this.indexTabel + 1) + ")").classList.add("tariSelectate");
-                 }
-             }
-
-             styleFaraDisplay(){
-                 this.shadowRoot.querySelector(".arrow-left").classList.remove("arrow-down");
-                 this.shadowRoot.querySelector(".tari").classList.remove("displayTari");
-                 this.$.linieSpeciala.classList.remove("linieSpeciala");
-             }
-
-             displayNone(event) {
-
-                 setTimeout(function () {
-                     this.styleFaraDisplay();
-                 }.bind(this));
-                this.indexTabel=-1;
-             }
-
-
-             displayBlock(event) {
-                 if(this.indexTabel === -1) {
-                     this.indexTabel++;
-                 }
-                 this.styleDisplay()
-             }
-
-                getFocus(event){
-                    event.path[0].parentNode.querySelector("#filter").focus();
+                        if (this.itemLabelProperty !== null && this.value.hasOwnProperty(this.itemLabelProperty)) {
+                            itemLabelProp = this.itemLabelProperty;
+                        }
+                        if (this.itemValueProperty !== null && this.value.hasOwnProperty(this.itemValueProperty)) {
+                            itemValueProp = this.itemValueProperty;
+                        }
+                        this.splice("_value", position, 0, {
+                            "label": this.value[this.itemLabelProperty],
+                            "value": this.value[this.itemValueProperty]
+                        });
+                    }
                 }
 
+                this.dispatchEvent(new CustomEvent("selected-changed", {
+                    bubbles: true,
+                    composed: true,
+                    detail: {
+                        value: this._value
+                    }
+                }));
+            }
 
-             changeColor(event) {
-                 for (let i = 0; i < this.memArray.length; i++) {
-                     if (event.path[0].innerHTML === this.memArray[i].label) {
-                         if (this.indexTabel !== -1) {
-                             this.shadowRoot.querySelector(".tari div:nth-of-type(" + (this.indexTabel + 1) + ")").classList.remove("tariSelectate");
-                         }
-                         event.path[0].classList.add("tariSelectate");
-                         this.indexTabel = i;
-                     }
-                 }
-             }
+            optionsChange() {
+                for (let i = 0; i < this.options.length; i++) {
+                    if (typeof this.options[i] === 'string') {
+                        this.options[i] = {"label": this.options[i], "value": this.options[i]};
+                    }
+                }
 
-             colorBack(event) {
-                 event.path[0].classList.remove("tariSelectate");
-             }
+                this.memArray = JSON.parse(JSON.stringify(this.options));
+                this.orderList();
+            }
 
-             keyCode(event) {
-                 var key = event.which || event.keyCode;
-                 var inputUser = { "label" : this.$.filter.value , "value" : this.$.filter.value };
-                 if(this.memArray.length !== 0) {
+            orderList() {
+                this.memArray.sort(
+                    function (a, b) {
+                        return a.label.toLowerCase().localeCompare(b.label.toLowerCase());
+                    }
+                );
+            }
+
+
+            styleDisplay() {
+                this.shadowRoot.querySelector(".tari").classList.add("displayTari");
+                this.$.linieSpeciala.classList.add("linieSpeciala");
+                this.shadowRoot.querySelector(".arrow-left").classList.add("arrow-down");
+                if ((this._value.length < this.options.length || this.combo === true) && this.$.filter.value === "" && this.memArray.length > 0) {
+                    this.shadowRoot.querySelector(".tari div:nth-of-type(" + (this.indexTabel + 1) + ")").classList.add("tariSelectate");
+                }
+            }
+
+            styleFaraDisplay() {
+                this.shadowRoot.querySelector(".arrow-left").classList.remove("arrow-down");
+                this.shadowRoot.querySelector(".tari").classList.remove("displayTari");
+                this.$.linieSpeciala.classList.remove("linieSpeciala");
+            }
+
+            displayNone(event) {
+
+                setTimeout(function () {
+                    this.styleFaraDisplay();
+                }.bind(this));
+                this.indexTabel = -1;
+            }
+
+
+            displayBlock(event) {
+                if (this.indexTabel === -1) {
+                    this.indexTabel++;
+                }
+                this.styleDisplay()
+            }
+
+            getFocus(event) {
+                event.path[0].parentNode.querySelector("#filter").focus();
+            }
+
+
+            changeColor(event) {
+                for (let i = 0; i < this.memArray.length; i++) {
+                    if (event.path[0].innerHTML === this.memArray[i].label) {
+                        if (this.indexTabel !== -1) {
+                            this.shadowRoot.querySelector(".tari div:nth-of-type(" + (this.indexTabel + 1) + ")").classList.remove("tariSelectate");
+                        }
+                        event.path[0].classList.add("tariSelectate");
+                        this.indexTabel = i;
+                    }
+                }
+            }
+
+            colorBack(event) {
+                event.path[0].classList.remove("tariSelectate");
+            }
+
+            keyCode(event) {
+                var key = event.which || event.keyCode;
+                var inputUser = {"label": this.$.filter.value, "value": this.$.filter.value};
+                if (this.memArray.length !== 0) {
                     if (key === 40) {
                         if (this.indexTabel !== -1) {
-                             this.shadowRoot.querySelector(".tari div:nth-of-type(" + (this.indexTabel + 1) + ")").classList.remove("tariSelectate");
-                         }
-                         this.indexTabel++;
+                            this.shadowRoot.querySelector(".tari div:nth-of-type(" + (this.indexTabel + 1) + ")").classList.remove("tariSelectate");
+                        }
+                        this.indexTabel++;
 
-                         if (this.indexTabel >= this.memArray.length) {
-                             this.indexTabel = 0;
-                         }
+                        if (this.indexTabel >= this.memArray.length) {
+                            this.indexTabel = 0;
+                        }
 
-                         this.shadowRoot.querySelector(".tari").classList.add("displayTari");
-                         this.shadowRoot.querySelector(".tari div:nth-of-type(" + (this.indexTabel + 1) + ")").classList.add("tariSelectate");
-                     }
+                        this.shadowRoot.querySelector(".tari").classList.add("displayTari");
+                        this.shadowRoot.querySelector(".tari div:nth-of-type(" + (this.indexTabel + 1) + ")").classList.add("tariSelectate");
+                    }
 
-                     if (key === 38) {
-                         if (this.indexTabel === -1) {
-                             this.indexTabel = this.memArray.length;
-                         }
-                         if (this.indexTabel !== this.memArray.length) {
-                             this.shadowRoot.querySelector(".tari div:nth-of-type(" + (this.indexTabel + 1) + ")").classList.remove("tariSelectate");
-                         }
-                         this.indexTabel--;
+                    if (key === 38) {
+                        if (this.indexTabel === -1) {
+                            this.indexTabel = this.memArray.length;
+                        }
+                        if (this.indexTabel !== this.memArray.length) {
+                            this.shadowRoot.querySelector(".tari div:nth-of-type(" + (this.indexTabel + 1) + ")").classList.remove("tariSelectate");
+                        }
+                        this.indexTabel--;
 
-                         if (this.indexTabel <= -1) {
-                             this.indexTabel = this.memArray.length - 1;
-                         }
-                         this.shadowRoot.querySelector(".tari").classList.add("displayTari");
-                         this.shadowRoot.querySelector(".tari div:nth-of-type(" + (this.indexTabel + 1) + ")").classList.add("tariSelectate");
-                     }
-                 }
+                        if (this.indexTabel <= -1) {
+                            this.indexTabel = this.memArray.length - 1;
+                        }
+                        this.shadowRoot.querySelector(".tari").classList.add("displayTari");
+                        this.shadowRoot.querySelector(".tari div:nth-of-type(" + (this.indexTabel + 1) + ")").classList.add("tariSelectate");
+                    }
+                }
 
-                 if (key === 13) {
-                     if(this.combo === false && this.$.filter.value === ""){
+                if (key === 13) {
+                    if (this.combo === true && this.$.filter.value === "") {
                         this.memArray = this.options;
-                     }
-                     if(this.memArray.length !== 0) {
-
-                         if (this.indexTabel === -1 && this.$.filter.value === "") {
-                             this.indexTabel ++;
-                             this.styleDisplay();
-                         }
-                         else {
-                             this.$.filter.value = "";
-                             this.selectFunction(
-                                {
-                                    model: {
-                                        item: this.memArray[this.indexTabel]
-                                    }
+                    }
+                    if (this.memArray.length !== 0) {
+                        if (this.indexTabel === -1 && this.$.filter.value === "") {
+                            this.indexTabel++;
+                            this.styleDisplay();
+                        } else {
+                            this.$.filter.value = "";
+                            this.selectFunction({
+                                model: {
+                                    item: this.memArray[this.indexTabel]
                                 }
-                            );
-                             if(this.indexTabel !== -1) {
-                                 this.shadowRoot.querySelector(".tari div:nth-of-type(" + (this.indexTabel + 1) + ")").classList.remove("tariSelectate");
-                             }
-                             this.styleFaraDisplay();
+                            });
+                            if (this.indexTabel !== -1) {
+                                this.shadowRoot.querySelector(".tari div:nth-of-type(" + (this.indexTabel + 1) + ")").classList.remove("tariSelectate");
+                            }
+                            this.styleFaraDisplay();
                             this.indexTabel = -1;
                         }
-                     }
-                     if(this.freetext === true && this.$.filter.value !== ""){
-                         if(this.multiple === false && this.combo === false) {
-                             this.splice("_value", 0, 1, inputUser);
-                             this.value = inputUser.value;
-                             this.$.filter.value = "";
-                             this.memArray = this.options;
-                         }
-                         if(this.multiple === true && this.combo === false){
-                             this.push("_value", inputUser);
-                             this.push("value", inputUser.value);
-                             this.$.filter.value = "";
-                             this.memArray = this.options;
-                         }
-                         if(this.combo === true){
-                             this.push("_value", inputUser);
-                             this.push("value", inputUser.value);
-                             this.$.filter.value = "";
-                             if(this.elemRamase.length !== 0){
-                                 this.memArray = this.elemRamase;
-                             }
-                             else if(this._value.length < this.options.length){
-                                 this.memArray = this.options;
-                             }
-                         }
-                         this.styleFaraDisplay();
-                         this.indexTabel = -1;
-                     }
-                 }
+                    }
+                    if (this.freetext === true && this.$.filter.value !== "") {
+                        if (this.multiple === false && this.combo === true) {
+                            this.splice("_value", 0, 1, inputUser);
+                            this.value = inputUser.value;
+                            this.$.filter.value = "";
+                            this.memArray = this.options;
+                        }
+                        if (this.multiple === true && this.combo === true) {
+                            this.push("_value", inputUser);
+                            this.push("value", inputUser.value);
+                            this.$.filter.value = "";
+                            this.memArray = this.options;
+                        }
+                        if (this.combo === false) {
+                            this.push("_value", inputUser);
+                            this.push("value", inputUser.value);
+                            this.$.filter.value = "";
+                            if (this.elemRamase.length !== 0) {
+                                this.memArray = this.elemRamase;
+                            }
+                            else if (this._value.length < this.options.length) {
+                                this.memArray = this.options;
+                            }
+                        }
+                        this.styleFaraDisplay();
+                        this.indexTabel = -1;
+                    }
+                }
 
-                 if(key === 8){
-                     if(this.combo === true) {
-                         if(this._value.length !== 0 && this.$.filter.value === "") {
-                             this.push("memArray", this._value[this._value.length-1]);
-                         }
-                         this.orderList();
-                     }
-                     if(this.$.filter.value === "") {
-                         this.splice("_value", this._value.length - 1, 1);
-                         this.shadowRoot.querySelector(".tari").classList.remove("displayTari");
-                         this.$.linieSpeciala.classList.remove("linieSpeciala");
-                         this.shadowRoot.querySelector(".arrow-left").classList.remove("arrow-down");
-                         this.indexTabel = -1;
-                     }
-                 }
-             }
+                if (key === 8) {
+                    if (this.combo === false) {
+                        if (this._value.length !== 0 && this.$.filter.value === "") {
+                            this.push("memArray", this._value[this._value.length - 1]);
+                        }
+                        this.orderList();
+                    }
+                    if (this.$.filter.value === "") {
+                        this.splice("_value", this._value.length - 1, 1);
+                        this.shadowRoot.querySelector(".tari").classList.remove("displayTari");
+                        this.$.linieSpeciala.classList.remove("linieSpeciala");
+                        this.shadowRoot.querySelector(".arrow-left").classList.remove("arrow-down");
+                        this.indexTabel = -1;
+                    }
+                }
+            }
 
-             filter(event) {
-                 this.shadowRoot.querySelector(".tari").classList.add("displayTari");
-                 var val = this.$.filter.value;
-                 let arrayLength = this.options.length;
-                 this.memArray = [];
-                 if(this.combo === false) {
-                     for (let i = 0; i < arrayLength; i++) {
-                         if (this.options[i].label.toLowerCase().indexOf(val.toLowerCase()) !== -1) {
-                             this.push("memArray", this.options[i]);
-                         }
-                     }
-                 }
-                 if(this.combo === true && this.elemRamase.length === 0 && this._value.length !== this.options.length){
-                     for(let i = 0; i < arrayLength; i++){
-                         if (this.options[i].label.toLowerCase().indexOf(val.toLowerCase()) !== -1) {
-                             this.push("memArray", this.options[i]);
-                         }
-                     }
-                 }
+            filter(event) {
+                this.shadowRoot.querySelector(".tari").classList.add("displayTari");
+                var val = this.$.filter.value;
+                let arrayLength = this.options.length;
+                this.memArray = [];
+                if (this.combo === true) {
+                    for (let i = 0; i < arrayLength; i++) {
+                        if (this.options[i].label.toLowerCase().indexOf(val.toLowerCase()) !== -1) {
+                            this.push("memArray", this.options[i]);
+                        }
+                    }
+                }
+                if (this.combo === false && this.elemRamase.length === 0 && this._value.length !== this.options.length) {
+                    for (let i = 0; i < arrayLength; i++) {
+                        if (this.options[i].label.toLowerCase().indexOf(val.toLowerCase()) !== -1) {
+                            this.push("memArray", this.options[i]);
+                        }
+                    }
+                }
 
-                 if(this.combo === true && this.elemRamase.length !== 0){
-                     for(let i = 0; i < this.elemRamase.length; i++){
-                         if (this.elemRamase[i].label.toLowerCase().indexOf(val.toLowerCase()) !== -1) {
-                             this.push("memArray", this.elemRamase[i]);
-                         }
-                     }
-                 }
-             }
+                if (this.combo === false && this.elemRamase.length !== 0) {
+                    for (let i = 0; i < this.elemRamase.length; i++) {
+                        if (this.elemRamase[i].label.toLowerCase().indexOf(val.toLowerCase()) !== -1) {
+                            this.push("memArray", this.elemRamase[i]);
+                        }
+                    }
+                }
+            }
 
-             selectFunction(event) {
-                     this.$.filter.value = "";
-                 if(this.multiple === true) {
-                     for(let i = 0; i < this.options.length; i++) {
-                         if(typeof event.model.item !== 'undefined' ) {
-                             if (this.options[i].value === event.model.item.value) {
-                                 this.push("_value", event.model.item);
-                                 this.push("value", event.model.item.value);
-                             }
-                         }
-                     }
-                 }
+            selectFunction(event) {
+                this.$.filter.value = "";
+                if (this.multiple === true) {
+                    for (let i = 0; i < this.options.length; i++) {
+                        if (typeof event.model.item !== 'undefined') {
+                            if (this.options[i].value === event.model.item.value) {
+                                this.push("_value", event.model.item);
+                                this.push("value", event.model.item.value);
+                                break;
+                            }
+                        }
+                    }
+                } else {
+                    for (let i = 0; i < this.options.length; i++) {
+                        if (typeof event.model.item !== 'undefined') {
+                            if (this.options[i].value === event.model.item.value) {
+                                this._value= [event.model.item];
+                                this.value=event.model.item.value;
+                                break;
+                            }
+                        }
+                    }
+                }
 
-                 if(this.combo === true) {
-                     for(let i = 0; i < this.options.length; i++) {
-                         if (typeof event.model.item !== 'undefined') {
-                             if (this.options[i].value === event.model.item.value) {
-                                 this.push("_value", event.model.item);
-                                 this.push("value", event.model.item.value);
-                             }
-                         }
-                     }
-                     this.elemRamase = [];
-                     for(let i = 0; i < this.options.length; i++) {
-                         var found = false;
-                         for(let x = 0; x< this._value.length; x++) {
-                                if (this.options[i].value === this._value[x].value) {
-                                    found = true;
-                                    break;
-                                }
-                         }
-                         if(!found){
-                             this.push("elemRamase", this.options[i]);
-                         }
-                     }
-                     this.memArray = this.elemRamase;
-                 }
+                if (this.combo === false) {
+                    this.elemRamase = [];
+                    for (let i = 0; i < this.options.length; i++) {
+                        var found = false;
+                        for (let x = 0; x < this._value.length; x++) {
+                            if (this.options[i].value === this._value[x].value) {
+                                found = true;
+                                break;
+                            }
+                        }
+                        if (!found) {
+                            this.push("elemRamase", this.options[i]);
+                        }
+                    }
+                    this.memArray = this.elemRamase;
+                }
 
-                 if(this.combo === false && this._value.length < 1 && this.multiple === false ) {
-                     for (let i = 0; i < this.options.length; i++) {
-                         if (typeof event.model.item !== 'undefined') {
-                             if (this.options[i].value === event.model.item.value) {
-                                 this.push("_value", event.model.item);
-                                 this.value = event.model.item.value;
-                             }
-                         }
-                     }
-                 }
+                setTimeout(function () {
+                    this.$.filter.focus();
+                }.bind(this));
 
-                 if(this.combo === false && this._value.length === 1 && this.multiple === false){
-                     for(let i = 0; i < this.options.length; i++) {
-                         if (typeof event.model.item !== 'undefined') {
-                             if (this.options[i].value === event.model.item.value) {
-                                 this.splice("_value", 0, 1, event.model.item);
-                                 this.value = event.model.item.value;
-                             }
-                         }
-                     }
-                 }
-                 setTimeout(function() {
-                     this.$.filter.focus();
-                 }.bind(this));
+                this.orderList();
+            }
 
-                 if(this.combo === false) {
-                     this.memArray = this.options;
-                 }
-                 this.orderList();
-             }
+            delete(event) {
 
-             delete(event) {
+                this.splice("_value", event.model.index, 1);
+                if (this.combo === false) {
+                    this.push("memArray", event.model.item);
+                    if (!this.options.includes(event.model.item) && this.freetext === true) {
+                        this.push("options", event.model.item);
+                    }
+                    this.orderList();
+                }
+            }
+        }
 
-                 this.splice("_value", event.model.index, 1);
-                     if (this.combo === true ) {
-                                 this.push("memArray", event.model.item);
-                                 if(!this.options.includes(event.model.item) && this.freetext === true) {
-                                     this.push("options", event.model.item);
-                                 }
-                                 this.orderList();
-                             }
-             }
-         }
-
-         window.customElements.define(CbnSelect.is, CbnSelect);
-       </script>
-     </dom-module>
+        window.customElements.define(CbnSelect.is, CbnSelect);
+    </script>
+</dom-module>
