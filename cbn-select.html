@@ -523,6 +523,18 @@
                 this.elemRamase = [];
                 for (let i = 0; i < this.memArray.length; i++) {
                     if (this.memArray[i].label.toLowerCase().indexOf(val.toLowerCase()) !== -1) {
+                        if(this.multiple && !this.combo) {
+                            let found = false;
+                            for (let x = 0; x < this._value.length; x++) {
+                                if (this.memArray[i].value === this._value[x].value) {
+                                    found = true;
+                                    break;
+                                }
+                            }
+                            if (found) {
+                                continue;
+                            }
+                        }
                         this.push("elemRamase", this.memArray[i]);
                     }
                 }
