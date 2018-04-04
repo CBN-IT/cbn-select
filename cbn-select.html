@@ -295,11 +295,11 @@
                         }
                         if (typeof this.value[i] === "string") {
                             let found = false;
-                            for (let j = 0; j < this.options.length; j++) {
-                                if (this.value[i] === this.options[j].value) {
+                            for (let j = 0; j < this.memArray.length; j++) {
+                                if (this.value[i] === this.memArray[j].value) {
                                     this.splice("_value", position, 0, {
-                                        label: this.options[j].label,
-                                        value: this.options[j].value
+                                        label: this.memArray[j].label,
+                                        value: this.memArray[j].value
                                     });
                                     found = true;
                                 }
@@ -329,11 +329,11 @@
                 } else {
                     if (typeof this.value === "string") {
                         let found = false;
-                        for (let j = 0; j < this.options.length; j++) {
-                            if (this.value === this.options[j].value) {
+                        for (let j = 0; j < this.memArray.length; j++) {
+                            if (this.value === this.memArray[j].value) {
                                 this.splice("_value", 0, 0, {
-                                    label: this.options[j].label,
-                                    value: this.options[j].value
+                                    label: this.memArray[j].label,
+                                    value: this.memArray[j].value
                                 });
                                 found = true;
                             }
@@ -371,13 +371,22 @@
             }
 
             optionsChange() {
+                let memArrayNew=[];
                 for (let i = 0; i < this.options.length; i++) {
                     if (typeof this.options[i] === 'string') {
-                        this.options[i] = {"label": this.options[i], "value": this.options[i]};
+                        memArrayNew[i] = {"label": this.options[i], "value": this.options[i]};
+                    }else{
+                        memArrayNew[i]=JSON.parse(JSON.stringify(this.options[i]));
+                        if(this.itemValueProperty!==null && this.options[i].hasOwnProperty(this.itemValueProperty)){
+                            memArrayNew[i]["value"]=this.options[i][this.itemValueProperty];
+                        }
+                        if(this.itemLabelProperty!==null && this.options[i].hasOwnProperty(this.itemLabelProperty)){
+                            memArrayNew[i]["label"]=this.options[i][this.itemLabelProperty];
+                        }
                     }
                 }
 
-                this.memArray = JSON.parse(JSON.stringify(this.options));
+                this.memArray = memArrayNew;
                 this.orderList();
             }
 
@@ -577,9 +586,9 @@
             selectFunction(event) {
                 this.$.filter.value = "";
                 if (this.multiple === true) {
-                    for (let i = 0; i < this.options.length; i++) {
+                    for (let i = 0; i < this.memArray.length; i++) {
                         if (typeof event.model.item !== 'undefined') {
-                            if (this.options[i].value === event.model.item.value) {
+                            if (this.memArray[i].value === event.model.item.value) {
                                 this.push("_value", event.model.item);
                                 this.push("value", event.model.item.value);
                                 break;
@@ -587,9 +596,9 @@
                         }
                     }
                 } else {
-                    for (let i = 0; i < this.options.length; i++) {
+                    for (let i = 0; i < this.memArray.length; i++) {
                         if (typeof event.model.item !== 'undefined') {
-                            if (this.options[i].value === event.model.item.value) {
+                            if (this.memArray[i].value === event.model.item.value) {
                                 this._value= [event.model.item];
                                 this.value=event.model.item.value;
                                 break;
@@ -600,19 +609,19 @@
 
                 if (this.combo === false) {
                     this.elemRamase = [];
-                    for (let i = 0; i < this.options.length; i++) {
+                    for (let i = 0; i < this.memArray.length; i++) {
                         var found = false;
                         for (let x = 0; x < this._value.length; x++) {
-                            if (this.options[i].value === this._value[x].value) {
+                            if (this.memArray[i].value === this._value[x].value) {
                                 found = true;
                                 break;
                             }
                         }
                         if (!found) {
-                            this.push("elemRamase", this.options[i]);
+                            this.push("elemRamase", this.memArray[i]);
                         }
                     }
-                    this.memArray = this.elemRamase;
+                    //this.memArray = this.elemRamase;
                 }
 
                 setTimeout(function () {
