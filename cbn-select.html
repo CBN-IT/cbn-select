@@ -351,8 +351,8 @@
                             itemValueProp = this.itemValueProperty;
                         }
                         this.splice("_value", position, 0, {
-                            "label": this.value[itemLabelProp],
-                            "value": this.value[itemValueProp]
+                            "label": this.value[this.itemLabelProperty],
+                            "value": this.value[this.itemValueProperty]
                         });
                     }
                 }
