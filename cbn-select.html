@@ -384,9 +384,11 @@
                 }
                 this.shadowRoot.querySelector(".tari").classList.add("displayTari");
                 this.shadowRoot.querySelector(".arrow-left").classList.add("arrow-down");
-                if (this.elemRamase.length > this.indexTabel) {
-                    this.shadowRoot.querySelector(".tari div:nth-of-type(" + (this.indexTabel + 1) + ")").classList.add("tariSelectate");
-                }
+                    setTimeout(function () {
+                        if (this.elemRamase.length > this.indexTabel && this.shadowRoot.querySelector(".tari div:nth-of-type(" + (this.indexTabel + 1) + ")") !== null) {
+                            this.shadowRoot.querySelector(".tari div:nth-of-type(" + (this.indexTabel + 1) + ")").classList.add("tariSelectate");
+                        }
+                    }.bind(this));
             }
 
             displayNone(event) {
@@ -490,10 +492,11 @@
                         }
                         this.orderList();
                     }
-                    if (this.$.filter.value === "") {
+                    if (this._value.length > 0 && this.$.filter.value === "") {
                         this.splice("_value", this._value.length - 1, 1);
-                        this.shadowRoot.querySelector(".tari").classList.remove("displayTari");
-                        this.shadowRoot.querySelector(".arrow-left").classList.remove("arrow-down");
+                        if(this._value.length === 0){
+                            this.displayNone();
+                        }
                         this.indexTabel = -1;
                     }
                     if(this._value.length !== 0 || this.$.filter.value !== ""){
@@ -526,6 +529,7 @@
                     }
                 }
                 this.orderList();
+                this.styleDisplay();
             }
 
             selectFunction(event) {
