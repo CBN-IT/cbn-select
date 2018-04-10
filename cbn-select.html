@@ -310,7 +310,7 @@
                     }
                 }
 
-                this.throwEvent(false);
+
             }
 
             throwEvent(reset) {
@@ -548,7 +548,7 @@
                         if (typeof event.model.item !== 'undefined') {
                             if (this.memArray[i].value === event.model.item.value) {
                                 this.push("_value", event.model.item);
-                                this.push("value", event.model.item.value);
+                                //this.push("value", event.model.item.value);
                                 this.throwEvent();
                                 found = true;
                                 break;
@@ -560,7 +560,7 @@
                             value: event.model.item,
                             label: event.model.item
                         });
-                        this.push("value", event.model.item);
+                        //this.push("value", event.model.item);
                         this.throwEvent();
                     }
                 } else {
@@ -568,8 +568,8 @@
                         if (typeof event.model.item !== 'undefined') {
                             if (this.memArray[i].value === event.model.item.value) {
                                 this._value = [event.model.item];
-                                this.value = [event.model.item.value];
-                                //this.throwEvent();
+                                //this.value = [event.model.item.value];
+                                this.throwEvent();
                                 found = true;
                                 break;
                             }
@@ -580,8 +580,8 @@
                             value: event.model.item,
                             label: event.model.item
                         }];
-                        this.value = [event.model.item];
-                        //this.throwEvent();
+                       // this.value = [event.model.item];
+                        this.throwEvent();
                     }
                 }
 
