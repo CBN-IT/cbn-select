@@ -310,21 +310,25 @@
                     }
                 }
 
-                this.throwEvent();
+                this.throwEvent(false);
             }
 
-            throwEvent() {
+            throwEvent(reset) {
                 let value = "";
-                if (this.value === undefined || this.value === null) {
+                if (this._value === undefined || this._value === null) {
                     if (this.multiple) {
                         value = [];
                     } else {
                         value = "";
                     }
                 } else if (this.multiple) {
-                    value = this.value;
-                } else if (this.value.length > 0) {
-                    value = this.value[0];
+                    let val=[];
+                    for(let i=0;i<this._value.length;i++){
+                        val.push(this._value[i].value);
+                    }
+                    value = val;
+                } else if (this._value.length > 0) {
+                    value = this._value[0].value;
                 } else {
                     value = "";
                 }
@@ -332,6 +336,9 @@
                     this.propInput = true;
                 }else{
                     this.propInput = false;
+                }
+                if(reset!==false) {
+                    this.value=value;
                 }
 
                 this.dispatchEvent(new CustomEvent("selected-changed", {
