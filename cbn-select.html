@@ -498,6 +498,7 @@
                             this.displayNone();
                         }
                         this.indexTabel = -1;
+                        this.throwEvent();
                     }
                     if(this._value.length !== 0 || this.$.filter.value !== ""){
                         this.propInput = true;
@@ -618,6 +619,7 @@
                 }else{
                     this.propInput = false;
                 }
+                this.throwEvent();
             }
         }
 
