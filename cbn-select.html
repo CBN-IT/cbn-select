@@ -86,9 +86,11 @@
             .fiecareDiv {
                 padding: 5px 10px;
             }
+
             .linieLabel {
                 top: -27px;
             }
+
             input.my-input {
                 @apply --paper-input-container-shared-input-style;
             }
@@ -96,25 +98,26 @@
 
         <paper-input-container always-float-label="[[propInput]]">
             <label class="label" slot="label">[[label]]</label>
-        <div class="container" slot="input" style="position:relative;">
+            <div class="container" slot="input" style="position:relative;">
 
-            <template is="dom-repeat" items="{{_value}}">
+                <template is="dom-repeat" items="{{_value}}">
               <span class="spanPrincipal" for="spanPrincipal">
                         <span id="spanPrincipal" style="padding-left: 5px;">[[item.label]]</span>
                         <iron-icon class="closeBtn" icon="icons:backspace" on-click="delete"></iron-icon>
               </span>
-            </template>
-            <input class="my-input" id="filter" type="text" for="tari" on-input="filter" on-click="styleDisplay" on-keydown="keyCode" on-blur="displayNone"/>
+                </template>
+                <input class="my-input" id="filter" type="text" for="tari" on-input="filter" on-click="styleDisplay"
+                       on-keydown="keyCode" on-blur="displayNone"/>
 
-        </div>
+            </div>
             <div slot="input" style="position:relative;">
                 <div class="arrow-left"></div>
             </div>
-        <div slot="input" class="tari" on-mouseover="changeColor" on-mouseout="colorBack">
-            <template is="dom-repeat" items="{{elemRamase}}">
-                <div class="fiecareDiv" on-mousedown="selectFunction">[[item.label]]</div>
-            </template>
-        </div>
+            <div slot="input" class="tari" on-mouseover="changeColor" on-mouseout="colorBack">
+                <template is="dom-repeat" items="{{elemRamase}}">
+                    <div class="fiecareDiv" on-mousedown="selectFunction">[[item.label]]</div>
+                </template>
+            </div>
         </paper-input-container>
 
     </template>
@@ -222,7 +225,7 @@
                     },
                     propInput: {
                         type: Boolean,
-                        value:false
+                        value: false
                     }
                 };
             }
@@ -309,11 +312,11 @@
                         });
                     }
                 }
-
+                this.updateLabel();
 
             }
 
-            throwEvent(reset) {
+            throwEvent() {
                 let value = "";
                 if (this._value === undefined || this._value === null) {
                     if (this.multiple) {
@@ -322,8 +325,8 @@
                         value = "";
                     }
                 } else if (this.multiple) {
-                    let val=[];
-                    for(let i=0;i<this._value.length;i++){
+                    let val = [];
+                    for (let i = 0; i < this._value.length; i++) {
                         val.push(this._value[i].value);
                     }
                     value = val;
@@ -332,14 +335,8 @@
                 } else {
                     value = "";
                 }
-                if(this._value.length !== 0 || this.$.filter.value !== ""){
-                    this.propInput = true;
-                }else{
-                    this.propInput = false;
-                }
-                if(reset!==false) {
-                    this.value=value;
-                }
+                this.updateLabel();
+                this.value = value;
 
                 this.dispatchEvent(new CustomEvent("selected-changed", {
                     bubbles: true,
@@ -381,21 +378,17 @@
 
 
             styleDisplay() {
-                if(this._value.length !== 0 || this.$.filter.value !== ""){
-                    this.propInput = true;
-                }else{
-                    this.propInput = false;
-                }
+                this.updateLabel();
                 if (this.indexTabel === -1) {
                     this.indexTabel = 0;
                 }
                 this.shadowRoot.querySelector(".tari").classList.add("displayTari");
                 this.shadowRoot.querySelector(".arrow-left").classList.add("arrow-down");
-                    setTimeout(function () {
-                        if (this.elemRamase.length > this.indexTabel && this.shadowRoot.querySelector(".tari div:nth-of-type(" + (this.indexTabel + 1) + ")") !== null) {
-                            this.shadowRoot.querySelector(".tari div:nth-of-type(" + (this.indexTabel + 1) + ")").classList.add("tariSelectate");
-                        }
-                    }.bind(this));
+                setTimeout(function () {
+                    if (this.elemRamase.length > this.indexTabel && this.shadowRoot.querySelector(".tari div:nth-of-type(" + (this.indexTabel + 1) + ")") !== null) {
+                        this.shadowRoot.querySelector(".tari div:nth-of-type(" + (this.indexTabel + 1) + ")").classList.add("tariSelectate");
+                    }
+                }.bind(this));
             }
 
             displayNone(event) {
@@ -501,17 +494,20 @@
                     }
                     if (this._value.length > 0 && this.$.filter.value === "") {
                         this.splice("_value", this._value.length - 1, 1);
-                        if(this._value.length === 0){
+                        if (this._value.length === 0) {
                             this.displayNone();
                         }
                         this.indexTabel = -1;
                         this.throwEvent();
                     }
-                    if(this._value.length !== 0 || this.$.filter.value !== ""){
-                        this.propInput = true;
-                    }else{
-                        this.propInput = false;
-                    }
+                    this.updateLabel();
+                }
+            }
+            updateLabel(){
+                if (this._value.length !== 0 || this.$.filter.value !== "") {
+                    this.propInput = true;
+                } else {
+                    this.propInput = false;
                 }
             }
 
@@ -580,7 +576,7 @@
                             value: event.model.item,
                             label: event.model.item
                         }];
-                       // this.value = [event.model.item];
+                        // this.value = [event.model.item];
                         this.throwEvent();
                     }
                 }
@@ -611,7 +607,6 @@
             }
 
             delete(event) {
-
                 this.splice("_value", event.model.index, 1);
                 if (this.multiple === true && this.combo === false) {
                     this.push("elemRamase", event.model.item);
@@ -621,11 +616,6 @@
 
                 }
                 this.orderList();
-                if(this._value.length !== 0 || this.$.filter.value !== ""){
-                    this.propInput = true;
-                }else{
-                    this.propInput = false;
-                }
                 this.throwEvent();
             }
         }
