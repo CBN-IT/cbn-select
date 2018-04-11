@@ -501,11 +501,7 @@
                 }
             }
             updateLabel(){
-                if (this._value.length !== 0 || this.$.filter.value !== "") {
-                    this.propInput = true;
-                } else {
-                    this.propInput = false;
-                }
+                this.propInput = this._value.length !== 0 || this.$.filter.value !== "";
             }
 
             filter(event) {
