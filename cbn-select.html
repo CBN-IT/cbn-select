@@ -236,10 +236,10 @@
                 if (this.value instanceof Array) {
                     for (let i = 0; i < this.value.length; i++) {
                         let position = 0;
-                        if ((this.multiple === true || this.combo === false) && this.mobile === false) {
+                        if (this.multiple === true || this.combo === false) {
                             position = this._value.length;
                         }
-                        if (this.multiple === false && this.combo === true && this.mobile === false) {
+                        if (this.multiple === false && this.combo === true) {
                             position = 0;
                         }
                         if (typeof this.value[i] === "string") {
@@ -276,7 +276,7 @@
                         }
                     }
                 } else {
-                    if (typeof this.value === "string") {
+                    if (typeof this.value === "string" && this.value.length > 0) {
                         let found = false;
                         for (let j = 0; j < this.memArray.length; j++) {
                             if (this.value === this.memArray[j].value) {
@@ -293,7 +293,14 @@
                                 value: this.value
                             });
                         }
-                    } else {
+                    } else if (this.value.length > 0) {
+                        let position = 0;
+                        if (this.multiple === true || this.combo === false) {
+                            position = this._value.length;
+                        }
+                        if (this.multiple === false && this.combo === true) {
+                            position = 0;
+                        }
                         let itemValueProp = "value";
                         let itemLabelProp = "label";
 
@@ -304,8 +311,8 @@
                             itemValueProp = this.itemValueProperty;
                         }
                         this.splice("_value", position, 0, {
-                            "label": this.value[this.itemLabelProperty],
-                            "value": this.value[this.itemValueProperty]
+                            "label": this.value[itemLabelProp],
+                            "value": this.value[itemValueProp]
                         });
                     }
                 }
@@ -479,7 +486,6 @@
                         }
 
                     }
-
                 }
 
                 if (key === 8) {
@@ -600,13 +606,14 @@
             }
 
             delete(event) {
+                console.log(this._value);
                 this.splice("_value", event.model.index, 1);
+                console.log(this._value);
                 if (this.multiple === true && this.combo === false) {
                     this.push("elemRamase", event.model.item);
                     if (!this.options.includes(event.model.item) && this.freetext === true) {
                         this.push("options", event.model.item);
                     }
-
                 }
                 this.orderList();
                 this.throwEvent();
