@@ -566,7 +566,6 @@
             selectFunction(event) {
                 this.$.filter.value = "";
                 let found = false;
-                let found2 = false;
                 if (this.multiple === true) {
                     for (let i = 0; i < this.memArray.length; i++) {
                         if (typeof event.model.item !== 'undefined') {
@@ -608,6 +607,14 @@
                             value: event.model.item,
                             label: event.model.item
                         }];
+                        if(!this.combo) {
+                            var object = {
+                                "label": event.model.item,
+                                "value": event.model.item
+                            };
+                            this.push("memArray", object);
+                        }
+
                         // this.value = [event.model.item];
                         this.throwEvent();
                     }
