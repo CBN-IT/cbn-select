@@ -232,6 +232,8 @@
             }
 
             valueChange(event) {
+                let _valueBackup = [];
+                _valueBackup = this._value;
                 this._value = [];
                 if (this.value instanceof Array) {
                     for (let i = 0; i < this.value.length; i++) {
@@ -253,6 +255,18 @@
                                     found = true;
                                 }
                             }
+                            if(!found) {
+                                for (let j = 0; j < _valueBackup.length; j++) {
+                                    if (this.value[i] === _valueBackup[j].value) {
+                                        this.splice("_value", position, 0, {
+                                            label: _valueBackup[j].label,
+                                            value: _valueBackup[j].value
+                                        });
+                                        found = true;
+                                    }
+                                }
+                            }
+
                             if (this.freetext && !found) {
                                 this.splice("_value", position, 0, {
                                     label: this.value[i],
@@ -270,9 +284,16 @@
                                 itemValueProp = this.itemValueProperty;
                             }
                             this.splice("_value", position, 0, {
-                                "label": this.value[i][this.itemLabelProperty],
-                                "value": this.value[i][this.itemValueProperty]
+                                "label": this.value[i][itemLabelProp],
+                                "value": this.value[i][itemValueProp]
                             });
+                            if(this.multiple === true && this.combo === false) {
+                                var object = {
+                                    "label": this.value[i][itemLabelProp],
+                                    "value": this.value[i][itemValueProp]
+                                };
+                                this.push("memArray", object);
+                            }
                         }
                     }
                 } else {
@@ -314,6 +335,13 @@
                             "label": this.value[itemLabelProp],
                             "value": this.value[itemValueProp]
                         });
+                        if(this.multiple === true && this.combo === false) {
+                            var object = {
+                                "label": this.value[itemLabelProp],
+                                "value": this.value[itemValueProp]
+                            };
+                            this.push("memArray", object);
+                        }
                     }
                 }
                 this.updateLabel();
@@ -472,7 +500,7 @@
                         if (this.shadowRoot.querySelector(".tariSelectate") !== null) {
                             this.shadowRoot.querySelector(".tariSelectate").classList.remove("tariSelectate");
                         }
-                    } else if (this.freetext) {
+                    } else if (this.freetext && this.$.filter.value !== "") {
                         this.selectFunction({
                             model: {
                                 item: this.$.filter.value
@@ -538,6 +566,7 @@
             selectFunction(event) {
                 this.$.filter.value = "";
                 let found = false;
+                let found2 = false;
                 if (this.multiple === true) {
                     for (let i = 0; i < this.memArray.length; i++) {
                         if (typeof event.model.item !== 'undefined') {
@@ -555,7 +584,11 @@
                             value: event.model.item,
                             label: event.model.item
                         });
-                        //this.push("value", event.model.item);
+                            var object = {
+                                "label": event.model.item,
+                                "value": event.model.item
+                            };
+                            this.push("memArray", object);
                         this.throwEvent();
                     }
                 } else {
@@ -606,9 +639,8 @@
             }
 
             delete(event) {
-                console.log(this._value);
+
                 this.splice("_value", event.model.index, 1);
-                console.log(this._value);
                 if (this.multiple === true && this.combo === false) {
                     this.push("elemRamase", event.model.item);
                     if (!this.options.includes(event.model.item) && this.freetext === true) {
