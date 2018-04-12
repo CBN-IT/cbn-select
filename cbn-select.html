@@ -96,7 +96,7 @@
             }
         </style>
 
-        <paper-input-container always-float-label="[[propInput]]">
+        <paper-input-container always-float-label="[[propInput]]" on-blur="displayNone" tabindex="0" style="outline:none">
             <label class="label" slot="label">[[label]]</label>
             <div class="container" slot="input" style="position:relative;">
 
@@ -107,7 +107,7 @@
               </span>
                 </template>
                 <input class="my-input" id="filter" type="text" for="tari" on-input="filter" on-click="styleDisplay"
-                       on-keydown="keyCode" on-blur="displayNone"/>
+                       on-keydown="keyCode" />
 
             </div>
             <div slot="input" style="position:relative;">
@@ -115,7 +115,7 @@
             </div>
             <div slot="input" class="tari" on-mouseover="changeColor" on-mouseout="colorBack">
                 <template is="dom-repeat" items="{{elemRamase}}">
-                    <div class="fiecareDiv" on-mousedown="selectFunction">[[item.label]]</div>
+                    <div class="fiecareDiv" on-click="selectFunction">[[item.label]]</div>
                 </template>
             </div>
         </paper-input-container>
@@ -426,6 +426,7 @@
             displayNone(event) {
                 this.shadowRoot.querySelector(".arrow-left").classList.remove("arrow-down");
                 this.shadowRoot.querySelector(".tari").classList.remove("displayTari");
+
                 this.indexTabel = -1;
             }
 
