@@ -3,6 +3,7 @@
 <link rel="import" href="../iron-icons/iron-icons.html">
 <link rel="import" href="../iron-icon/iron-icon.html">
 <link rel="import" href="../paper-input/paper-input-container.html">
+<link rel="import" href="../iron-dropdown/iron-dropdown.html">
 
 
 <dom-module id="cbn-select">
@@ -24,19 +25,14 @@
 
             .tari {
                 border: none;
-                position: absolute;
                 background-color: whitesmoke;
-                display: none;
                 z-index: 100;
                 cursor: pointer;
             }
 
             .tariSelectate {
                 background-color: darkgrey;
-            }
-
-            .displayTari {
-                display: block;
+                width: 100%;
             }
 
             .arrow-left {
@@ -85,6 +81,7 @@
 
             .fiecareDiv {
                 padding: 5px 10px;
+                box-sizing: border-box;
             }
 
             .linieLabel {
@@ -94,9 +91,12 @@
             input.my-input {
                 @apply --paper-input-container-shared-input-style;
             }
+            #functieOpen{
+                padding: 5px;
+            }
         </style>
 
-        <paper-input-container always-float-label="[[propInput]]" on-blur="displayNone" tabindex="0" style="outline:none">
+        <paper-input-container always-float-label="[[propInput]]" tabindex="0" style="outline:none">
             <label class="label" slot="label">[[label]]</label>
             <div class="container" slot="input" style="position:relative;">
 
@@ -106,18 +106,20 @@
                         <iron-icon class="closeBtn" icon="icons:backspace" on-click="delete"></iron-icon>
               </span>
                 </template>
-                <input class="my-input" id="filter" type="text" for="tari" on-input="filter" on-click="styleDisplay"
+                <input class="my-input" id="filter" type="text" for="tari" on-input="filter"
                        on-keydown="keyCode" />
 
             </div>
             <div slot="input" style="position:relative;">
                 <div class="arrow-left"></div>
             </div>
-            <div slot="input" class="tari" on-mouseover="changeColor" on-mouseout="colorBack">
+            <iron-dropdown slot="input" id="functieOpen" no-cancel-on-outside-click horizontal-align="left" vertical-align="top" vertical-offset="58" allow-outside-scroll="true" >
+             <div slot="dropdown-content" class="tari" on-mouseover="changeColor" on-mouseout="colorBack">
                 <template is="dom-repeat" items="{{elemRamase}}">
                     <div class="fiecareDiv" on-click="selectFunction">[[item.label]]</div>
                 </template>
-            </div>
+              </div>
+            </iron-dropdown>
         </paper-input-container>
 
     </template>
@@ -225,6 +227,12 @@
                         value: false
                     }
                 };
+            }
+
+            connectedCallback() {
+                super.connectedCallback();
+                this.addEventListener("focus", function (){this.styleDisplay()}.bind(this));
+                this.addEventListener("blur", function(){this.displayNone()}.bind(this));
             }
 
             validate() {
@@ -408,13 +416,17 @@
                 );
             }
 
+            open(event) {
+                this.shadowRoot.querySelector("#functieOpen").open();
+            }
 
-            styleDisplay() {
+
+            styleDisplay(event) {
                 this.updateLabel();
+                this.shadowRoot.querySelector("#functieOpen").open();
                 if (this.indexTabel === -1) {
                     this.indexTabel = 0;
                 }
-                this.shadowRoot.querySelector(".tari").classList.add("displayTari");
                 this.shadowRoot.querySelector(".arrow-left").classList.add("arrow-down");
                 setTimeout(function () {
                     if (this.elemRamase.length > this.indexTabel && this.shadowRoot.querySelector(".tari div:nth-of-type(" + (this.indexTabel + 1) + ")") !== null) {
@@ -425,8 +437,10 @@
 
             displayNone(event) {
                 this.shadowRoot.querySelector(".arrow-left").classList.remove("arrow-down");
-                this.shadowRoot.querySelector(".tari").classList.remove("displayTari");
-
+                this.shadowRoot.querySelector("#functieOpen").close();
+                if(this.shadowRoot.querySelector(".tari div:nth-of-type(" + (this.indexTabel + 1) + ")") !== null) {
+                    this.shadowRoot.querySelector(".tari div:nth-of-type(" + (this.indexTabel + 1) + ")").classList.remove("tariSelectate");
+                }
                 this.indexTabel = -1;
             }
 
@@ -464,7 +478,7 @@
                             this.indexTabel = 0;
                         }
 
-                        this.shadowRoot.querySelector(".tari").classList.add("displayTari");
+                        this.shadowRoot.querySelector("#functieOpen").open();
                         this.shadowRoot.querySelector(".tari div:nth-of-type(" + (this.indexTabel + 1) + ")").classList.add("tariSelectate");
                     }
 
@@ -480,7 +494,7 @@
                         if (this.indexTabel <= -1) {
                             this.indexTabel = this.elemRamase.length - 1;
                         }
-                        this.shadowRoot.querySelector(".tari").classList.add("displayTari");
+                        this.shadowRoot.querySelector("#functieOpen").open();
                         this.shadowRoot.querySelector(".tari div:nth-of-type(" + (this.indexTabel + 1) + ")").classList.add("tariSelectate");
                     }
                 }
@@ -572,7 +586,6 @@
                         if (typeof event.model.item !== 'undefined') {
                             if (this.memArray[i].value === event.model.item.value) {
                                 this.push("_value", event.model.item);
-                                //this.push("value", event.model.item.value);
                                 this.throwEvent();
                                 found = true;
                                 break;
@@ -615,8 +628,6 @@
                             };
                             this.push("memArray", object);
                         }
-
-                        // this.value = [event.model.item];
                         this.throwEvent();
                     }
                 }
@@ -636,14 +647,18 @@
                             this.push("elemRamase", this.memArray[i]);
                         }
                     }
-                    //this.memArray = this.elemRamase;
                 }
 
                 setTimeout(function () {
-                    this.$.filter.focus();
+
+                    if(!this.multiple){
+                        this.blur();
+                    }
+
                 }.bind(this));
 
                 this.orderList();
+                this.indexTabel = -1;
             }
 
             delete(event) {
