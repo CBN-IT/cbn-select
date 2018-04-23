@@ -225,14 +225,33 @@
                     propInput: {
                         type: Boolean,
                         value: false
+                    },
+                    styleDisplayFunction: {
+                        type: Function,
+                        value: function(){
+                            return function (){this.styleDisplay()}.bind(this);
+                        }
+                    },
+                    styleDisplayNoneFunction: {
+                        type: Function,
+                        value: function(){
+                            return function(){this.displayNone()}.bind(this);
+                        }
                     }
                 };
             }
 
+
             connectedCallback() {
                 super.connectedCallback();
-                this.addEventListener("focus", function (){this.styleDisplay()}.bind(this));
-                this.addEventListener("blur", function(){this.displayNone()}.bind(this));
+                this.addEventListener("focus", this.styleDisplayFunction);
+                this.addEventListener("blur", this.styleDisplayNoneFunction);
+            }
+
+            disconnectedCallback() {
+                super.connectedCallback();
+                this.removeEventListener("focus", this.styleDisplayFunction);
+                this.removeEventListener("blur", this.styleDisplayNoneFunction);
             }
 
             validate() {
