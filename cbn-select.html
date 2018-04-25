@@ -201,7 +201,7 @@
                         value: false
                     },
 
-                    freetext: {
+                    freeText: {
                         type: Boolean,
                         value: false
                     },
@@ -294,7 +294,7 @@
                                 }
                             }
 
-                            if (this.freetext && !found) {
+                            if (this.freeText && !found) {
                                 this.splice("_value", position, 0, {
                                     label: this.value[i],
                                     value: this.value[i]
@@ -335,7 +335,7 @@
                                 found = true;
                             }
                         }
-                        if (this.freetext && !found) {
+                        if (this.freeText && !found) {
                             this.splice("_value", 0, 0, {
                                 label: this.value,
                                 value: this.value
@@ -397,7 +397,7 @@
                 this.updateLabel();
                 this.value = value;
 
-                this.dispatchEvent(new CustomEvent("selected-changed", {
+                this.dispatchEvent(new CustomEvent("cbn-selected-changed", {
                     bubbles: true,
                     composed: true,
                     detail: {
@@ -534,7 +534,7 @@
                         if (this.shadowRoot.querySelector(".tariSelectate") !== null) {
                             this.shadowRoot.querySelector(".tariSelectate").classList.remove("tariSelectate");
                         }
-                    } else if (this.freetext && this.$.filter.value !== "") {
+                    } else if (this.freeText && this.$.filter.value !== "") {
                         this.selectFunction({
                             model: {
                                 item: this.$.filter.value
@@ -611,7 +611,7 @@
                             }
                         }
                     }
-                    if (!found && this.freetext) {
+                    if (!found && this.freeText) {
                         this.push("_value", {
                             value: event.model.item,
                             label: event.model.item
@@ -635,7 +635,7 @@
                             }
                         }
                     }
-                    if (!found && this.freetext) {
+                    if (!found && this.freeText) {
                         this._value = [{
                             value: event.model.item,
                             label: event.model.item
@@ -685,7 +685,7 @@
                 this.splice("_value", event.model.index, 1);
                 if (this.multiple === true && this.combo === false) {
                     this.push("elemRamase", event.model.item);
-                    if (!this.options.includes(event.model.item) && this.freetext === true) {
+                    if (!this.options.includes(event.model.item) && this.freeText === true) {
                         this.push("options", event.model.item);
                     }
                 }
