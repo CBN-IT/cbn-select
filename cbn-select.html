@@ -372,6 +372,13 @@
                     }
                 }
                 this.updateLabel();
+                this.dispatchEvent(new CustomEvent("cbn-selected-changed", {
+                    bubbles: true,
+                    composed: true,
+                    detail: {
+                        value: this.value
+                    }
+                }));
 
             }
 
