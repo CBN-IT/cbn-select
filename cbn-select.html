@@ -12,15 +12,20 @@
             :host {
                 display: block;
             }
+            :host[disabled] {
+                opacity:0.5
+
+            }
 
             #filter {
                 border: none;
                 margin-bottom: 6px;
                 position: relative;
                 display: inline-block;
-                width: 100%;
                 height: 20px;
                 outline: none;
+                min-width:100px;
+                flex:1;
             }
 
             .tari {
@@ -61,6 +66,7 @@
                 height: 20px;
                 z-index: 1;
                 white-space: nowrap;
+                margin-top: 3px;
             }
 
             .closeBtn {
@@ -77,6 +83,7 @@
             .container {
                 display: flex;
                 flex-direction: row;
+                flex-wrap: wrap;
             }
 
             .fiecareDiv {
@@ -96,7 +103,7 @@
             }
         </style>
 
-        <paper-input-container always-float-label="[[propInput]]" tabindex="0" style="outline:none">
+        <paper-input-container always-float-label="[[propInput]]" disabled$="[[disabled]]" tabindex="0" style="outline:none">
             <label class="label" slot="label">[[label]]</label>
             <div class="container" slot="input" style="position:relative;">
 
@@ -106,8 +113,7 @@
                         <iron-icon class="closeBtn" icon="backspace" on-click="delete"></iron-icon>
               </span>
                 </template>
-                <input class="my-input" id="filter" type="text" for="tari" on-input="filter"
-                       on-keydown="keyCode" />
+                <input class="my-input" id="filter" type="text" for="tari" on-input="filter" on-keydown="keyCode" />
 
             </div>
             <div slot="input" style="position:relative;">
@@ -219,6 +225,10 @@
                         value: "value"
                     },
                     required: {
+                        type: Boolean,
+                        value: false
+                    },
+                    disabled: {
                         type: Boolean,
                         value: false
                     },
@@ -688,7 +698,6 @@
             }
 
             delete(event) {
-
                 this.splice("_value", event.model.index, 1);
                 if (this.multiple === true && this.combo === false) {
                     this.push("elemRamase", event.model.item);
