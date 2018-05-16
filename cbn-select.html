@@ -101,9 +101,10 @@
             #functieOpen{
                 padding: 5px;
             }
+
         </style>
 
-        <paper-input-container always-float-label="[[propInput]]" disabled$="[[disabled]]" tabindex="0" style="outline:none">
+        <paper-input-container always-float-label="[[propInput]]" no-label-float="[[noLabelFloat]]" disabled$="[[disabled]]" tabindex="0" style="outline:none">
             <label class="label" slot="label">[[label]]</label>
             <div class="container" slot="input" style="position:relative;">
 
@@ -211,6 +212,12 @@
                         type: Boolean,
                         value: false
                     },
+
+                    noLabelFloat: {
+                        type: Boolean,
+                        value: false
+                    },
+
                     mobile: {
                         type: Boolean,
                         value: false
@@ -229,6 +236,10 @@
                         value: false
                     },
                     disabled: {
+                        type: Boolean,
+                        value: false
+                    },
+                    noFilter: {
                         type: Boolean,
                         value: false
                     },
@@ -629,15 +640,22 @@
                         }
                     }
                     if (!found && this.freeText) {
-                        this.push("_value", {
-                            value: event.model.item,
-                            label: event.model.item
-                        });
-                            var object = {
+                        if(typeof event.model.item==="string"){
+                            this.push("_value", {
+                                value: event.model.item,
+                                label: event.model.item
+                            });
+                            let object = {
                                 "label": event.model.item,
                                 "value": event.model.item
                             };
                             this.push("memArray", object);
+                        }else{
+                            this.push("_value", event.model.item);
+                            let object = event.model.item;
+                            this.push("memArray", object);
+                        }
+
                         this.throwEvent();
                     }
                 } else {
