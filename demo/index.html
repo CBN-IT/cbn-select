@@ -12,21 +12,21 @@
     <link rel="import" href="../../iron-demo-helpers/demo-snippet.html">
     <link rel="import" href="../cbn-select.html">
 
-    <custom-style>
-      <style is="custom-style" include="demo-pages-shared-styles">
-      </style>
-    </custom-style>
+
     <script>
       function setOptions(){
           var selects= document.querySelectorAll("cbn-select");
+          console.log(selects);
           for(var i=0;i<selects.length;i++){
-              selects[i].options=[
-                  "Romania",
-                  "Spania",
-                  "Germania",
-                  "Franta",
-                  "Anglia"
-              ];
+              if(i<selects.length-2){
+                selects[i].options=[
+                    "Romania",
+                    "Spania",
+                    "Germania",
+                    "Franta",
+                    "Anglia"
+                ];
+              }
               selects[i].label = ["Tara"];
               selects[i].value=[{
                   label:"peEcran",
@@ -53,6 +53,10 @@
     </script>
   </head>
   <body onload="setOptions()">
+  <custom-style>
+    <style is="custom-style" include="demo-pages-shared-styles">
+    </style>
+  </custom-style>
     <div class="vertical-section-container centered">
       <h3>Basic new-element demo</h3>
       <demo-snippet>
@@ -60,7 +64,7 @@
           <cbn-select label="Single select"></cbn-select>
           <cbn-select label="Multiple select" multiple></cbn-select>
           <cbn-select label="Combo Multiple select" combo multiple ></cbn-select>
-          <cbn-select label="Free Text select" free-text></cbn-select>
+          <cbn-select label="Free Text select" free-text multiple></cbn-select>
           <cbn-select label="Free Text select" disabled free-text></cbn-select>
         </template>
       </demo-snippet>

@@ -12,10 +12,6 @@
             :host {
                 display: block;
             }
-            :host[disabled] {
-                opacity:0.5
-
-            }
 
             #filter {
                 border: none;
@@ -109,10 +105,10 @@
             <div class="container" slot="input" style="position:relative;">
 
                 <template is="dom-repeat" items="{{_value}}">
-              <span class="spanPrincipal" for="spanPrincipal">
+                    <span class="spanPrincipal" for="spanPrincipal">
                         <span id="spanPrincipal" style="padding-left: 5px;">[[item.label]]</span>
                         <iron-icon class="closeBtn" icon="backspace" on-click="delete"></iron-icon>
-              </span>
+                    </span>
                 </template>
                 <input class="my-input" id="filter" type="text" for="tari" on-input="filter" on-keydown="keyCode" />
 
@@ -336,7 +332,7 @@
                                 "value": this.value[i][itemValueProp]
                             });
                             if(this.multiple === true && this.combo === false) {
-                                var object = {
+                                let object = {
                                     "label": this.value[i][itemLabelProp],
                                     "value": this.value[i][itemValueProp]
                                 };
@@ -489,6 +485,13 @@
                     this.shadowRoot.querySelector(".tari div:nth-of-type(" + (this.indexTabel + 1) + ")").classList.remove("tariSelectate");
                 }
                 this.indexTabel = -1;
+                if(this.freeText && this.$.filter.value.length>0){
+                    this.selectFunction({
+                        model: {
+                            item: this.$.filter.value,
+                        }
+                    });
+                }
             }
 
             getFocus(event) {
@@ -553,7 +556,7 @@
                     } else if (this.elemRamase.length !== 0 && this.indexTabel !== -1) {
                         this.selectFunction({
                             model: {
-                                item: this.elemRamase[this.indexTabel]
+                                item: this.elemRamase[this.indexTabel],
                             }
                         });
                         this.filter();
@@ -565,7 +568,7 @@
                     } else if (this.freeText && this.$.filter.value !== "") {
                         this.selectFunction({
                             model: {
-                                item: this.$.filter.value
+                                item: this.$.filter.value,
                             }
                         });
                         this.filter();
@@ -632,6 +635,7 @@
                     for (let i = 0; i < this.memArray.length; i++) {
                         if (typeof event.model.item !== 'undefined') {
                             if (this.memArray[i].value === event.model.item.value) {
+
                                 this.push("_value", event.model.item);
                                 this.throwEvent();
                                 found = true;
