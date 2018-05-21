@@ -449,24 +449,29 @@
                 this.memArray = memArrayNew;
                 this.elemRamase = JSON.parse(JSON.stringify(memArrayNew));
                 this.orderList();
+                this.shadowRoot.querySelector("#functieOpen").notifyResize();
             }
 
             orderList() {
                 this.elemRamase.sort(
                     function (a, b) {
+                        a.label = a.label === undefined ? "" : a.label;
+                        b.label = b.label === undefined ? "" : b.label;
+
                         return a.label.toLowerCase().localeCompare(b.label.toLowerCase());
                     }
                 );
             }
 
             open(event) {
+                this.shadowRoot.querySelector("#functieOpen").notifyResize();
                 this.shadowRoot.querySelector("#functieOpen").open();
             }
 
 
             styleDisplay(event) {
                 this.updateLabel();
-                this.shadowRoot.querySelector("#functieOpen").open();
+                this.open();
                 if (this.indexTabel === -1) {
                     this.indexTabel = 0;
                 }
@@ -528,7 +533,7 @@
                             this.indexTabel = 0;
                         }
 
-                        this.shadowRoot.querySelector("#functieOpen").open();
+                        this.open();
                         this.shadowRoot.querySelector(".tari div:nth-of-type(" + (this.indexTabel + 1) + ")").classList.add("tariSelectate");
                     }
 
@@ -544,7 +549,7 @@
                         if (this.indexTabel <= -1) {
                             this.indexTabel = this.elemRamase.length - 1;
                         }
-                        this.shadowRoot.querySelector("#functieOpen").open();
+                        this.open();
                         this.shadowRoot.querySelector(".tari div:nth-of-type(" + (this.indexTabel + 1) + ")").classList.add("tariSelectate");
                     }
                 }
@@ -604,6 +609,7 @@
             }
 
             filter(event) {
+                if(!this.noFilter){
                 this.styleDisplay();
                 let val = this.$.filter.value;
                 this.elemRamase = [];
@@ -626,6 +632,7 @@
                 }
                 this.orderList();
                 this.styleDisplay();
+            }
             }
 
             selectFunction(event) {
