@@ -1,6 +1,6 @@
 {
-  "name": "new-element",
-  "main": "new-element.html",
+  "name": "cbn-select",
+  "main": "demo/index.html",
   "dependencies": {
     "polymer": "Polymer/polymer#^2.0.0",
     "paper-item": "PolymerElements/paper-item#^2.0.0",
