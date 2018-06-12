@@ -499,7 +499,7 @@
                         return a.label.toLowerCase().localeCompare(b.label.toLowerCase());
                     }
                 );
-                if(this.mobile){
+                if (!this.isSelectHidden()) {
                     let str = "";
                     for(let i=0;i<this._filteredOptions.length;i++){
                         str+=`<option value='${this._filteredOptions[i].value}'>${this._filteredOptions[i].label}</option>`
@@ -518,7 +518,7 @@
 
 
             styleDisplay(event) {
-                if(this.mobile){
+                if (!this.isSelectHidden()) {
                     return;
                 }
                 this.open();
@@ -815,8 +815,9 @@
 
                 console.log(result) ;
             }
-            isSelectHidden(){
-                return !this.mobile||this.freeText
+
+            isSelectHidden() {
+                return !this.mobile || this.freeText
             }
         }
 
