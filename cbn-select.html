@@ -329,20 +329,14 @@
                             let found = false;
                             for (let j = 0; j < this._options.length; j++) {
                                 if (this.value[i] === this._options[j].value) {
-                                    this.splice("_value", position, 0, {
-                                        label: this._options[j].label,
-                                        value: this._options[j].value
-                                    });
+                                    this.splice("_value", position, 0, this._options[j]);
                                     found = true;
                                 }
                             }
                             if (!found) {
                                 for (let j = 0; j < valueBackup.length; j++) {
                                     if (this.value[i] === valueBackup[j].value) {
-                                        this.splice("_value", position, 0, {
-                                            label: valueBackup[j].label,
-                                            value: valueBackup[j].value
-                                        });
+                                        this.splice("_value", position, 0, valueBackup[j]);
                                         found = true;
                                     }
                                 }
@@ -364,10 +358,8 @@
                             if (this.itemValueProperty !== null && this.value[i].hasOwnProperty(this.itemValueProperty)) {
                                 itemValueProp = this.itemValueProperty;
                             }
-                            this.splice("_value", position, 0, {
-                                "label": this.value[i][itemLabelProp],
-                                "value": this.value[i][itemValueProp]
-                            });
+
+                            this.splice("_value", position, 0, this.value[i]);
                             if (this.multiple === true && this.combo === false) {
                                 let object = {
                                     "label": this.value[i][itemLabelProp],
@@ -382,10 +374,7 @@
                         let found = false;
                         for (let j = 0; j < this._options.length; j++) {
                             if (this.value === this._options[j].value) {
-                                this.splice("_value", 0, 0, {
-                                    label: this._options[j].label,
-                                    value: this._options[j].value
-                                });
+                                this.splice("_value", 0, 0, this._options[j]);
                                 found = true;
                             }
                         }
@@ -426,13 +415,7 @@
                     }
                 }
                 this.updateLabel();
-                this.dispatchEvent(new CustomEvent("cbn-selected-changed", {
-                    bubbles: true,
-                    composed: true,
-                    detail: {
-                        value: this.value
-                    }
-                }));
+                this.throwEvent();
 
             }
 
@@ -456,9 +439,10 @@
                     value = "";
                 }
                 this.updateLabel();
-                this._stopValueChange=true;
-                this.value = value;
 
+                if(this.value !== value){
+                this._stopValueChange=true;
+                }
                 this.dispatchEvent(new CustomEvent("cbn-selected-changed", {
                     bubbles: true,
                     composed: true,
@@ -467,6 +451,7 @@
                         fullValue: this._value
                     }
                 }));
+                this.value = value;
             }
 
             optionsChange() {
