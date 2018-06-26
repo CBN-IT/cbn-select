@@ -486,6 +486,9 @@
                 );
                 if (!this.isSelectHidden()) {
                     let str = "";
+                    if(!this.multiple){
+                        str = "<option value=''></option>";
+                    }
                     for(let i=0;i<this._filteredOptions.length;i++){
                         str+=`<option value='${this._filteredOptions[i].value}'>${this._filteredOptions[i].label}</option>`
                     }
