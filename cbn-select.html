@@ -99,7 +99,7 @@ Custom property                | Description                             | Defau
 				</template>
 			</template>
 			
-			<input id="input" type="text" value="{{_inputValue::input}}" class="text-input" autocomplete="off"
+			<input id="input" type="text" value="{{_inputValue::input}}" class="text-input" autocomplete="[[_autocompleteRandom]]"
 					title="[[placeholder]]" placeholder$="[[placeholder]]" readonly$="[[readonly]]"
 					on-tap="_dropDownButtonTap" on-input="_queryInputHandler">
 			
@@ -200,6 +200,10 @@ Custom property                | Description                             | Defau
 				options: {
 					type: Array,
 					value: function() { return []; }
+				},
+				_autocompleteRandom: {
+					type: String,
+					value: function() { return "off_"+new Date().getTime(); }
 				},
 				
 				/**
